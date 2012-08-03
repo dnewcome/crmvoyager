@@ -11,7 +11,7 @@ I just had to deal with this error once again after having redeployed some Share
 
 The error text is:
 
-[sourcecode]
+```
 Web Part Error: The request could not be completed because the specified solution was not found.
 
 Show Error Details 
@@ -23,7 +23,8 @@ Hide Error Details
   at Microsoft.SharePoint.UserCode.SPUserCodeWebPartRemoteExecutionHelper.<>c__DisplayClassa.b__9() 
   at Microsoft.SharePoint.Utilities.SecurityContext.RunAsProcess(CodeToRunElevated secureCode) 
   at Microsoft.SharePoint.UserCode.SPUserCodeWebPartRemoteExecutionHelper.ExecuteRequestInSandBox(HttpContext context, SPWeb web, SPWebPartManager manager, SPUserCodeWebPart userCodeWebPart)  
-[/sourcecode]
+```
+
 
 This typically happens when either a web part has been added to a SharePoint page already and then the code is redeployed in another location or the Web Part gallery has not updated after the code was redeployed.
 

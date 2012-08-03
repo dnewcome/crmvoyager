@@ -19,9 +19,12 @@ To install, grab the latest SDK from [here](http://www.microsoft.com/downloads/e
 
 The file that we want to import is located in the sdk under:
 
-[sourcecode]
+```
+
 sdk\tools\metadatabrowser\metadatabrowser_1_0_0_1_managed.zip
-[/sourcecode]
+
+```
+
 
 [![](http://crmvoyager.files.wordpress.com/2011/05/select-file.png)](http://crmvoyager.files.wordpress.com/2011/05/select-file.png)
 

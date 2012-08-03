@@ -15,13 +15,16 @@ In order to implement this feature with .NET exceptions, Microsoft has created a
 
 What I have been doing from the beginning is to rethrow the System.Web.Services.Protocols.SoapException as a System.Exception and include the Xml as the exception message. Consider the following error handler:
 
-[sourcecode language="csharp"]
+``` csharp
+
 try {
 	return DoCrmCall();
 }
 catch (System.Web.Services.Protocols.SoapException ex) {
 	throw new Exception(ex.Detail.InnerXml, ex);
 }
-[/sourcecode]
+
+```
+
 
 When we see the exception in the calling code (the .NET service proxy) we get a System.Exception where the message contains the Xml from the SOAP fault. There may be better ways of handling the SOAP messages, but this method has been working well for me, and I thought I'd put it up for you guys to comment on, since I know that error messages are a hot button topic in CRM and Web services in general.

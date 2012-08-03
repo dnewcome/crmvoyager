@@ -21,15 +21,19 @@ The hallmark of CRM 4 DyanmicEntities is the use of property classes for the dat
 
 
 
-[sourcecode language="csharp"]
+``` csharp
+
 foreach( Property prop in m_entity.Properties ) {
     /// do something
 }
-[/sourcecode]
+
+```
+
 
 When we use a foreach construct, the IEnumerator implementation returns a Property type. Why is this inconsistent? Well it isn't from an API standpoint, but it was very confusing to me when I took a look at how the data was actually stored at runtime. Hint: there are no Property objects to be found in the backing store. They are created dynamically in the IEnumerator implementation. Take a look at the disassembly of IGetEnumerator():
 
-[sourcecode language="csharp"]
+``` csharp
+
 private IEnumerator<Property> InternalGetEnumerator()
 {
     List<Property> list = new List<Property>();
@@ -39,7 +43,9 @@ private IEnumerator<Property> InternalGetEnumerator()
     }
     return list.GetEnumerator();
 }
-[/sourcecode]
+
+```
+
 
 We can see that the Property types are actually being created and returned on-the-fly from the internal data store _nameToPropertyValue.
 
@@ -51,31 +57,43 @@ We can see that the Property types are actually being created and returned on-th
 
 We can do assignment in one of two ways. In each case the value that we assign will be slightly different.
 
-[sourcecode language="csharp"]
+``` csharp
+
 DyanmicEntity entity = new DynamicEntity();
 entity.Properties.Add( new StringProperty( key, value ) );
-[/sourcecode]
+
+```
+
 
 or
 
-[sourcecode language="csharp"]
+``` csharp
+
 entity[ key ] = value;
-[/sourcecode]
+
+```
+
 
 This example also applies to retrieval of the property value, that is, if we want to get the plain string without the StringProperty wrapper we would write:
 
-[sourcecode language="csharp"]
+``` csharp
+
 string val = entity[ key ];
-[/sourcecode]
+
+```
+
 
 I've noticed that when we make an assignment using a Property, the SDK library actually throws it away and only stores the inner value! This makes the property simply an ephemeral container that is effectively used only for conveying the field name. Check out disassembly for PropertyCollection.Add():
 
-[sourcecode language="csharp"]
+``` csharp
+
 public void Add(Property property)
 {
     this._nameToPropertyValue[property.Name] = property.GetValue();
 }
-[/sourcecode]
+
+```
+
  
 So when iterating and using Add() we are dealing with Property types. When using [] indexer notation we are dealing with the underlying value data type. I find this to be quite inconsistent and tedious, but as long as it is kept in mind, things work out ok.
 

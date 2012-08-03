@@ -11,22 +11,30 @@ I had to go through the rain dance of [adding the Administrator account back](ht
 
 Ordinarily you would give the -m flag to the sqlserver.exe executable and be on your merry way. However, this time around I ran into a perplexing issue. Take a look at the following screenshot to see the welcome that I received after running:
 
-[sourcecode language="bash"]
+``` bash
+
 C:\Program Files\Microsoft SQL Server\MSSQL10_50.SQL2008R2STD\MSSQL\Binn>sqlservr.exe -m
-[/sourcecode]
+
+```
+
 
 [![](http://crmvoyager.files.wordpress.com/2011/04/sqlsserver.png)](http://crmvoyager.files.wordpress.com/2011/04/sqlsserver.png)
 
 Quite informative. I took a look in the services administrative tool to see what the service commandline was and discovered that there is an [-s flag](http://msdn.microsoft.com/en-us/library/ms190737.aspx) that starts a named instance. I also have SQL Server Express running on this same machine, so there was a conflict.
 
 I used the following command to get it started:
-[sourcecode language="bash"]
+
+``` bash
+
 C:\Program Files\Microsoft SQL Server\MSSQL10_50.SQL2008R2STD\MSSQL\Binn>sqlservr.exe  -sSQL2008R2STD -m
-[/sourcecode]
+
+```
+
 
 And you should be greeted by this:
 
-[sourcecode]
+```
+
 2011-04-26 00:50:37.40 Server      Microsoft SQL Server 2008 R2 (RTM) - 10.50.16
 00.1 (X64)
         Apr  2 2010 15:48:46
@@ -39,5 +47,7 @@ And you should be greeted by this:
 2011-04-26 00:50:37.41 Server      System Manufacturer: 'innotek GmbH', System M
 odel: 'VirtualBox'.
 2011-04-26 00:50:37.41 Server      Authentication mode is WINDOWS-ONLY.
-[/sourcecode]
+
+```
+
 

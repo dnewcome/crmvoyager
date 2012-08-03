@@ -18,26 +18,33 @@ We are going to use a tool called Netcat to accomplish our goal. Netcat for Wind
 Once we have Netcat on both machines we can set up the server to listen on a port of our choosing and serve up cmd.exe over the network. On the client end, we will use Netcat again, but in client mode, to connect to the server and display the output from cmd.exe on the local machine.
 
 On the server we invoke Netcat like so:
-[sourcecode]
+
+```
 > nc -l -p 7777 -e "cmd.exe"
-[/sourcecode]
+
+```
+
 Here we are telling Netcat to enter listen mode on port 7777, executing 'cmd.exe' when a client connects. Netcat will forward all input from the network to cmd.exe and return all output back over the network.
 
 On the client end, we connect 
-[sourcecode]
+
+```
 > nc localhost 7777
 Microsoft Windows [Version 6.0.6001]
 Copyright (c) 2006 Microsoft Corporation.  All rights reserved.
 >
-[/sourcecode]
+```
+
 Wait a minute, why are we connecting to 'localhost' if we really want to get a remote shell? Well in the [previous article](http://crmvoyager.wordpress.com/2010/06/29/connecting-to-ms-crm-over-ssh/), where we set up the SSH tunnel, we configured our backhaul connection to listen on the remote port 7777, and the client is that remote host, so from the client's perspective we need to connect to localhost. Then the tunnel does its thing, which is to forward traffic from the local port 7777 to the remote port, where we have Netcat listening.
 
 We can prove that we are actually on the remote host by doing something like this:
-[sourcecode]
+
+```
 > hostname
 remote-srvr
 >
-[/sourcecode]
+```
+
 
 Hopefully this saves you some time, since now you can just switch to your command window and type 'iisreset' instead of messing with remote desktop. One thing that I'd like to get working, but haven't yet, is some console text editor. I have tried VIM and some others, but they all try to access the local console via some mechanism other than standard out, so they don't work. VIM tries to change the display mode of the console window that the remote Netcat process is running under rather than the local console window that the client is running in. Perhaps if we ran the Netcat server as a service without an attached console things would work. Hopefully someone can help me out in the comments.
 

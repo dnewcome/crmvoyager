@@ -16,7 +16,8 @@ Using an archive viewer ([7zip ](http://www.7-zip.org/)is my tool of choice here
 We can see that along with the assemblies required to run the Silverlight code, we have two configuration files in the archive -- AppManifest.xaml and ServiceReferences.ClientConfig. These two files provide the assembly references and service references for the application, respectively. Following are samples of these two files:
 
 AppManifest.xaml:
-[sourcecode language="xml"]
+``` xml
+
 <Deployment xmlns="http://schemas.microsoft.com/client/2007/deployment" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" EntryPointAssembly="SilverlightWizard" EntryPointType="SilverlightWizard.App" RuntimeVersion="4.0.50401.0">
   <Deployment.Parts>
     <AssemblyPart x:Name="SilverlightWizard" Source="SilverlightWizard.dll" />
@@ -31,10 +32,13 @@ AppManifest.xaml:
     <AssemblyPart x:Name="System.Windows.Data" Source="System.Windows.Data.dll" />
   </Deployment.Parts>
 </Deployment>
-[/sourcecode]
+
+```
+
 
 ServiceReferences.ClientConfig
-[sourcecode language="xml"]
+``` xml
+
 <configuration>
     <system.serviceModel>
         <bindings>
@@ -51,7 +55,9 @@ ServiceReferences.ClientConfig
         </client>
     </system.serviceModel>
 </configuration>
-[/sourcecode]
+
+```
+
 
 Normally we wouldn't need to touch these files, but in the case of a moved webservice location, knowing that the endpoint is defined here can be a lifesaver. We can use 7zip to edit the client config in-place to change the endpoint url of a service that the Silverlight application references.
 

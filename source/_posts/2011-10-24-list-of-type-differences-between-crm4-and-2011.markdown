@@ -13,802 +13,706 @@ Without further ado, the [list is here](http://msdn.microsoft.com/en-us/library/
 
 I'm including it inline here for quick reference:
 
-  
 
 
-          
 
 
-            
-              **AttributeTypeCode**
-            
-            
-									
-										Microsoft Dynamics CRM 2011 type
+<table style='border:1px solid black'>
+
+	  <tr>
+
+		<th>
+
+		  <strong>AttributeTypeCode</strong>
+
+		</th>
+
+		<th>
+
 								
-            
-									
-										Microsoft Dynamics CRM 4.0 type
-								
-          
-          
 
+									Microsoft Dynamics CRM 2011 type
 
-            
+							</th>
 
-              
+		<th>
+Microsoft Dynamics CRM 4.0 type </th>
 
+	  </tr>
 
-                [AttributeTypeCode](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx).[BigInt](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+	  <tr>
 
+		<td>
 
-            
+		  <p>
 
-            
+			<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">AttributeTypeCode</a>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">BigInt</a></p>
 
-              
+		</td>
 
+		<td>
 
-                **long**
-              
+		  <p>
 
+			<strong>long</strong>
 
-            
+		  </p>
 
-            
+		</td>
 
-              
+		<td>
 
-N/A
+		  <p>N/A</p>
 
+		</td>
 
-            
+	  </tr>
 
-          
-          
+	  <tr>
 
+		<td>
 
-            
+		  <p>
 
-              
+			<strong>AttributeTypeCode</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Boolean</a></p>
 
+		</td>
 
-                **AttributeTypeCode**.[Boolean](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		<td>
 
+		  <p>
 
-            
+			<strong>bool</strong>
 
-            
+		  </p>
 
-              
+		</td>
 
+		<td>
 
-                **bool**
-              
+		  <p>
 
+			<a href="http://msdn.microsoft.com/en-us/library/bb928926.aspx">CrmBoolean</a>
 
-            
+		  </p>
 
-            
+		</td>
 
-              
+	  </tr>
 
+	  <tr>
 
-                [CrmBoolean](http://msdn.microsoft.com/en-us/library/bb928926.aspx)
-              
+		<td>
 
+		  <p>
 
-            
+			<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributemetadata.attributetype.aspx">AttributeType</a>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">CalendarRules</a></p>
 
-          
-          
+		</td>
 
+		<td>
 
-            
+		  <p>
 
-              
+			
 
+		  </p>
 
-                [AttributeType](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributemetadata.attributetype.aspx).[CalendarRules](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		  <p>
 
+			<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.entitycollection.aspx">EntityCollection</a> or <strong>CalendarRules</strong>[]</p>
 
-            
+		</td>
 
-            
+		<td>
 
-              
+		  <p>
 
+			<a href="http://msdn.microsoft.com/en-us/library/bb956153.aspx">DynamicEntity</a>[] or <a href="http://msdn.microsoft.com/en-us/library/bb928506.aspx">calendarrule</a>[]</p>
 
-                
-              
+		</td>
 
+	  </tr>
 
-              
+	  <tr>
 
+		<td>
 
-                [EntityCollection](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.entitycollection.aspx) or **CalendarRules**[]
+		  <p>
 
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Customer</a></p>
 
-            
+		</td>
 
-            
+		<td>
 
-              
+		  <p>
 
+			<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.entityreference.aspx">EntityReference</a>
 
-                [DynamicEntity](http://msdn.microsoft.com/en-us/library/bb956153.aspx)[] or [calendarrule](http://msdn.microsoft.com/en-us/library/bb928506.aspx)[]
+		  </p>
 
+		</td>
 
-            
+		<td>
 
-          
-          
+		  <p>
 
+			<a href="http://msdn.microsoft.com/en-us/library/bb955969.aspx">Customer</a>
 
-            
+		  </p>
 
-              
+		</td>
 
+	  </tr>
 
-                **AttributeType**.[Customer](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+	  <tr>
 
+		<td>
 
-            
+		  <p>
 
-            
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">DateTime</a></p>
 
-              
+		</td>
 
+		<td>
 
-                [EntityReference](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.entityreference.aspx)
-              
+		  <p>
 
+			<strong>System.DateTime</strong>
 
-            
+		  </p>
 
-            
+		</td>
 
-              
+		<td>
 
+		  <p>
 
-                [Customer](http://msdn.microsoft.com/en-us/library/bb955969.aspx)
-              
+			<a href="http://msdn.microsoft.com/en-us/library/bb928935.aspx">CrmDateTime</a>
 
+		  </p>
 
-            
+		</td>
 
-          
-          
+	  </tr>
 
+	  <tr>
 
-            
+		<td>
 
-              
+		  <p>
 
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Decimal</a></p>
 
-                **AttributeType**.[DateTime](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		</td>
 
+		<td>
 
-            
+		  <p>
 
-            
+			<strong>decimal</strong>
 
-              
+		  </p>
 
+		</td>
 
-                **System.DateTime**
-              
+		<td>
 
+		  <p>
 
-            
+			<a href="http://msdn.microsoft.com/en-us/library/bb928945.aspx">CrmDecimal</a>
 
-            
+		  </p>
 
-              
+		</td>
 
+	  </tr>
 
-                [CrmDateTime](http://msdn.microsoft.com/en-us/library/bb928935.aspx)
-              
+	  <tr>
 
+		<td>
 
-            
+		  <p>
 
-          
-          
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Double</a></p>
 
+		</td>
 
-            
+		<td>
 
-              
+		  <p>
 
+			<strong>double</strong>
 
-                **AttributeType**.[Decimal](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		  </p>
 
+		</td>
 
-            
+		<td>
 
-            
+		  <p>
 
-              
+			<a href="http://msdn.microsoft.com/en-us/library/bb928954.aspx">CrmFloat</a>
 
+		  </p>
 
-                **decimal**
-              
+		</td>
 
+	  </tr>
 
-            
+	  <tr>
 
-            
+		<td>
 
-              
+		  <p>
 
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">EntityName</a></p>
 
-                [CrmDecimal](http://msdn.microsoft.com/en-us/library/bb928945.aspx)
-              
+		</td>
 
+		<td>
 
-            
+		  <p>
 
-          
-          
+			<strong>string</strong>
 
+		  </p>
 
-            
+		</td>
 
-              
+		<td>
 
+		  <p>Attributes with <strong>ObjectTypeCode</strong> in <strong>DisplayMask</strong></p>
 
-                **AttributeType**.[Double](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		</td>
 
+	  </tr>
 
-            
+	  <tr>
 
-            
+		<td>
 
-              
+		  <p>
 
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Integer</a></p>
 
-                **double**
-              
+		</td>
 
+		<td>
 
-            
+		  <p>
 
-            
+			<strong>int</strong>
 
-              
+		  </p>
 
+		</td>
 
-                [CrmFloat](http://msdn.microsoft.com/en-us/library/bb928954.aspx)
-              
+		<td>
 
+		  <p>
 
-            
+			<a href="http://msdn.microsoft.com/en-us/library/bb928972.aspx">CrmNumber</a>
 
-          
-          
+		  </p>
 
+		</td>
 
-            
+	  </tr>
 
-              
+	  <tr>
 
+		<td>
 
-                **AttributeType**.[EntityName](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		  <p>
 
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Lookup</a></p>
 
-            
+		</td>
 
-            
+		<td>
 
-              
+		  <p>
 
+			<strong>EntityReference</strong>
 
-                **string**
-              
+		  </p>
 
+		</td>
 
-            
+		<td>
 
-            
+		  <p>
 
-              
+			<a href="http://msdn.microsoft.com/en-us/library/bb957132.aspx">Lookup</a>
 
-Attributes with **ObjectTypeCode** in **DisplayMask**
+		  </p>
 
+		</td>
 
-            
+	  </tr>
 
-          
-          
+	  <tr>
 
+		<td>
 
-            
+		  <p>
 
-              
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">ManagedProperty</a></p>
 
+		</td>
 
-                **AttributeType**.[Integer](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		<td>
 
+		  <p>
 
-            
+			<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.booleanmanagedproperty.aspx">BooleanManagedProperty</a>
 
-            
+		  </p>
 
-              
+		</td>
 
+		<td>
 
-                **int**
-              
+		  <p>N/A</p>
 
+		</td>
 
-            
+	  </tr>
 
-            
+	  <tr>
 
-              
+		<td>
 
+		  <p>
 
-                [CrmNumber](http://msdn.microsoft.com/en-us/library/bb928972.aspx)
-              
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Memo</a></p>
 
+		</td>
 
-            
+		<td>
 
-          
-          
+		  <p>
 
+			<strong>string</strong>
 
-            
+		  </p>
 
-              
+		</td>
 
+		<td>
 
-                **AttributeType**.[Lookup](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		  <p>
 
+			<strong>System.String</strong>
 
-            
+		  </p>
 
-            
+		</td>
 
-              
+	  </tr>
 
+	  <tr>
 
-                **EntityReference**
-              
+		<td>
 
+		  <p>
 
-            
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Money</a></p>
 
-            
+		</td>
 
-              
+		<td>
 
+		  <p> <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.money.aspx">Money</a></p>
 
-                [Lookup](http://msdn.microsoft.com/en-us/library/bb957132.aspx)
-              
+		</td>
 
+		<td>
 
-            
+		  <p>
 
-          
-          
+			<a href="http://msdn.microsoft.com/en-us/library/bb928963.aspx">CrmMoney</a>
 
+		  </p>
 
-            
+		</td>
 
-              
+	  </tr>
 
+	  <tr>
 
-                **AttributeType**.[ManagedProperty](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		<td>
 
+		  <p>
 
-            
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Owner</a></p>
 
-            
+		</td>
 
-              
+		<td>
 
+		  <p>
 
-                [BooleanManagedProperty](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.booleanmanagedproperty.aspx)
-              
+			<strong>EntityReference</strong>
 
+		  </p>
 
-            
+		</td>
 
-            
+		<td>
 
-              
+		  <p>
 
-N/A
+			<a href="http://msdn.microsoft.com/en-us/library/bb670715.aspx">Owner</a>
 
+		  </p>
 
-            
+		</td>
 
-          
-          
+	  </tr>
 
+	  <tr>
 
-            
+		<td>
 
-              
+		  <p>
 
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">PartyList</a></p>
 
-                **AttributeType**.[Memo](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		</td>
 
+		<td>
 
-            
+		  <p> <strong>EntityCollection</strong> or <strong>ActivityParty</strong>[]</p>
 
-            
+		</td>
 
-              
+		<td>
 
+		  <p>
 
-                **string**
-              
+			<a href="http://msdn.microsoft.com/en-us/library/bb955715.aspx">activityparty[]</a> or <a href="http://msdn.microsoft.com/en-us/library/bb956153.aspx">DynamicEntity</a> []</p>
 
+		</td>
 
-            
+	  </tr>
 
-            
+	  <tr>
 
-              
+		<td>
 
+		  <p>
 
-                **System.String**
-              
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Picklist</a></p>
 
+		</td>
 
-            
+		<td>
 
-          
-          
+		  <p>
 
+			<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.optionsetvalue.aspx">OptionSetValue</a>
 
-            
+		  </p>
 
-              
+		</td>
 
+		<td>
 
-                **AttributeType**.[Money](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		  <p>
 
+			<a href="http://msdn.microsoft.com/en-us/library/bb929048.aspx">Picklist</a>
 
-            
+		  </p>
 
-            
+		</td>
 
-              
+	  </tr>
 
- [Money](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.money.aspx)
+	  <tr>
 
+		<td>
 
-            
+		  <p>
 
-            
+			<strong>AttributeType</strong>. <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Uniqueidentifier</a> (Formerly <strong>PrimaryKey</strong>)</p>
 
-              
+		</td>
 
+		<td>
 
-                [CrmMoney](http://msdn.microsoft.com/en-us/library/bb928963.aspx)
-              
+		  <p>
 
+			<strong>System.Guid</strong>
 
-            
+		  </p>
 
-          
-          
+		</td>
 
+		<td>
 
-            
+		  <p>
 
-              
+			<a href="http://msdn.microsoft.com/en-us/library/bb956919.aspx">Key</a>
 
+		  </p>
 
-                **AttributeType**.[Owner](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		</td>
 
+	  </tr>
 
-            
+	  <tr>
 
-            
+		<td>
 
-              
+		  <p>
 
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">String</a></p>
 
-                **EntityReference**
-              
+		</td>
 
+		<td>
 
-            
+		  <p>
 
-            
+			<strong>string</strong>
 
-              
+		  </p>
 
+		</td>
 
-                [Owner](http://msdn.microsoft.com/en-us/library/bb670715.aspx)
-              
+		<td>
 
+		  <p>
 
-            
+			<strong>System.String</strong>
 
-          
-          
+		  </p>
 
+		</td>
 
-            
+	  </tr>
 
-              
+	  <tr>
 
+		<td>
 
-                **AttributeType**.[PartyList](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+		  <p>
 
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">State</a></p>
 
-            
+		</td>
 
-            
+		<td>
 
-              
+		  <p>
 
- **EntityCollection** or **ActivityParty**[]
+			<strong>OptionSetValue</strong> or enumeration generated for the entity state</p>
 
+		</td>
 
-            
+		<td>
 
-            
+		  <p>
 
-              
+			<em>EntityName</em>StateInfo</p>
 
+		</td>
 
-                [activityparty[]](http://msdn.microsoft.com/en-us/library/bb955715.aspx) or [DynamicEntity](http://msdn.microsoft.com/en-us/library/bb956153.aspx) []
+	  </tr>
 
+	  <tr>
 
-            
+		<td>
 
-          
-          
+		  <p>
 
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Status</a></p>
 
-            
+		</td>
 
-              
+		<td>
 
+		  <p>
 
-                **AttributeType**.[Picklist](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
+			<strong>OptionSetValue</strong>
 
+		  </p>
 
-            
+		</td>
 
-            
+		<td>
 
-              
+		  <p>
 
+			<a href="http://msdn.microsoft.com/en-us/library/bb958198.aspx">Status</a>
 
-                [OptionSetValue](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.optionsetvalue.aspx)
-              
+		  </p>
 
+		</td>
 
-            
+	  </tr>
 
-            
+	  <tr>
 
-              
+		<td>
 
+		  <p>
 
-                [Picklist](http://msdn.microsoft.com/en-us/library/bb929048.aspx)
-              
+			<strong>AttributeType</strong>.<strong>Uniqueidentifier</strong></p>
 
+		</td>
 
-            
+		<td>
 
-          
-          
+		  <p>
 
+			<strong>System.Guid</strong>
 
-            
+		  </p>
 
-              
+		</td>
 
+		<td>
 
-                **AttributeType**. [Uniqueidentifier](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx) (Formerly **PrimaryKey**)
+		  <p>
 
+			<a href="http://msdn.microsoft.com/en-us/library/bb890012.aspx">UniqueIdentifier</a>
 
-            
+		  </p>
 
-            
+		</td>
 
-              
+	  </tr>
 
+	  <tr>
 
-                **System.Guid**
-              
+		<td>
 
+		  <p>
 
-            
+			<strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Virtual</a></p>
 
-            
+		</td>
 
-              
+		<td>
 
+		  <p>Not used in records.</p>
 
-                [Key](http://msdn.microsoft.com/en-us/library/bb956919.aspx)
-              
+		</td>
 
+		<td>
 
-            
+		  <p>Not used in records.</p>
 
-          
-          
+		</td>
 
+	  </tr>
 
-            
-
-              
-
-
-                **AttributeType**.[String](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
-
-
-            
-
-            
-
-              
-
-
-                **string**
-              
-
-
-            
-
-            
-
-              
-
-
-                **System.String**
-              
-
-
-            
-
-          
-          
-
-
-            
-
-              
-
-
-                **AttributeType**.[State](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
-
-
-            
-
-            
-
-              
-
-
-                **OptionSetValue** or enumeration generated for the entity state
-
-
-            
-
-            
-
-              
-
-
-                _EntityName_StateInfo
-
-
-            
-
-          
-          
-
-
-            
-
-              
-
-
-                **AttributeType**.[Status](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
-
-
-            
-
-            
-
-              
-
-
-                **OptionSetValue**
-              
-
-
-            
-
-            
-
-              
-
-
-                [Status](http://msdn.microsoft.com/en-us/library/bb958198.aspx)
-              
-
-
-            
-
-          
-          
-
-
-            
-
-              
-
-
-                **AttributeType**.**Uniqueidentifier**
-
-
-            
-
-            
-
-              
-
-
-                **System.Guid**
-              
-
-
-            
-
-            
-
-              
-
-
-                [UniqueIdentifier](http://msdn.microsoft.com/en-us/library/bb890012.aspx)
-              
-
-
-            
-
-          
-          
-
-
-            
-
-              
-
-
-                **AttributeType**.[Virtual](http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx)
-
-
-            
-
-            
-
-              
-
-Not used in records.
-
-
-            
-
-            
-
-              
-
-Not used in records.
-
-
-            
-
-          
-        
+</table>
+		
+	  
+	

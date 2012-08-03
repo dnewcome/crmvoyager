@@ -13,20 +13,22 @@ Microsoft has doubled down on PowerShell in both CRM and SharePoint. Both are ab
 
 The snapin will be installed on the CRM server by default, so to start powershell and load the snapin, we open up a console window and do the following:
 
-[sourcecode]
+```
 C:\> powershell
 Windows PowerShell
 Copyright (C) 2009 Microsoft Corporation. All rights reserved.
 
 PS C:\Users\Administrator> add-pssnapin Microsoft.CRM.Powershell
 
-[/sourcecode]
+
+```
+
 
 Now we have access to all of the cmdlets (this is PowerShell terminology for a command tool).
 
 For example, we can get information on the default CRM organization:
 
-[sourcecode]
+```
 
 PS C:\Users\Administrator> get-crmorganization
 
@@ -48,6 +50,7 @@ UniqueName            : crmtest
 Version               : 5.0.9688.34
 ExtensionData         : System.Runtime.Serialization.ExtensionDataObject
 
-[/sourcecode]
+
+```
 
 Here is a list of all of the [available commands](http://msdn.microsoft.com/en-us/library/gg328563.aspx).

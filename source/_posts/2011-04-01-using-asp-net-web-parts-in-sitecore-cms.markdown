@@ -11,7 +11,8 @@ I'm going to share with you a technique for re-using simple Microsoft ASP.NET We
 
 In this example I'm going to use a very simple Web Part that I've created to easily test and illustrate the concept and nothing more. Here is the code:
 
-[sourcecode language="csharp"]
+``` csharp
+
 using System;
 using System.Data;
 using System.Collections.Generic;
@@ -37,7 +38,9 @@ namespace WebParts
         }
     }
 }
-[/sourcecode]
+
+```
+
 
 This Web Part contains an IFrame that points to Google. If we render this and see the Google home page we know it is working. Later on we can use [Web Part configurable properties](http://crmvoyager.wordpress.com/2010/11/16/creating-configurable-web-part-properties/) to allow this url to be set using the design mode of ASP.NET Web Parts.
 
@@ -45,7 +48,8 @@ In Sitecore, in order to make this code available in the CMS, we'll have to crea
 
 I'm going to create the Web Part UI in Sitecore as a sublayout. This is basically another name for an .ascx UserControl in Sitecore terminology. The code for the UserControl looks like this:
 
-[sourcecode language="html"]
+``` html
+
 <%@ Control Language="c#" AutoEventWireup="true" TargetSchema="http://schemas.microsoft.com/intellisense/ie5" %>
 <%@ register tagprefix="webParts" Namespace="WebParts"%>
 
@@ -91,7 +95,9 @@ I'm going to create the Web Part UI in Sitecore as a sublayout. This is basicall
 	}
 	</script>
     </div>
-[/sourcecode]
+
+```
+
 
 
 In order to add this code to the site, we'll have to create a new sublayout in the Sitecore manager view and browse to the new file under the Sitecore site on the filesystem. The sublayouts should end up under SitecoreWebsite\WebSite\Layouts.

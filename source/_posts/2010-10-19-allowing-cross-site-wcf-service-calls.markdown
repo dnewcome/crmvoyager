@@ -13,7 +13,8 @@ In order to run things under IIS in Vista we have to run Visual Studio as an adm
 
 Here is a policy file that I use frequently that allows access from any client, but is also insecure, so you shouldn't deploy something like this beyond your local development workstation:
 
-[sourcecode language="xml"]
+``` xml
+
 <?xml version="1.0" encoding="utf-8"?>
 <access-policy>
   <cross-domain-access>
@@ -27,6 +28,8 @@ Here is a policy file that I use frequently that allows access from any client, 
     </policy>
   </cross-domain-access>
 </access-policy>
-[/sourcecode]
+
+```
+
 
 Place the file in the root of the domain, and Silverlight should be able to call it from a different server hostname or port. Note that this file needs to be at the _domain_ root rather than the root of the WCF service in order to be found by the Silverlight plugin.

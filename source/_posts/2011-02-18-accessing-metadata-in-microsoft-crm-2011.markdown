@@ -15,7 +15,8 @@ The message classes are named the same, so the code will be mostly compatible on
 
 The namespaces you'll need in most cases will be:
 
-[sourcecode langauge="csharp"]
+``` csharp
+
 // for service proxy type, IOrganizationService/OrganizationServiceProxy
 using Microsoft.Xrm.Sdk.Client;
 
@@ -24,11 +25,14 @@ using Microsoft.Xrm.Sdk.Messages;
 
 // needed for actual metadata descriptor types
 using Microsoft.Xrm.Sdk.Metadata;
-[/sourcecode]
+
+```
+
 
 For example, one of the things that I use metadata for is to get the text values that are in a CRM picklist. The following code snippet will query CRM 2011 metadata for the gendercode field on the contact entity and print out the values.
 
-[sourcecode language="csharp"]
+``` csharp
+
 IOrganizationService serviceProxy = new OrganizationServiceProxy(
 	Config.OrganizationUri,
 	null,
@@ -47,6 +51,8 @@ foreach( OptionMetadata option in picklist.OptionSet.Options ) {
 	Console.WriteLine( option.Label.UserLocalizedLabel.Label );
 }
 
-[/sourcecode]
+
+```
+
 
 

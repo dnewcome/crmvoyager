@@ -11,10 +11,13 @@ I was writing some client code recently when I wanted to add a customer referenc
 
 The only info on ActivityParty that I found was [for CRM4](http://crmentropy.blogspot.com/2009/04/using-activityparty-in-partylist-for.html). Through trial and error I arrived at the following code:
 
-[sourcecode language="csharp"]
+``` csharp
+
 Entity customer = new Entity("activityparty");
 customer["partyid" ]= new EntityReference( "contact", in_contactID );
 campaignResponse["customer"] = new EntityCollection( new List(){ customer } );
-[/sourcecode]
+
+```
+
 
 So what I had to do was create a list of entities that had an EntityReference field set that pointed to the contact. You cannot set the EntityReference directly on the campaignresponse, it is expecting an EntityCollection. Hopefully this saves you some time.

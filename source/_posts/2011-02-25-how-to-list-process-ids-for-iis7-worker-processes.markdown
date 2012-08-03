@@ -15,23 +15,33 @@ Under IIS6 there was a script called iisapp.vbs that would show you the running 
 
 Appcmd was not in the path for me, so I had to add it using:
 
-[sourcecode]
+```
+
 c:\> set path=%path%;C:\Windows\System32\inetsrv
-[/sourcecode]
+
+```
+
 
 Then we can run
-[sourcecode]
+
+```
+
 C:\Program Files (x86)\ICW>appcmd list wp
-[/sourcecode]
+
+```
+
 
 to get:
 
-[sourcecode]
+```
+
 WP "5260" (applicationPool:CRMAppPool)
 WP "5736" (applicationPool:SharePoint - 80)
 WP "4460" (applicationPool:SecurityTokenServiceApplicationPool)
 WP "4700" (applicationPool:2d129968e2144980a7614f288ac778fd)
 WP "5684" (applicationPool:Sitecore6.0AppPool)
-[/sourcecode]
+
+```
+
 
 Short and sweet.

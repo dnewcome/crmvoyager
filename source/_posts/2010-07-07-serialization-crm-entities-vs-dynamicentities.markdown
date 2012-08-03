@@ -10,7 +10,8 @@ wordpress_id: 104
 I did a quick experiment to see what the serialization formats look like for a DynamicEntity and a static entity type as found in the Microsoft.Crm.SdkTypeProxy namespace. The results were predictable by looking at the structure of each type of entity, but I thought that I'd post my results here if for no other reason than to provide you with some canned CRM data that you can use for testing, which was the entire point of this exercise for me. I also wanted to know if CRM entities could be 'round-tripped' -- that is, serialized to xml and then deserialized back to entity instances. The answer is yes, they certainly can. So we can grab some data from a live CRM installation and use it in offline tests. 
 
 The following code illustrates the concept of using .NET serialization to round-trip a .NET type (a CRM entity in our specific case):
-[sourcecode language="csharp"]
+``` csharp
+
 	public static Object RoundTrip( Type in_type, Object in_instance ) {
 			System.Xml.Serialization.XmlSerializer xser = new System.Xml.Serialization.XmlSerializer( in_type );
 			
@@ -22,10 +23,13 @@ The following code illustrates the concept of using .NET serialization to round-
 			ms.Close();
 			return retval;
 		}
-[/sourcecode]
+
+```
+
 
 When we save the intermediate results to disk, we get a file like this for a static product type:
-[sourcecode language="xml"]
+``` xml
+
 <?xml version="1.0"?>
 <product xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <createdby name="First name Last name" dsc="0" xmlns="http://schemas.microsoft.com/crm/2007/WebServices">3bbf2574-c324-df11-b753-0800277bde92</createdby>
@@ -48,10 +52,13 @@ When we save the intermediate results to disk, we get a file like this for a sta
   <statuscode name="Active" xmlns="http://schemas.microsoft.com/crm/2007/WebServices">1</statuscode>
   <transactioncurrencyid name="US Dollar" dsc="0" xmlns="http://schemas.microsoft.com/crm/2007/WebServices">447adec9-c324-df11-b753-0800277bde92</transactioncurrencyid>
 </product>
-[/sourcecode]
+
+```
+
 
 The DynamicEntity looks like this:
-[sourcecode language="csharp"]
+``` csharp
+
 <?xml version="1.0"?>
 <DynamicEntity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="product">
   <Properties xmlns="http://schemas.microsoft.com/crm/2006/WebServices">
@@ -114,6 +121,8 @@ The DynamicEntity looks like this:
     </Property>
   </Properties>
 </DynamicEntity>
-[/sourcecode]
+
+```
+
 
 I'll be following up with how I'm using this in my mock CRM implementation that I'm going to use for testing.

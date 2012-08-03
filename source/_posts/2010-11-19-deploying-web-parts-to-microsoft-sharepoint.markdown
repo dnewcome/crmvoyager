@@ -47,9 +47,12 @@ _Creating the .wsp Package in Visual Studio_
 
 Now that we have the .wsp file, we need to pull the package into SharePoint. SharePoint provides a scriptable tool called stsadm as well as a PowerShell cmdlet, since the PowerShell interface is what Microsoft will be moving forward with in the future, I'll stick with using the cmdlet. We'll need to have access to the SharePoint Central Administration site in order to complete the deployment. Open the SharePoint Management Shell from the Start menu and type the following:
 
-[sourcecode language="bash"]
+``` bash
+
 Add-SPSolution -LiteralPath c:\path\to\solution.wsp
-[/sourcecode]
+
+```
+
 
 Notice that the **full** path to the package is necessary.
 

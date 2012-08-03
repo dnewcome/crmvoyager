@@ -23,15 +23,18 @@ Putty doesn't need to be installed, just run putty.exe on the server and give it
 I chose port 9982 as the port I want to use on my laptop to access CRM. On the CRM server end, I used 'localhost:80' as the destination, because the CRM server is running on the actual box that I'm connecting from (localhost) on the standard HTTP port (80).
 
 Now I just have to change my CRM URLs in development to something like:
-[sourcecode]
+```
 http://localhost:9982/mscrmservices/2006/CrmService.asmx
-[/sourcecode]
+```
+
 
 Why do we use 'localhost' here if we are connecting to the server? Remember that the SSH tunnel is now listening on the laptop, so when we connect to this port that SSH is listening on, it takes the connection and forwards it on to the server. So, to our .NET code it looks like CRM is actually running locally on the laptop.
 
 As an added bonus, URLs like the following will also be available locally:
-[sourcecode]
+
+```
 http://localhost:9982/sdk/list.aspx
-[/sourcecode]
+
+```
 
 This can dramatically reduce your development cycle time when the environment is not ideal. Hope this saves you some time.

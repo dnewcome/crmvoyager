@@ -15,16 +15,20 @@ Ok, for starters, although it is possible to use a plain UserControl as a WebPar
 
 To get started, all we need is an empty ASP.NET web site. Once we have created a web site in Visual Studio, creating the web part is as simple as inheriting from WebPart and overriding a single method. Here is the shell of the class:
 
-[sourcecode language="csharp"]
+``` csharp
+
 	public class MyWebPart : System.Web.UI.WebControls.WebParts.WebPart
 	{
 		protected override void CreateChildControls() {}
 	}
-[/sourcecode]
+
+```
+
 
 So, as you may have guessed, we need to implement code that generates the content for the WebPart just like we would when writing a server control. Probably the simplest thing we could do here is to insert a Label control, making our code look like this:
 
-[sourcecode language="csharp"]
+``` csharp
+
 	public class MyWebPart : System.Web.UI.WebControls.WebParts.WebPart
 	{
 		protected override void CreateChildControls() {
@@ -34,13 +38,16 @@ So, as you may have guessed, we need to implement code that generates the conten
 			ChildControlsCreated = true;
                 }
 	}
-[/sourcecode]
+
+```
+
 
 The code should look familiar if you have ever written an ASP.NET server control. What we have done so far is exactly what we would have done to create a server control. However, in order to use the WebPart in a page, we need some extra machinery: namely the WebPartManager and the WebPartZone. The WebPartManager coordinates all of the WebParts and WebPartZones on the page, so we only need one of them. WebPartZones can be thought of as the container for a WebPart.
 
 The markup for a basic WebPart page looks something like this:
 
-[sourcecode language="html"]
+``` html
+
 	<asp:WebPartManager ID="WebPartManager1" runat="server" >
 	</asp:WebPartManager>
 	<asp:WebPartZone ID="WebPartZone1" runat="server">
@@ -51,23 +58,31 @@ The markup for a basic WebPart page looks something like this:
             title="Simple Label WebPart" />
         </zonetemplate>
 	</asp:WebPartZone>
-[/sourcecode]
+
+```
+
 
 Note that the WebPart gets added to the page in much the same way as a normal ASP.NET custom control. We need to use something like this to register the tag name:
 
-[sourcecode language="html"]
+``` html
+
 <%@ register tagprefix="webparts" Namespace="AppCode" %>
-[/sourcecode]
+
+```
+
 
 With personalization enabled, the rendered control looks like this:
 [![](http://crmvoyager.files.wordpress.com/2010/07/webpart.png)](http://crmvoyager.files.wordpress.com/2010/07/webpart.png)
 
 There is one final thing that I'll leave you with. After playing around with the WebParts for a while, I accidentally deleted the WebPart from the page and I couldn't get it to display again. This is due to the way that [personalization](http://msdn.microsoft.com/en-us/library/z36h8be9.aspx) works. I didn't set up a personalization provider, but somehow it was still being persisted. Personalization can be disabled on the WebPartManager by setting Personalization-Enabled to false, either in code or in the markup. Alternatively, if you'd like to keep personalization enabled, the state can be reset by calling ResetPersonalizationState() on the WebPartManager. I added a button to the page so that I could clear the state easily at runtime.
 
-[sourcecode language="csharp"]
+``` csharp
+
 protected void Reset_Personalization( object sender, EventArgs e ) {
 		WebPartManager1.Personalization.ResetPersonalizationState();
 	}
-[/sourcecode]
+
+```
+
 
 I'll talk a little bit more about developing WebParts in a later post.

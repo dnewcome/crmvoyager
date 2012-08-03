@@ -13,16 +13,22 @@ Design mode is a page viewing mode in which the WebParts on the page can be move
 
 [The documentation](http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.webparts.webpartmanager.designdisplaymode.aspx) gives an example in which the supported DisplayModes are queried from the WebPartManager and their names are added to a drop-down field on the page. Simply stated, all of the possible display modes are stored as static fields of the WebPartManager class rather than as an enum. The display modes supported at runtime for a given WebPartManager instance are found using the SupportedDisplayModes property.
 
-[sourcecode language="csharp"]
+``` csharp
+
 foreach( WebPartDisplayMode mode in WebPartManager1.SupportedDisplayModes ) {
      // .....
 }
-[/sourcecode]
+
+```
+
 
 Setting the display mode for the page is done like this:
-[sourcecode language="csharp"]
+``` csharp
+
 WebPartManager1.DisplayMode = WebPartManager.DesignDisplayMode;
-[/sourcecode]
+
+```
+
 
 Note that if we try to set a display mode that is not supported by the WebPartManager, a runtime error will result. Also, drag-and-drop doesn't work in all browsers. It didn't work in Google Chrome for me, but it worked fine (go figure) in IE8.
 

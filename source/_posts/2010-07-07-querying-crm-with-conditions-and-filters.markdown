@@ -16,22 +16,26 @@ To clear up the naming convention, there are two types that are used in the cons
 One way to look at a complex query is that the criteria consist of a tree of FilterExpressions with ConditionExpressions as the terminals. That is, FilterExpression has a collection of other FilterExpressions, whereas ConditionExpressions do not contain any further expressions.
 
 As an example, if we wanted to express the clause:
-[sourcecode]
+
+```
 ( A = 1 and ( B = 2 or C = 3 ) ) 
-[/sourcecode]
+```
+
 we would need two FilterExpressions and three ConditionExpressions. It is easy to see how to construct the ConditionExpressions - we simply create three instances using ConditionOperator.Equal as the operator. For example:
 
-[sourcecode language="csharp"]
+``` csharp
 ConditionExpression conditionA = new ConditionExpression();
 conditionA.AttributeName = "A";
 conditionA.Operator = ConditionOperator.Equal;
 conditionA.Values = new int[] { 1 }; 
-[/sourcecode]
+```
+
 
 Notice that the value is placed in an array of integers. ConditionExpression.Values is a collection since we support the possibility of testing for set membership, thus necessitating the use of a collection for the possible values.
 
 Next we create two filters, one each for the 'and' and 'or' expressions:
-[sourcecode language="csharp"]
+``` csharp
+
 FilterExpression andFilter = new FilterExpression();
 andFilter.FilterOperator = LogicalOperator.And;
 
@@ -40,13 +44,18 @@ childFilter.FilterOperator = LogicalOperator.Or;
 
 // Now establish the filter hierarchy
 andFilter.Filters = new FilterExpression[] { orFilter };
-[/sourcecode]
+
+```
+
 
 Once the filters are set up, we can apply the conditionals:
-[sourcecode language="csharp"]
+``` csharp
+
 andFilter.Conditions = new ConditionExpression[] { conditionA };
 orFilter.Conditions = new ConditionExpression[] { conditionB, conditionC };
-[/sourcecode]
+
+```
+
 
 I have organized the code slightly differently than most of the code samples available from Microsoft. I think that looking at the filters as a tree structure makes things clearer. Notice that a ConditionExpression is given the same consideration that a FilterExpression is given when evaluating the entire expression -- the boolean operator is applied to conditionA and the result of  the evaluation of orFilter.
 

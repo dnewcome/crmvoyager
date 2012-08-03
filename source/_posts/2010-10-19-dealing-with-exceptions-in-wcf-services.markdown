@@ -13,7 +13,8 @@ Windows Communication Foundation Web services handle exceptions differently than
 
 For code that calls WCF services we can construct a FaultException to wrap the general exception that is thrown like this:
 
-[sourcecode language="csharp"]
+``` csharp
+
 		try {
 				
                             // perform the action that could throw an exception
@@ -24,6 +25,8 @@ For code that calls WCF services we can construct a FaultException to wrap the g
 					new FaultCode( e.GetType().ToString() )
 				);
 			}
-[/sourcecode]
+
+```
+
 
 However in Silverlight this doesn't seem to work as expected. I still get a "Not Found" exception. Back to the drawing board.

@@ -19,17 +19,23 @@ I was upgrading my open-source CRM query library, [CrmQuery](https://github.com/
 
 First off, you'll need to reference the Microsoft.Xrm.Sdk.dll library in your project. This replaces the CRM4 library Microsoft.Crm.Sdk.dll. Most of the types are the same name. Anywhere you'd use the namespaces:
 
-[sourcecode language="csharp"]
+``` csharp
+
 using Microsoft.Crm.Sdk;
 using Microsoft.Crm.Sdk.Query;
-[/sourcecode]
+
+```
+
 
 Becomes:
 
-[sourcecode language="csharp"]
+``` csharp
+
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-[/sourcecode]
+
+```
+
 
 This was a bit confusing to me since I was familiar with the interim 4.0 SDK release that introduced what Microsoft referred to as "Xrm" which was basically a set of extensions and a new code generator to allow building proxies for the CRM services that could be queried using Linq. However in the 5.0 SDK, Microsoft has used the Xrm naming convention throughout the entire SDK, replacing most of the old Crm namespaces.
 
@@ -41,22 +47,31 @@ This was a bit confusing to me since I was familiar with the interim 4.0 SDK rel
 
 Certain base types have been removed, one of which being the column set base type which was used for anything that specified a list of columns to return or deal with in CRM. The use of the following type:
 
-[sourcecode language="csharp"]
+``` csharp
+
 ColumnSetBase
-[/sourcecode]
+
+```
+
 
 Becomes simply:
 
-[sourcecode language="csharp"]
+``` csharp
+
 ColumnSet
-[/sourcecode]
+
+```
+
 
 As a consequence, there is no Allcolumns type to represent all of the fields of an entity. Instead we create an instance of ColumnSet using a specialized constructor to indicate that we intend to specify all columns:
 
 
-[sourcecode language="csharp"]
+``` csharp
+
 ColumnSet cols = new ColumnSet( true );
-[/sourcecode]
+
+```
+
 
 
 
@@ -65,16 +80,22 @@ ColumnSet cols = new ColumnSet( true );
 
 Members that formerly used the ArrayList type are now implemented using generic lists in the form of DataCollection For example:
 
-[sourcecode language="csharp"]
+``` csharp
+
 LinkEntity.LinkEntities
-[/sourcecode]
+
+```
+
 
 Is no longer an ArrayList. Likewise, ConditionExpression.Values is now of the type:
 
-[sourcecode language="csharp"]
+``` csharp
+
 [DataMemberAttribute]
 public DataCollection<Object> Values { get; }
-[/sourcecode]
+
+```
+
 
 Notice also that there is no setter, so code that creates a collection and set this property will no longer work.
 

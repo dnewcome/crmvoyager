@@ -15,7 +15,8 @@ What, you ask, how can we do advanced data binding without DataSets? I asked the
 
 In order to create a bindable data structure, I created a POCO (plain old C# object) that had the fields I wished to display like so:
 
-[sourcecode language="csharp"]
+``` csharp
+
 	public class Product
 	{
 		public string name { get; set; }
@@ -23,22 +24,33 @@ In order to create a bindable data structure, I created a POCO (plain old C# obj
 		public string price { get; set; }
                ...
       }
-[/sourcecode]
+
+```
+
 
 Once we have a class to represent the list items, we instantiate the generic list using the new type:
 
-[sourcecode language="csharp"]
+``` csharp
+
 ObservableCollection<Product> itemsource = new ObservableCollection<Product>();
-[/sourcecode]
+
+```
+
 
 The ObservableCollection supports all list operations, so building the list works just like any other IList:
-[sourcecode language="csharp"]
+``` csharp
+
 itemsource.Add( new Product() );
-[/sourcecode]
+
+```
+
 
 Finally we can bind the new collection to the grid as follows:
-[sourcecode language="csharp"]
+``` csharp
+
 dataGrid.ItemsSource = itemsource;
-[/sourcecode]
+
+```
+
 
 This is just the tip of the iceberg with databinding in Silverlight. In a forthcoming post I'm going to show how Silverlight supports binding to nested collections.

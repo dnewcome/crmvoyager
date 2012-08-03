@@ -13,7 +13,8 @@ As you may know, WebParts do not natively support the use of the ASP.NET templat
 
 I found two currently supported approaches to adding Silverlight content to a page in version 4: using an object tag or [client-side using Javascript](http://msdn.microsoft.com/en-us/library/cc265155(VS.95).aspx). Since I wasn't doing much else with Javascript on the client, I wanted to stick to a server-side solution. My attempts at programmatically creating the Silverlight control as [outlilned here](http://blogs.msdn.com/b/andreww/archive/2009/03/12/silverlight-web-part-in-sharepoint.aspx) failed, so what I ended up doing was to embed the object tag into an [HtmlGenericControl ](http://msdn.microsoft.com/en-us/library/system.web.ui.htmlcontrols.htmlgenericcontrol.aspx)directly in the WebPart. Here is the code:
 
-[sourcecode language="csharp"]
+``` csharp
+
 	public class SilverlightPart : WebPart
 	{
 		protected override void CreateChildControls() {
@@ -33,7 +34,9 @@ I found two currently supported approaches to adding Silverlight content to a pa
 			ChildControlsCreated = true;
 		}
 	}
-[/sourcecode]
+
+```
+
 
 One small thing to note is that we need to specify a height for the Silverlight control when it appears in a WebPart zone. Setting width to 100% is fine, but setting the height must be done using a specific height due to the layout logic used by the zones.
 

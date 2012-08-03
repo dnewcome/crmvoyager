@@ -15,23 +15,30 @@ However, I wanted to create a more elegant solution to this problem by attaching
 
 My first thought was to create an ASP.NET server control that extends Microsoft's own CheckBox control. This is easy to do, as I show in the following code:
 
-[sourcecode language="csharp"]
+``` csharp
+
 public class ExtendedCheckbox : CheckBox
 {
 	public Guid ItemID { get; set; }
 	public ExtendedCheckbox() {}
 }
-[/sourcecode]
+
+```
+
 
 All we did was add a single property to the basic CheckBox control. This code will let us use the ExtendedCheckbox control on our pages and allow us to set a property called ItemID. For example:
 
-[sourcecode language="html"]
+``` html
+
 <djn:ExtendedCheckbox runat="server" ItemID="<%=myID%>"/>
-[/sourcecode]
+
+```
+
 
 However in order to be useful to us, the value of ItemID must persist when the page is posted back. When the user hits the 'submit' button on our page, we presumably want to do something useful with this ID like make a CRM request to modify the entity with the checkbox information. All of the built-in properties of the CheckBox use the ASP.NET ViewState mechanism to accomplish this. Unfortunately our custom property doesn't benefit from the base class's ViewState implicitly, so we have to make a change to our property as follows:
 
-[sourcecode language="cshap"]
+``` csharp
+
 public Guid ItemID {
 	get {
 		if( ViewState["ItemID"] != null )
@@ -40,22 +47,30 @@ public Guid ItemID {
 	}
 	set { ViewState["ItemID"] = value; }
 }
-[/sourcecode]
+
+```
+
  
 So you can see that we used the base class's own ViewState collection to store our own data for the custom property. Now when we do a postback, the value of ItemID will be available to us.
 
 To use this new control, we have to register it in the page where we are going to use it. In my case, the code for the new control is in the App_Code folder, so my @register directive looks like this:
 
-[sourcecode language="html"]
+``` html
+
 <%@ Register TagPrefix="djn" namespace="Djn.Controls" Assembly="__code" %>
-[/sourcecode]
+
+```
+
 
 Note that we can reference the assembly generated from App_Code by using __code as the assembly reference.
 
 We can now use the control just like a built in control, albeit with a new custom field. Accessing the ItemID later on in code is as simple as referencing the checkbox by name:
 
-[sourcecode language="csharp"]
+``` csharp
+
 Guid id = myCustomCheckbox.ItemID
-[/sourcecode]
+
+```
+
 
 Hopefully this gives you some ideas when doing custom ASP.NET work for your clients.

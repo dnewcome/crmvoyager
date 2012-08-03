@@ -13,15 +13,21 @@ Ok enough bull. What happened was that I had a conflict between two different de
 
 Keeping the previous assertions in mind, my first thought was to just reference the Silverlight assembly, System.Windows.dll in my Service app and use the ObservableCollection type defined there. In order to do this, we have to disambiguate the assembly references by using an [alias](http://www.codeproject.com/KB/cs/aliases.aspx). In the property page of the assembly reference for System.Windows.dll, I changed the Alias "global" to "silverlight" and declared an extern at the top of my file like this:
 
-[sourcecode language="csharp"]
+``` csharp
+
 extern alias silverlight;
-[/sourcecode]
+
+```
+
 
 Once I had this set up, I could reference the Silverlight version of ObservableCollection thusly:
 
 
-[sourcecode language="csharp"]
+``` csharp
+
 silverlight::System.Collections.ObjectModel.ObservableCollection collection;
-[/sourcecode]
+
+```
+
 
 This seemed to work at first, but I ended up getting errors when I ran the project. I'm still not sure why this didn't work out, maybe I'll look into it some more. If anyone has any ideas let me know in the comments.

@@ -15,13 +15,17 @@ I didn't think that this should be a problem since I have the 4.0 server on anot
 
 Here is the error that we get if we try to run a project compiled against the 4.0 SDK on a machine that has CRM 2011 installed (even though we are using the service endpoint of the CRM 4.0 server):
 
-[sourcecode]
+```
+
 Error: Could not load file or assembly 'Microsoft.Crm.Sdk, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)		
-[/sourcecode]
+
+```
+
 
 We can force the runtime to load our own supplied version of Microsoft.Crm.Sdk by overriding the publisher policy. This is done in App.config (or Web.config for a web application) using the following code:
 
-[sourcecode language="xml"]
+``` xml
+
 <configuration>
 ...
  <runtime>
@@ -33,6 +37,8 @@ We can force the runtime to load our own supplied version of Microsoft.Crm.Sdk b
     </assemblyBinding>
   </runtime>
 </configuration>
-[/sourcecode]
+
+```
+
 
 That's all there is to it. Now Fusion binding should find the correct assembly instead of trying to load the CRM 2011 out of the GAC.

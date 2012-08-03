@@ -17,15 +17,19 @@ So the question I had was, what was different about my application that was prev
 
 It turns out that the Silverlight browser plug-in will happily load code from any domain as long as it doesn't try to access the host page in any way, including reading any Javascript variables on the page. The change that I made to my application was a call to read some configuration value from the Web Part that hosted the Silverlight application, thus triggering the security restriction. Here is what the code looked like:
 
-[sourcecode language="csharp"]
+``` csharp
+
 public static ScriptObject GetJsVariable( string in_name ) { 
 	return ( ScriptObject )HtmlPage.Window.GetProperty( in_name );
 }
-[/sourcecode]
+
+```
+
 
 To solve this problem, we can either just host the code on the same domain, or we can make a small change to the way that the Silverlight plugin is embedded in the page. I don't want to have to maintain a static source file in the SharePoint hive, so I added the following code to my Web Part:
 
-[sourcecode language="html"]
+``` html
+
 <object data='data:application/x-silverlight-2,' type='application/x-silverlight-2' width='100%' height='100%'>
 				<param name='source' value='ClientBin/MyApplication.xap'/>
 				<param name='onError' value='onSilverlightError' />
@@ -37,11 +41,16 @@ To solve this problem, we can either just host the code on the same domain, or w
  					<img src='http://go.microsoft.com/fwlink/?LinkId=161376' alt='Get Microsoft Silverlight' style='border-style:none'/>
 				</a>
 			</object>
-[/sourcecode]
+
+```
+
 
 Note the addition of
-[sourcecode language="html"]
+``` html
+
 <param name='enableHtmlAccess' value='true' />
-[/sourcecode]
+
+```
+
 
 Once I had this parameter set everything started working again. One thing that I'd like to be able to do is to display an error message instead of just displaying an empty Silverlight plugin. The SharePoint Silverlight content control that ships with SharePoint 2010 does this, but I'm not sure what how it does it. I'll look into it at some point when I get time, but in the meantime if anyone knows I'd love to hear from you.

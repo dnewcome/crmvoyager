@@ -11,7 +11,8 @@ I was debugging a piece of code just now when I realized that my problem was in 
 
 I thought that a Key field was a unique key for the entity instance, which it is, sort of. There apparently can be more than one Key field in an entity instance, so my code that was supposed to return the ID of an entity instance wasn't working because it was finding a second Key field:
 
-[sourcecode language="csharp"]
+``` csharp
+
 		public static Guid GetDynamicEntityId( DynamicEntity in_entity ) {
 			foreach( object prop in in_entity.Properties ) {
 				if( prop is KeyProperty ) {
@@ -20,7 +21,9 @@ I thought that a Key field was a unique key for the entity instance, which it is
 			}
 			return Guid.Empty;
 		}
-[/sourcecode]
+
+```
+
 
 I'm at a loss now for a good way to return the ID of an entity instance. You could always assume that it is going to be the entity name + 'id', but I don't think that is 100% reliable. I could be wrong though. Since the IDs are GUIDs, I have no idea why it makes any sense to have more than one key (or a composite key). I'm still looking into this one.
 
@@ -29,7 +32,8 @@ I ended up with a hack that just looks at the entity name and tacks on 'id' to t
 
 Here is the code:
 
-[sourcecode language="csharp"]
+``` csharp
+
 	public static Guid GetDynamicEntityId( DynamicEntity in_entity ) {
 			foreach( Property prop in in_entity.Properties ) {
 				if( prop.Name.IndexOf( in_entity.Name + "id" ) != -1 ) {
@@ -38,4 +42,6 @@ Here is the code:
 			}
 			return Guid.Empty;
 		}
-[/sourcecode]
+
+```
+

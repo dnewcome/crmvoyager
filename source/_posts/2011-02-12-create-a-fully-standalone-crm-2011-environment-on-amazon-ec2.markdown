@@ -88,9 +88,10 @@ The first thing that I do (after changing the admin password - we'll be rebootin
 
 Promoting a domain controller is done from the commandline by running
 
-[sourcecode]
+```
 c:\>dcpromo.exe 
-[/sourcecode]
+```
+
 
 The promotion takes a while, so I grab the SQL Server install media from MSDN during this time. Transfer rates from MS are pretty fast and it should download by the time the DC is ready to go.
 

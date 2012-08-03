@@ -13,7 +13,8 @@ I've seen [some references](http://msdn.microsoft.com/en-us/magazine/dd179724.as
 
 As an example, take the following custom CRM workflow activity that sends a notification to a web service with a contract ID that has been updated in CRM
 
-[sourcecode language="csharp"]
+``` csharp
+
 public class ContractUpdateActivity : Activity
 {
     public static DependencyProperty ContractNumberProperty =
@@ -39,39 +40,51 @@ public class ContractUpdateActivity : Activity
         return ActivityExecutionStatus.Closed;
     }
 }
-[/sourcecode]
+
+```
+
 
 Even though this is far from being a unit test or free of side effects, we'd still like to run this activity as a smoke test outside of CRM. There are two potential problems with doing something like
 
-[sourcecode language="csharp"]
+``` csharp
+
 ContractUpdateActivity updateActivity = new ContractUpdateActivity();
 updateActivity.Execute( null );
-[/sourcecode]
+
+```
+
 
 The most obvious issue, were one to attempt compilation of the above code, is that the Execute() method is protected and not visible to us in a test. Fortunately, Execute() is defined on System.Workflow.ComponentModel.Activity which intended for use as a base class and is not sealed.
 
 So, instead of using ContractUpdateActivity directly in our test, we can make a small wrapper by subclassing it:
 
-[sourcecode language="csharp"]
+``` csharp
+
 public class ContractUpdateActivityTest : ContractUpdateActivity {
     public void Execute() {
         base.Execute( null );
     }
 }
-[/sourcecode]
+
+```
+
 
 now we can write a few lines of code to exercise the code (I hesitate to call this a 'test') via the subclass:
 
-[sourcecode language="csharp"]
+``` csharp
+
 ContractUpdateActivityTest testUpdateActivity = new ContractUpdateActivityTest();
 testUpdateActivity.ContractNumber = "12345";
 testUpdateActivity.Execute();
-[/sourcecode]
+
+```
+
 
 The other issue to watch for is that of dependencies. The type initializer of Activity tries to load dependencies behind the scenes and won't look in the current path of the executable that is running the test. The required classes must either be compiled into the same assembly as the workflow activity or be found in the GAC. It may be possible to locate the assemblies somewhere else, but I haven't looked at the fusion logs to find out where else workflow looks for assemblies.
 
 If an assembly is not found, the .net runtime will issue an error similar to the following:
 
-[sourcecode]
+```
 System.TypeLoadException: Could not load type 'Service' from assembly 'ContractServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null'.
-[/sourcecode]
+```
+

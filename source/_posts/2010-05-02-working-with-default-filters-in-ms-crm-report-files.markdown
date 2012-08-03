@@ -13,7 +13,8 @@ What I want to talk about here are default filters, which are added to the repor
 
 By default, the data is filtered to show only the last 30 days' worth of records. Downloading a report from CRM and comparing it with the originally uploaded .rdl file, we can see that the following chunk gets added to the .rdl file:
 
-[sourcecode language="xml"]
+``` xml
+
 
 <CustomProperties>
   <CustomProperty>
@@ -34,21 +35,27 @@ ReportEntity&amp;gt;&amp;lt;/ReportFilter&amp;gt;&lt;/MSCRM&gt;</Value>
   </CustomProperty>
 </CustomProperties>
 
-[/sourcecode]
+
+```
+
 
 Yuck. Unfortunately, since the report filter is an embedded xml document, it must be escaped in order for CRM to import it correctly. It would be nice if we could format this so that it is easy to edit. At first blush it seems the a simple CDATA section should do the trick. However, the data is actually escaped twice, which requires nested CDATA sections, which are not allowed in the XML standard. What can we do? Fortunately we can embed the CDATA sections so that when the data is unescaped the first time, the second CDATA section remains intact.
 
 The first thing to do is to recover the plain XML markup from the escaped text. I used a tool called [XMLStarlet](http://xmlstar.sourceforge.net/), but anything that can unescape XML entity references will do the trick.
 
-[sourcecode language="bash" light="true"]
+``` bash
+
 
 $ cat crm.xml | xmlstarlet unesc | xmlstarlet unesc
 
-[/sourcecode]
+
+```
+
 
 Gives us something like the following:
 
-[sourcecode language="xml"]
+``` xml
+
 <CustomProperties>
   <CustomProperty>
     <Name>Custom</Name>
@@ -80,11 +87,14 @@ Gives us something like the following:
     </Value>
   </CustomProperty>
 </CustomProperties>
-[/sourcecode]
+
+```
+
 
 In order to work correctly when uploading the default filter, we escape it with CDATA tags like the following:
 
-[sourcecode language="xml"]
+``` xml
+
 <CustomProperties>
   <CustomProperty>
     <Name>Custom</Name>
@@ -116,7 +126,9 @@ In order to work correctly when uploading the default filter, we escape it with 
     </Value>
   </CustomProperty>
 </CustomProperties>
-[/sourcecode]
+
+```
+
 
 Now we are free to edit the filter easily and when the .rdl file is uploaded, the changes to the filter will take effect.
 

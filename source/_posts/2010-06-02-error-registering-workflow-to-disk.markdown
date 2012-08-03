@@ -9,12 +9,15 @@ wordpress_id: 50
 
 The other day I was working on a CRM workflow activity that I had registered to the database with the plugin registration tool. Later on, I wanted to register the same assembly to disk for easy debugging, but I was confronted with the following exception when trying to register the assembly:
 
-[sourcecode language="bash"]
+``` bash
+
 Unhandled Exception: System.Web.Services.Protocols.SoapException: Server was unable to process request.
 Detail: <detail><error>
   <code>0x80044191</code>
   <description>Assembly can not be loaded from C:\Program Files\Microsoft Dynamics CRM\server\bin\assembly\MyWorkflow.dll.</description>
-[/sourcecode]
+
+```
+
 
 I thought that maybe I had to run the registration tool as administrator since the path was under `program files', but this did not help.
 

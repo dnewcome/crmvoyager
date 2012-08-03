@@ -11,7 +11,8 @@ I was improving the design of some Silverlight code recently where the applicati
 
 In order to make a type scriptable in Silverlight all we need to do is add an attribute to the type definition and register it with the Html page. My code looks something like this:
 
-[sourcecode language="csharp"]
+``` csharp
+
 [ScriptableType]
 	public partial class MainPage : UserControl
 	{
@@ -21,25 +22,34 @@ In order to make a type scriptable in Silverlight all we need to do is add an at
 			HtmlPage.RegisterScriptableObject("MainPage", this);
 			
 	...
-[/sourcecode]
+
+```
+
 
 This code will register the class as scriptable on the page. Here is the method that I wanted to expose to Javascript:
 
-[sourcecode language="csharp"]
+``` csharp
+
 	[ScriptableMember]
 		public void SetEventByID( string in_eventID ) {		
 				ApplicationState.SetEventByID( in_eventID );
 		}
-[/sourcecode]
+
+```
+
 
 Notice that we have marked this member with a ScriptableMemberAttribute. Since the type is already marked as a ScriptableType, this is not necessary, I've just shown it as an alternative to marking the entire type as scriptable, thus exposing all of its immediate (non-inherited) members.
 
 For more details on exposing Silverlight code to Javascript, I highly recommend that you read [this MSDN article](http://msdn.microsoft.com/en-us/library/cc645085(v=vs.95).aspx).
 
 The calling code in Javascript looks like this:
-[sourcecode langauge="javascript"]
+
+``` javascript
+
 document.getElementById('silverlight').Content.MainPage.SetEventByID( '097346E8-9917-DD11-96BD-0003FF464654' );
-[/sourcecode]
+
+```
+
 
 Note that we get the Silverlight host object on the page by ID (which happens to be 'silverlight' in this example) and access the type by its name via the Content attribute exposed by Silverlight.
 

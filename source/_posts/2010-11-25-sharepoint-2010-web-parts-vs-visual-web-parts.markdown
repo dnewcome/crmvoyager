@@ -15,7 +15,8 @@ The answer is, there is a difference, but not in the .NET type. There is a diffe
 
 Notice the automatically-created .ascx user control. Indeed, the code in the Web Part is the same as we would find on a normal part, but in the implementation the user control is instantiated programmatically like this:
 
-[sourcecode language="csharp"]
+``` csharp
+
     public class VisualWebPart1 : WebPart
     {
         private const string _ascxPath = 
@@ -27,7 +28,9 @@ Notice the automatically-created .ascx user control. Indeed, the code in the Web
             Controls.Add(control);
         }
     }
-[/sourcecode]
+
+```
+
 
 Trying to deploy this project as a sandboxed solution will fail, since user controls violate the constraints placed on code that runs in the sandbox. There is nothing intrinsically about the code that would prevent its installation as a sandboxed solution, but it will fail when the solution is activated.
 
@@ -39,7 +42,8 @@ Trying to deploy this project as a sandboxed solution will fail, since user cont
 
 We can change the Web Part type by manually editing the .spdata file in the project. Visual Studio won't allow direct access to this file, so we'll have to browse to it on the filesystem and edit it in notepad.
 
-[sourcecode language="xml"]
+``` xml
+
 <?xml version="1.0" encoding="utf-8"?>
 <ProjectItem Type="Microsoft.VisualStudio.SharePoint.VisualWebPart" DefaultFile="VisualWebPart1UserControl.ascx" SupportedTrustLevels="FullTrust" SupportedDeploymentScopes="Site" xmlns="http://schemas.microsoft.com/VisualStudio/2010/SharePointTools/SharePointProjectItemModel">
   <Files>
@@ -51,21 +55,29 @@ We can change the Web Part type by manually editing the .spdata file in the proj
     <SafeControl Name="SafeControlEntry1" Assembly="$SharePoint.Project.AssemblyFullName$" Namespace="VisualWebPartProject2.VisualWebPart1" TypeName="*" IsSafe="true" IsSafeAgainstScript="false" />
   </SafeControls>
 </ProjectItem>
-[/sourcecode]
+
+```
+
 
 We are interested only in this line:
 
-[sourcecode language="xml"]
+``` xml
+
 <ProjectItem Type="Microsoft.VisualStudio.SharePoint.VisualWebPart" DefaultFile="VisualWebPart1UserControl.ascx" SupportedTrustLevels="FullTrust" 
-[/sourcecode]
+
+```
+
 
 We can change the Type from VisualWebPart to WebPart and SupportedTrustLevels from FullTrust to All.
 
 The resulting code looks like this:
 
 
-[sourcecode language="xml"]
+``` xml
+
 <ProjectItem Type="Microsoft.VisualStudio.SharePoint.WebPart" DefaultFile="VisualWebPart1UserControl.ascx" SupportedTrustLevels="All" 
-[/sourcecode]
+
+```
+
 
 Once the change is made, reload the project in Visual Studio, and its type should be recognized as a normal web part. Be sure to remove the user control before attempting to deploy as a sandboxed solution!

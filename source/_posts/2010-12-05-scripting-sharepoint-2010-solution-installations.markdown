@@ -20,18 +20,20 @@ Before we go any further, we need to understand what the SharePoint Management S
 
 In order to figure out what is going on when we run the management shell, take a look at the shortcut properties to find out which script is being run. Here is the path that I found:
 
-[sourcecode]
+```
 C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\CONFIG\POWERSHELL\Registration\SharePoint.ps1
-[/sourcecode]
+```
+
 
 Taking a look at the contents of the script we see something like the following:
 
-[sourcecode]
+```
 $ver = $host | select version
 if ($ver.Version.Major -gt 1)  {$Host.Runspace.ThreadOptions = "ReuseThread"}
 Add-PsSnapin Microsoft.SharePoint.PowerShell
 Set-location $home
-[/sourcecode]
+```
+
 
 Ok now we are getting somewhere. In order to write a PowerShell script that imports the SharePoint management cmdlets we can call Add-PsSnapin and gain access to the tools that we need. I later found this to be documented on MSDN [here](http://msdn.microsoft.com/en-us/library/ee537913.aspx).
 
@@ -42,13 +44,14 @@ Ok now we are getting somewhere. In order to write a PowerShell script that impo
 
 The simple script that I came up with to get the client through the hoop of getting the solution imported into SharePoint looks like this:
 
-[sourcecode]
+```
 C:\Windows\System32\WindowsPowerShell\v1.0\PowerShell.exe  ^
 	-Command  "& { "^
 		"Add-PsSnapin Microsoft.SharePoint.PowerShell; "^
 		"Add-SPSolution -LiteralPath %cd%\ClientSolution.wsp "^
 	"}"
-[/sourcecode]
+```
+
 
 Note that this is a batch file which invokes the PowerShell Windows executable. We could probably just write a PowerShell script and hope that the client's machine is set up correctly so that he can run the .ps1 file directly, but I didn't want to count on it. The downside is that the version of PowerShell is hard coded into the path. These are all refinements for a later date though.
 

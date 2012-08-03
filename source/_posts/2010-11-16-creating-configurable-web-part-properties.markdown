@@ -27,13 +27,16 @@ Let's say I have a [Web Part that displays a Silverlight application](http://crm
 
 Fortunately the solution is pretty simple. We just need to add a .NET property to the Web Part class and adorn it with the right attributes. In the following code snippet I have defined a string property called SilverlightUrl that I'll use for storing my Silverlight .xap file path:
 
-[sourcecode language="csharp"]
+``` csharp
+
 [WebBrowsable( true ), Category( "Silverlight" ),
 WebDisplayName( "Silverlight URL" ),
 WebDescription( "web url to Silverlight XAP package" ),
 Personalizable( PersonalizationScope.User )]
 public string SilverlightUrl { get; set; }
-[/sourcecode]
+
+```
+
 
 Note that there are five different attributes applied to this single property. The most important attribute is WebBrowsable. This makes the field visible to an editor part. I'll cover editor parts in the next section, but just know that most of the attributes are for controlling how the field shows up in the property editor part. Category,WebDisplayNameandWebDescription describe how the field is grouped, named, and described in the editor part, respectively. The Personalizable attribute is important in controlling the conditions under which the editor part is shown at all. In our example I have set it to User scope in order to get the editor to show up without toggling the [personalization scope](http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.webparts.personalizationscope.aspx). I'll cover personalization scope in another post, but just know that if we aren't in the right scope the editor will not be shown when we put the page into edit mode. This is something that tripped me up for a while when trying to get WebBrowsale properties working initially.
 
@@ -47,21 +50,27 @@ Just publishing our code to SharePoint as-is will be enough for us to configure 
 
 In addition to the typical WebPartManager and WebPartZone on the page we will need an EditorZone. The particular editor that we are interested in is the [PropertyGridEditorPart](http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.webparts.propertygrideditorpart.aspx). The ASP.NET markup would look something like this:
 
-[sourcecode language="xml"]
+``` xml
+
 <asp:EditorZone ID="EditorZone1" runat="server" >
       <ZoneTemplate>
         <asp:PropertyGridEditorPart Title="Edit Custom Properties" ID="PropertyGridEditorPart1" runat="server"/>
       </ZoneTemplate>
     </asp:EditorZone>
-[/sourcecode]
+
+```
+
 
 In order to toggle edit mode, we'll want to put an ASP.NET button on the page and wire it up to something like this:
 
-[sourcecode language="csharp"]
+``` csharp
+
 protected void Enable_Edit( object sender, EventArgs e ) {
 	WebPartManager1.DisplayMode = WebPartManager.EditDisplayMode;
 }
-[/sourcecode]
+
+```
+
 
 By default, ASP.NET will set the Web Part page up in PersonalizationScope.User mode, meaning that we are editing per-user configuration rather than configuration that all site users will see. If we set the Personalizable attribute on our property to PersonalizationScope.Shared we would not see the editor part at all.
 

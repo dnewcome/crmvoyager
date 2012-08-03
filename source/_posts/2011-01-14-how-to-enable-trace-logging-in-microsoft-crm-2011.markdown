@@ -13,11 +13,14 @@ In case you didn't know already, there are a few registry keys that control the 
 
 If you are in a hurry, there are only three keys that you really need: one to specify the file name, and two flags to actually enable tracing. 
 
-[sourcecode]
+```
+
 TraceDirectory
 TraceEnabled
 TraceRefresh
-[/sourcecode]
+
+```
+
 
 Here is a screenshot to help you out:
 [![](http://crmvoyager.files.wordpress.com/2011/01/registry.png?w=300)](http://crmvoyager.files.wordpress.com/2011/01/registry.png)

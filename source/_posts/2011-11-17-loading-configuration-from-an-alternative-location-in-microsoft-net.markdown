@@ -13,7 +13,8 @@ It turns out that this is easy to do. There is a method on the ConfigurationMana
 
 I have a little method for pulling in the configuration from a given file:
 
-[sourcecode language="csharp"]
+``` csharp
+
 // MSCrmConfigurationSection is my custom config section type
 MSCrmConfigurationSection GetConfig( string in_filename ) {
 	ConfigurationFileMap fileMap = new ConfigurationFileMap( in_filename );
@@ -21,6 +22,8 @@ MSCrmConfigurationSection GetConfig( string in_filename ) {
 	MSCrmConfigurationSection config = ( MSCrmConfigurationSection )configuration.GetSection( "MSCrm" );
 	return config;
 }
-[/sourcecode]
+
+```
+
 
 A really nice feature that we get for free is that we can mix and match files at will, pulling configuration sections from different files. And, as a bonus, the app.config file still takes effect, so any assembly redirects or publisher policies that are defined there still work as usual. Pretty awesome.
