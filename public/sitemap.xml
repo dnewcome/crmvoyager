@@ -2,386 +2,400 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/05/02/working-with-default-filters-in-ms-crm-report-files/
+            http://crmvoyager.com/blog/2010/05/02/working-with-default-filters-in-ms-crm-report-files/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/05/19/testing-windows-workflow-activities-in-isolation/
+            http://crmvoyager.com/blog/2010/05/19/testing-windows-workflow-activities-in-isolation/
         </loc>
         <lastmod>2012-08-02T21:36:48-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/05/19/dependency-properties-rant/</loc>
+        <loc>http://crmvoyager.com/blog/2010/05/19/dependency-properties-rant/</loc>
         <lastmod>2012-08-02T21:36:13-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/05/21/fixing-intractable-crm-workflow-errors/</loc>
+        <loc>http://crmvoyager.com/blog/2010/05/21/fixing-intractable-crm-workflow-errors/</loc>
         <lastmod>2012-08-02T21:35:10-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/06/02/error-registering-workflow-to-disk/</loc>
+        <loc>http://crmvoyager.com/blog/2010/06/02/error-registering-workflow-to-disk/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/06/07/consuming-crm-web-services-from-javascript/</loc>
+        <loc>
+            http://crmvoyager.com/blog/2010/06/07/consuming-crm-web-services-from-javascript/
+        </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/06/29/connecting-to-ms-crm-over-ssh/</loc>
+        <loc>http://crmvoyager.com/blog/2010/06/29/connecting-to-ms-crm-over-ssh/</loc>
         <lastmod>2012-08-02T21:34:39-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/07/06/getting-started-with-asp-net-web-parts/</loc>
+        <loc>http://crmvoyager.com/blog/2010/07/06/getting-started-with-asp-net-web-parts/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/07/07/code-spelunking-crm-web-service-internals/</loc>
+        <loc>
+            http://crmvoyager.com/blog/2010/07/07/code-spelunking-crm-web-service-internals/
+        </loc>
         <lastmod>2012-08-02T21:33:06-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/07/07/querying-crm-with-conditions-and-filters/</loc>
+        <loc>http://crmvoyager.com/blog/2010/07/07/querying-crm-with-conditions-and-filters/</loc>
         <lastmod>2012-08-02T21:31:31-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/07/07/enabling-design-mode-in-asp-net-webparts/</loc>
+        <loc>http://crmvoyager.com/blog/2010/07/07/enabling-design-mode-in-asp-net-webparts/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/07/07/serialization-crm-entities-vs-dynamicentities/
+            http://crmvoyager.com/blog/2010/07/07/serialization-crm-entities-vs-dynamicentities/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/07/12/getting-a-remote-shell-with-windows/</loc>
+        <loc>http://crmvoyager.com/blog/2010/07/12/getting-a-remote-shell-with-windows/</loc>
         <lastmod>2012-08-02T21:30:58-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/07/13/understanding-crm-linkentities/</loc>
-        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://yoursite.com/blog/2010/07/16/net-references-not-found-in-visual-studio/</loc>
-        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://yoursite.com/blog/2010/08/02/installing-asp-net-4-0-on-server2003iis6/</loc>
+        <loc>http://crmvoyager.com/blog/2010/07/13/understanding-crm-linkentities/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/08/18/creating-guids-with-windows-scripting-javascript/
+            http://crmvoyager.com/blog/2010/07/16/net-references-not-found-in-visual-studio/
+        </loc>
+        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://crmvoyager.com/blog/2010/08/02/installing-asp-net-4-0-on-server2003iis6/</loc>
+        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://crmvoyager.com/blog/2010/08/18/creating-guids-with-windows-scripting-javascript/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/08/18/including-multiple-script-files-with-windows-scripting/
+            http://crmvoyager.com/blog/2010/08/18/including-multiple-script-files-with-windows-scripting/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/08/19/creating-versioned-output-folders-with-visual-studio/
+            http://crmvoyager.com/blog/2010/08/19/creating-versioned-output-folders-with-visual-studio/
         </loc>
         <lastmod>2012-08-02T20:56:20-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/08/24/working-with-dynamicentity-properties/</loc>
+        <loc>http://crmvoyager.com/blog/2010/08/24/working-with-dynamicentity-properties/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/09/09/creating-a-paypal-payflow-test-account/</loc>
+        <loc>http://crmvoyager.com/blog/2010/09/09/creating-a-paypal-payflow-test-account/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/09/09/crm-api-quirks/</loc>
+        <loc>http://crmvoyager.com/blog/2010/09/09/crm-api-quirks/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/09/21/key-properties-in-crm/</loc>
+        <loc>http://crmvoyager.com/blog/2010/09/21/key-properties-in-crm/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/10/06/building-sharepoint-projects-with-cruisecontrol/
+            http://crmvoyager.com/blog/2010/10/06/building-sharepoint-projects-with-cruisecontrol/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/10/11/silverlight-unit-testing/</loc>
+        <loc>http://crmvoyager.com/blog/2010/10/11/silverlight-unit-testing/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/10/11/silverlight-content-positioning-expanding-to-fill-container/
+            http://crmvoyager.com/blog/2010/10/11/silverlight-content-positioning-expanding-to-fill-container/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/10/12/embedding-silverlight-into-a-webpart/</loc>
+        <loc>http://crmvoyager.com/blog/2010/10/12/embedding-silverlight-into-a-webpart/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/10/13/creating-a-silverlight-usercontrol/</loc>
+        <loc>http://crmvoyager.com/blog/2010/10/13/creating-a-silverlight-usercontrol/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/10/13/data-binding-in-silverlight/</loc>
+        <loc>http://crmvoyager.com/blog/2010/10/13/data-binding-in-silverlight/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/10/14/applying-styles-in-silverlight/</loc>
+        <loc>http://crmvoyager.com/blog/2010/10/14/applying-styles-in-silverlight/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/10/15/observations-on-observablecollection/</loc>
+        <loc>http://crmvoyager.com/blog/2010/10/15/observations-on-observablecollection/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/10/15/wspbuilder-and-sharepoint-deployment-layout-where-does-this-stuff-end-up/
+            http://crmvoyager.com/blog/2010/10/15/wspbuilder-and-sharepoint-deployment-layout-where-does-this-stuff-end-up/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/10/15/whats-in-a-silverlight-xap/</loc>
+        <loc>http://crmvoyager.com/blog/2010/10/15/whats-in-a-silverlight-xap/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/10/19/dealing-with-exceptions-in-wcf-services/</loc>
+        <loc>http://crmvoyager.com/blog/2010/10/19/dealing-with-exceptions-in-wcf-services/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2010/10/19/allowing-cross-site-wcf-service-calls/</loc>
-        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
-    </url>
-    <url>
-        <loc>
-            http://yoursite.com/blog/2010/10/19/silverlight-host-page-for-development-and-debugging/
-        </loc>
+        <loc>http://crmvoyager.com/blog/2010/10/19/allowing-cross-site-wcf-service-calls/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/11/01/silverlight-single-click-checkbox-datagrid-columns/
-        </loc>
-        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://yoursite.com/blog/2010/11/16/creating-configurable-web-part-properties/</loc>
-        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
-    </url>
-    <url>
-        <loc>
-            http://yoursite.com/blog/2010/11/19/deploying-web-parts-to-microsoft-sharepoint/
+            http://crmvoyager.com/blog/2010/10/19/silverlight-host-page-for-development-and-debugging/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/11/25/enabling-user-sandboxed-code-in-sharepoint-2010/
+            http://crmvoyager.com/blog/2010/11/01/silverlight-single-click-checkbox-datagrid-columns/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/11/25/sharepoint-2010-web-parts-vs-visual-web-parts/
+            http://crmvoyager.com/blog/2010/11/16/creating-configurable-web-part-properties/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/11/30/sharepoint-web-part-error-when-switching-deployment-types/
+            http://crmvoyager.com/blog/2010/11/19/deploying-web-parts-to-microsoft-sharepoint/
+        </loc>
+        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://crmvoyager.com/blog/2010/11/25/enabling-user-sandboxed-code-in-sharepoint-2010/
+        </loc>
+        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://crmvoyager.com/blog/2010/11/25/sharepoint-2010-web-parts-vs-visual-web-parts/
+        </loc>
+        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://crmvoyager.com/blog/2010/11/30/sharepoint-web-part-error-when-switching-deployment-types/
         </loc>
         <lastmod>2012-08-02T21:29:42-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/12/02/attaching-visual-studio-as-a-silverlight-debugger/
+            http://crmvoyager.com/blog/2010/12/02/attaching-visual-studio-as-a-silverlight-debugger/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/12/05/scripting-sharepoint-2010-solution-installations/
+            http://crmvoyager.com/blog/2010/12/05/scripting-sharepoint-2010-solution-installations/
         </loc>
         <lastmod>2012-08-02T21:29:20-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/12/06/full-stack-sharepoint-silverlight-debugging-with-visual-studio-2010/
+            http://crmvoyager.com/blog/2010/12/06/full-stack-sharepoint-silverlight-debugging-with-visual-studio-2010/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2010/12/07/cross-domain-silverlight-4-application-xap-hosting/
-        </loc>
-        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://yoursite.com/blog/2010/12/08/migrating-sdk-code-from-crm4-to-crm5-2011/</loc>
-        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
-    </url>
-    <url>
-        <loc>
-            http://yoursite.com/blog/2011/01/14/deploying-referenced-assemblies-in-crm-2011-plugins-and-workflows/
+            http://crmvoyager.com/blog/2010/12/07/cross-domain-silverlight-4-application-xap-hosting/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/01/14/how-to-enable-trace-logging-in-microsoft-crm-2011/
+            http://crmvoyager.com/blog/2010/12/08/migrating-sdk-code-from-crm4-to-crm5-2011/
+        </loc>
+        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://crmvoyager.com/blog/2011/01/14/deploying-referenced-assemblies-in-crm-2011-plugins-and-workflows/
+        </loc>
+        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://crmvoyager.com/blog/2011/01/14/how-to-enable-trace-logging-in-microsoft-crm-2011/
         </loc>
         <lastmod>2012-08-02T21:27:48-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/01/16/setting-up-a-silverlight-4-development-environment/
+            http://crmvoyager.com/blog/2011/01/16/setting-up-a-silverlight-4-development-environment/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/02/12/create-a-fully-standalone-crm-2011-environment-on-amazon-ec2/
+            http://crmvoyager.com/blog/2011/02/12/create-a-fully-standalone-crm-2011-environment-on-amazon-ec2/
         </loc>
         <lastmod>2012-08-02T21:27:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/02/18/accessing-metadata-in-microsoft-crm-2011/</loc>
+        <loc>http://crmvoyager.com/blog/2011/02/18/accessing-metadata-in-microsoft-crm-2011/</loc>
         <lastmod>2012-08-02T21:25:26-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/02/25/how-to-list-process-ids-for-iis7-worker-processes/
+            http://crmvoyager.com/blog/2011/02/25/how-to-list-process-ids-for-iis7-worker-processes/
         </loc>
         <lastmod>2012-08-02T21:24:52-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/02/25/assembly-binding-redirection-in-asp-net/</loc>
+        <loc>http://crmvoyager.com/blog/2011/02/25/assembly-binding-redirection-in-asp-net/</loc>
         <lastmod>2012-08-02T21:24:09-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/04/01/using-asp-net-web-parts-in-sitecore-cms/</loc>
+        <loc>http://crmvoyager.com/blog/2011/04/01/using-asp-net-web-parts-in-sitecore-cms/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/04/12/scripting-silverlight-4-applications-with-javascript/
+            http://crmvoyager.com/blog/2011/04/12/scripting-silverlight-4-applications-with-javascript/
         </loc>
         <lastmod>2012-08-02T21:23:34-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/04/13/handling-errors-with-the-crm-2011-web-services-api/
+            http://crmvoyager.com/blog/2011/04/13/handling-errors-with-the-crm-2011-web-services-api/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/04/20/programmatically-executing-workflows-in-crm-2011/
+            http://crmvoyager.com/blog/2011/04/20/programmatically-executing-workflows-in-crm-2011/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/04/20/creating-custom-error-pages-in-asp-net/</loc>
+        <loc>http://crmvoyager.com/blog/2011/04/20/creating-custom-error-pages-in-asp-net/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/04/22/storing-a-guid-in-an-asp-net-checkbox-control/
+            http://crmvoyager.com/blog/2011/04/22/storing-a-guid-in-an-asp-net-checkbox-control/
         </loc>
         <lastmod>2012-08-02T20:57:27-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/04/26/starting-sql-server-2008-in-single-user-mode/
+            http://crmvoyager.com/blog/2011/04/26/starting-sql-server-2008-in-single-user-mode/
         </loc>
         <lastmod>2012-08-02T21:20:34-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/05/04/crm-2011-entity-metadata-browser/</loc>
+        <loc>http://crmvoyager.com/blog/2011/05/04/crm-2011-entity-metadata-browser/</loc>
         <lastmod>2012-08-02T21:19:55-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/05/17/managing-crm-2011-from-powershell/</loc>
+        <loc>http://crmvoyager.com/blog/2011/05/17/managing-crm-2011-from-powershell/</loc>
         <lastmod>2012-08-02T21:19:29-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/06/05/using-activityparty-in-crm-2011/</loc>
+        <loc>http://crmvoyager.com/blog/2011/06/05/using-activityparty-in-crm-2011/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/10/12/updating-expired-license-key-in-crm-2011/</loc>
+        <loc>http://crmvoyager.com/blog/2011/10/12/updating-expired-license-key-in-crm-2011/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/10/20/running-microsoft-crm-4-0-apps-when-2011-is-installed/
+            http://crmvoyager.com/blog/2011/10/20/running-microsoft-crm-4-0-apps-when-2011-is-installed/
         </loc>
         <lastmod>2012-08-02T21:18:44-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/10/24/list-of-type-differences-between-crm4-and-2011/
+            http://crmvoyager.com/blog/2011/10/24/list-of-type-differences-between-crm4-and-2011/
         </loc>
         <lastmod>2012-08-02T21:17:57-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/10/24/implementing-a-custom-iorganizationservice/</loc>
-        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
-    </url>
-    <url>
         <loc>
-            http://yoursite.com/blog/2011/10/25/digging-into-microsoft-crm-4-dynamicentity-properties/
+            http://crmvoyager.com/blog/2011/10/24/implementing-a-custom-iorganizationservice/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/10/25/building-multiple-visual-studio-project-configurations-with-msbuild/
+            http://crmvoyager.com/blog/2011/10/25/digging-into-microsoft-crm-4-dynamicentity-properties/
+        </loc>
+        <lastmod>2012-08-02T20:54:11-07:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://crmvoyager.com/blog/2011/10/25/building-multiple-visual-studio-project-configurations-with-msbuild/
         </loc>
         <lastmod>2012-08-02T21:02:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/10/27/using-active-directory-domain-accounts-with-copssh/
+            http://crmvoyager.com/blog/2011/10/27/using-active-directory-domain-accounts-with-copssh/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/11/16/configuration-patterns-in-net/</loc>
+        <loc>http://crmvoyager.com/blog/2011/11/16/configuration-patterns-in-net/</loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/
+            http://crmvoyager.com/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/11/17/configuration-types-in-microsoft-net/</loc>
+        <loc>http://crmvoyager.com/blog/2011/11/17/configuration-types-in-microsoft-net/</loc>
         <lastmod>2012-08-02T21:01:04-07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yoursite.com/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/
+            http://crmvoyager.com/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/
         </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/</loc>
+        <loc>
+            http://crmvoyager.com/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/
+        </loc>
         <lastmod>2012-08-02T20:54:11-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/archives/</loc>
+        <loc>http://crmvoyager.com/blog/archives/</loc>
         <lastmod>2012-08-02T21:36:48-07:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/</loc>
+        <loc>http://crmvoyager.com/</loc>
         <lastmod>2012-08-02T21:36:48-07:00</lastmod>
     </url>
 </urlset>
