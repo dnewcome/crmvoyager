@@ -2,10 +2,10 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://yoursite.com
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
-author: Your Name
+url: http://crmvoyager.com
+title: CRM Voyager 
+subtitle: Navigating the high seas of Microsoft CRM.
+author: Dan Newcome 
 simple_search: http://google.com/search
 description:
 
