@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Managing CRM 2011 from PowerShell - My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="Starting with Windows Server 2008, Microsoft has stepped up its commitment to scriptable server management with the inclusion of PowerShell by &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/2011/05/17/managing-crm-2011-from-powershell/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Managing CRM 2011 From PowerShell</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-17T00:24:55-07:00" pubdate data-updated="true">May 17<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Starting with Windows Server 2008, Microsoft has stepped up its commitment to scriptable server management with the inclusion of PowerShell by default in the operating system. PowerShell enables the ease of scripting like batch files with the power of a scripting language like perl. Anyone that has done any extensive batch scripting will know what a pain it can be to do simple things like string handling.</p>
+
+<p>Microsoft has doubled down on PowerShell in both CRM and SharePoint. Both are able to be managed using PowerShell snapins. What is a snapin? Snapins are what Microsoft calls script modules that can be loaded into PowerShell. The management features of CRM 2011 are supplied via a snapin.</p>
+
+<p>The snapin will be installed on the CRM server by default, so to start powershell and load the snapin, we open up a console window and do the following:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>C:\&gt; powershell
+</span><span class='line'>Windows PowerShell
+</span><span class='line'>Copyright (C) 2009 Microsoft Corporation. All rights reserved.
+</span><span class='line'>
+</span><span class='line'>PS C:\Users\Administrator&gt; add-pssnapin Microsoft.CRM.Powershell
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we have access to all of the cmdlets (this is PowerShell terminology for a command tool).</p>
+
+<p>For example, we can get information on the default CRM organization:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>PS C:\Users\Administrator&gt; get-crmorganization
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>BaseCurrencyCode      : USD
+</span><span class='line'>BaseCurrencyName      : US Dollar
+</span><span class='line'>BaseCurrencyPrecision : 2
+</span><span class='line'>BaseCurrencySymbol    : $
+</span><span class='line'>BaseLanguageCode      : 1033
+</span><span class='line'>DatabaseName          : crmtest_MSCRM
+</span><span class='line'>FriendlyName          : CRM Test
+</span><span class='line'>Id                    : 04721a7a-e0f5-45dc-a4b7-57e02088a13a
+</span><span class='line'>SqlCollation          : Latin1_General_CI_AI
+</span><span class='line'>SqlServerName         : WIN-0VODKV30814\SQL2008R2STD
+</span><span class='line'>SqmIsEnabled          : False
+</span><span class='line'>SrsUrl                : http://win-0vodkv30814/reportserver_sql2008r2std
+</span><span class='line'>State                 : Enabled
+</span><span class='line'>UniqueName            : crmtest
+</span><span class='line'>Version               : 5.0.9688.34
+</span><span class='line'>ExtensionData         : System.Runtime.Serialization.ExtensionDataObject
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is a list of all of the <a href="http://msdn.microsoft.com/en-us/library/gg328563.aspx">available commands</a>.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-17T00:24:55-07:00" pubdate data-updated="true">May 17<span>th</span>, 2011</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoursite.com/blog/2011/05/17/managing-crm-2011-from-powershell/" data-via="" data-counturl="http://yoursite.com/blog/2011/05/17/managing-crm-2011-from-powershell/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2011/05/04/crm-2011-entity-metadata-browser/" title="Previous Post: Crm 2011 Entity Metadata Browser">&laquo; Crm 2011 Entity Metadata Browser</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2011/06/05/using-activityparty-in-crm-2011/" title="Next Post: Using ActivityParty in CRM 2011">Using ActivityParty in CRM 2011 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

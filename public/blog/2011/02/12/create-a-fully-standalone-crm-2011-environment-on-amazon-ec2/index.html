@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Create a fully standalone Microsoft CRM 2011 environment on Amazon EC2 - My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="I set up a development environment that I can share in the cloud with my colleagues and partners for sharing ideas and quick demos. There are already &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/2011/02/12/create-a-fully-standalone-crm-2011-environment-on-amazon-ec2/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Create a Fully Standalone Microsoft CRM 2011 Environment on Amazon EC2</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-12T23:57:22-08:00" pubdate data-updated="true">Feb 12<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I set up a development environment that I can share in the cloud with my colleagues and partners for sharing ideas and quick demos. There are already a few articles out there that can help you get the latest CRM 2011 bits set up on a virtual machine, but I didn&#8217;t find anything specific to EC2 or anything on installing everything on one server including Active Directory (so the whole setup is completely self-contained), so I&#8217;m writing up my experiences here for you. Keep in mind that we are installing a release candidate here, as the final bits aren&#8217;t available yet.</p>
+
+<p>Briefly, the steps are:</p>
+
+<ul>
+<li><p>Create Windows Server 2008 EC2 instance</p></li>
+<li><p>Promote instance to Active Directory domain controller</p></li>
+<li><p>Install IIS+ASP.NET</p></li>
+<li><p>Install Sql Server 2008 R2</p></li>
+<li><p>Install CRM 2011</p></li>
+</ul>
+
+
+<p>For this guide I&#8217;m assuming that you have met a few prerequisites:</p>
+
+<ul>
+<li><p>An Amazon AWS account</p></li>
+<li><p>An MSDN subscription or retail copy of SQL Server 2008 R2</p></li>
+<li><p>The CRM 2011 RC <a href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=c3f82c6f-c123-4e80-b9b2-ee422a16b91d">bits</a></p></li>
+</ul>
+
+
+<p>Also, I won&#8217;t belabor every individual installation step. I&#8217;ll cover the high points necessary to get things installed so that CRM 2011 won&#8217;t have any installation issues. This means I&#8217;ll be accepting the default installation details for SQL Server. If you need to customize things feel free to do so, but I haven&#8217;t tested other configurations so it may not work as expected.</p>
+
+<p>There is a great guide <a href="http://crmscape.blogspot.com/2010/09/creating-ms-crm-2011-vm-part-1-of-2.html">here</a> for installing the CRM 2011 Beta on a local virtual machine. He mentions that it will take a full day to set up, but using Amazon&#8217;s available Windows images, we should be able to get that time down to about 3 hours. If you already have an EC2 image set up with a password set and have the SQL Server installation media you might be able to do this in just over two hours.</p>
+
+<h2>Start the EC2 instance</h2>
+
+<p>Signing up for an Amazon Web Services account is a prerequisite for all of this. I won&#8217;t go into it here, but there is now a nice <a href="https://console.aws.amazon.com">management console</a> for AWS, so starting up EC2 instances is now pretty easy using the web. The critical piece is getting the right server image the first time. We want the following three things:</p>
+
+<ul>
+<li><p>An EBS based image</p></li>
+<li><p>Windows Server 2008 64bit</p></li>
+<li><p>Without SQL Server pre-installed</p></li>
+</ul>
+
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/ami.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/ami.png" alt="" /></a>
+It is important not to use a SQL server image, as you will pay more per hour and it won&#8217;t have Reporting Services installed anyway. 64bit is important because the CRM release candidate is 64bit only. EBS is important if you want to stop the server later without rebuilding everything. The alternative to EBS is AMI, which is backed by S3. In order to keep your changes (i.e. all of the stuff we are going to be installing) with an AMI instance will require you to &#8220;bundle&#8221; the instance every time new changes are made that you want to keep. I recommend EBS since it is much simpler and only slightly more expensive. Detailed instructions on launching a Windows instance and decrypting the admin password can be found <a href="http://www.michaelckennedy.net/blog/2010/01/31/BuildingWindowsMachinesInAmazonEC2.aspx">here</a>. I won&#8217;t go into it here since it is beyond the scope of this article.</p>
+
+<p>There is one critical configuration step to take before we proceed. By default, Windows EC2 instances have dynamic hostnames which are generated when the instance boots up. This will cause problems later on once we have promoted the box to the domain controller role and have SQL server installed. Forgetting this step is not fatal, but changing the host name on a domain controller can be a pain, so best to avoid having to do it altogether.</p>
+
+<p>Amazon achieves the dynamic naming using a Windows service that is installed on the base image. We can configure the behavior of this service using a tool called ec2 service properties, which can be found in the start menu. All we need to do is uncheck the setting for &#8220;Set Computer Name&#8221; per the following screenshot:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/ec2-setname.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/ec2-setname.png" alt="" /></a></p>
+
+<h2>Promote server to Active Directory domain controller</h2>
+
+<p>The first thing that I do (after changing the admin password - we&#8217;ll be rebooting a few times) is promote the server to an Active Directory domain controller. CRM requires a domain, and since we are going for a self-contained installation, we have to promote the CRM server itself to the domain controller role. Ordinarily it is a bad idea for a domain controller to have any other server role, but for a development environment this will be fine. Additionally, promoting the server before we install SQL helps avoid additional configuration steps as a result of the server&#8217;s name and user accounts changing.</p>
+
+<p>Promoting a domain controller is done from the commandline by running</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>c:\&gt;dcpromo.exe </span></code></pre></td></tr></table></div></figure>
+
+
+<p>The promotion takes a while, so I grab the SQL Server install media from MSDN during this time. Transfer rates from MS are pretty fast and it should download by the time the DC is ready to go.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/newdomain.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/newdomain.png" alt="" /></a></p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/domain-name.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/domain-name.png" alt="" /></a></p>
+
+<p>We&#8217;ll also need to install an ISO mounting program to install SQL Server. I use MagicDisc, which can be found <a href="http://www.magiciso.com/tutorials/miso-magicdisc-overview.htm">here</a>. Get the 64 bit Vista version for Server 2008. In the case that you are using Server 2008 R2, get the Windows 7 version.</p>
+
+<p>You&#8217;ll have to reboot after dcpromo has done its thing. Remember to use the new domain name when you log back into the server. The login will require domain\user now that the server is in a domain (it <em>is</em> the domain!).</p>
+
+<h2>Install SQL Server 2008 R2</h2>
+
+<p>Once the SQL installation media is ready, install MagicDisc and mount the ISO. Run the setup and select a new SQL installation. I used the defaults for everything, installing all services. The most important thing to get installed beyond SQL Server itself is SSRS, so at the very least make sure that Reporting Services is checked off.</p>
+
+<p>Since we have promoted the server to domain controller status, the default local accounts cannot be used as the SQL Server service accounts. Create a new non-admin user called &#8216;sqlserver&#8217; and use that as the service account.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/sqlserver-account.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/sqlserver-account.png" alt="" /></a></p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/sqlserver-user.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/sqlserver-user.png" alt="" /></a></p>
+
+<p>Also note that the SQL Browser service needs to be manually enabled and started. This will be necessary later on in order for the CRM installer to find the SQL server instance.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/sql-default-install.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/sql-default-install.png" alt="" /></a></p>
+
+<h2>Install IIS and ASP.NET</h2>
+
+<p>Installing IIS is accomplished by adding the Web server role to the server using the server management console. Just note that in addition to the IIS role we&#8217;ll need ASP.NET, which must be selected separately. Once these two things are selected, the installer will install them both simultaneously.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/webserver-role.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/webserver-role.png" alt="" /></a></p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/asp-net.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/asp-net.png" alt="" /></a></p>
+
+<h2>Install CRM 2011 Release Candidate</h2>
+
+<p>Now for the moment we have been waiting for. Run the CRM 2011 RC installer. If the .NET Framework 4.0 is not installed, the CRM installer will install it and ask you to reboot, which is a minor annoyance, but the installer will stop and wait for you to do it, so don&#8217;t let it go unattended for too long or you&#8217;ll never make it in under three hours! I used the defaults everywhere possible and set the service accounts to &#8220;Network Service&#8221;. You&#8217;ll have to browse for the SQL Server instance but the installer should find the SRSS server automatically.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/orgname.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/orgname.png" alt="" /></a></p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/service-accounts.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/service-accounts.png" alt="" /></a></p>
+
+<p>I had a lot of missteps along the way to getting all of this installed, but on the last run I sailed through it in under 3 hours including getting the 4GB SQL Server installation media from MSDN. Hopefully you have similar results and you won&#8217;t have to spend a whole day setting things up.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-12T23:57:22-08:00" pubdate data-updated="true">Feb 12<span>th</span>, 2011</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoursite.com/blog/2011/02/12/create-a-fully-standalone-crm-2011-environment-on-amazon-ec2/" data-via="" data-counturl="http://yoursite.com/blog/2011/02/12/create-a-fully-standalone-crm-2011-environment-on-amazon-ec2/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2011/01/16/setting-up-a-silverlight-4-development-environment/" title="Previous Post: Setting up a Silverlight 4 development environment">&laquo; Setting up a Silverlight 4 development environment</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2011/02/18/accessing-metadata-in-microsoft-crm-2011/" title="Next Post: Accessing metadata in Microsoft CRM 2011">Accessing metadata in Microsoft CRM 2011 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

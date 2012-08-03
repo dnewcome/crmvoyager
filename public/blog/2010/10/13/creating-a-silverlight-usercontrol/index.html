@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Referencing a Silverlight UserControl - My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="Funny how a lot of details are glossed over in the copious blog coverage that surrounds Silverlight. Creating UserControls is supposed to be dead &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/2010/10/13/creating-a-silverlight-usercontrol/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Referencing a Silverlight UserControl</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-13T01:52:10-07:00" pubdate data-updated="true">Oct 13<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Funny how a lot of details are glossed over in the copious blog coverage that surrounds Silverlight. Creating UserControls is supposed to be dead easy, and it is relatively easy, but the method by which we register the control on the page eluded me for far too long, so here I aim to make the process just a little less painful for those who come after me.</p>
+
+<p>Creating the UserControl is very easy. Given that you probably already have at least one UserControl in your Silverlight application &#8211; the &#8220;main&#8221; page is a user control &#8211; you can simply copy this and use it as the base of your new user control.</p>
+
+<p>You&#8217;ll notice that some of the Microsoft-supplied controls use an XML prefix such as &#8220;sdk:&#8221; for their user controls. For example, putting a TabControl into the .xaml file results in some markup that looks like so:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;sdk:TabControl</span> <span class="na">Height=</span><span class="s">&quot;Auto&quot;</span> <span class="na">Width=</span><span class="s">&quot;Auto&quot;</span> <span class="na">Name=</span><span class="s">&quot;tabControl1&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    ...
+</span><span class='line'><span class="nt">&lt;/sdk:TabControl&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We must do the same when instantiating our UserControls,  so any markup we add to the XAML file must be declared as part of a namespace. The <a href="http://msdn.microsoft.com/en-us/library/cc189061(VS.95">documentation </a>.aspx)was difficult to find until I figured out what to search for &#8211; Microsoft has a particular namespace root for referencing assemblies and types in XAML files. This namespace root is &#8220;clr-namespace&#8221;. In order to add a namespace prefix that references our new UserControl types, we need to declare the namespace prefix using a literal &#8220;clr-namespace&#8221; in the URI. For example, if we have a type called MyUserControl that is in the .NET namespace MyProject, our namespace ends up being &#8220;clr-namespace:MyProject&#8221;. In a XAML file we just need to add this XML namespace prefix somewhere in the file so that it is in scope where we need it. Practically speaking such prefixes are nearly always declared in the root element of the document, so we&#8217;ll do the same. Here is what my code ended up looking like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;UserControl</span> <span class="na">x:Class=</span><span class="s">&quot;MyProject.MainPage&quot;</span>
+</span><span class='line'>    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+</span><span class='line'>     <span class="err">....</span>
+</span><span class='line'>    <span class="na">xmlns:myprefix=</span><span class="s">&quot;clr-namespace:MyProject&quot;</span><span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I have omitted several of the default namespace prefixes for clarity. To instantiate a UserControl type defined in the &#8220;MyProject&#8221; namespace, we need only to write an XML element with the name of our type, prefixed by the XML namespace prefix that we just defined. Here is a sample:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;myprefix:MyUserControl</span> <span class="na">Height=</span><span class="s">&quot;Auto&quot;</span> <span class="na">Width=</span><span class="s">&quot;Auto&quot;</span><span class="nt">&gt;&lt;/myprefix:MyUserControl&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>According to the more general <a href="http://msdn.microsoft.com/en-us/library/ms747086.aspx">documentation </a>for WPF, of which Silverlight is a derivative, the assembly name may be specified in the URI format as follows:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>xmlns:custom=&quot;clr-namespace:SDKSample;assembly=SDKSampleLibrary&quot;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Hopefully this sheds some light on a detail seemingly glossed over in many Silverlight articles and tutorials.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-13T01:52:10-07:00" pubdate data-updated="true">Oct 13<span>th</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoursite.com/blog/2010/10/13/creating-a-silverlight-usercontrol/" data-via="" data-counturl="http://yoursite.com/blog/2010/10/13/creating-a-silverlight-usercontrol/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2010/10/12/embedding-silverlight-into-a-webpart/" title="Previous Post: Embedding Silverlight into a WebPart">&laquo; Embedding Silverlight into a WebPart</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2010/10/13/data-binding-in-silverlight/" title="Next Post: Data binding in Silverlight">Data binding in Silverlight &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

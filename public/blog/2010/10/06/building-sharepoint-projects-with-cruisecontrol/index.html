@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Building SharePoint projects with CruiseControl - My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="Short version: See this MSDN article. Longer version: I needed to get another developer&#8217;s WebParts building under my CruiseControl server today &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/2010/10/06/building-sharepoint-projects-with-cruisecontrol/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Building SharePoint Projects With CruiseControl</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-06T00:09:50-07:00" pubdate data-updated="true">Oct 6<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><strong>Short version</strong>:</p>
+
+<p>See <a href="http://msdn.microsoft.com/en-us/library/ff622991.aspx">this MSDN article</a>.</p>
+
+<p><strong>Longer version:</strong></p>
+
+<p>I needed to get another developer&#8217;s WebParts building under my <a href="http://confluence.public.thoughtworks.org/display/CCNET/Welcome+to+CruiseControl.NET">CruiseControl</a> server today. After checking the code out on the build box I realized that I would need a few dependencies that were not available since SharePoint was not installed on the build machine. After grabbing the obvious references I needed to build the project and changing the project references around I got to a point where MSBuild was giving me the following error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>C:<span class="se">\W</span>INDOWS<span class="se">\M</span>icrosoft.NET<span class="se">\F</span>ramework<span class="se">\v</span>4.0.30319<span class="se">\M</span>icrosoft.Common.targets<span class="o">(</span>1835,9<span class="o">)</span>:
+</span><span class='line'>error MSB3091: Task failed because <span class="s2">&quot;resgen.exe&quot;</span> was not found, or the correct
+</span><span class='line'>Microsoft Windows SDK is not installed.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ok, so apparently I needed to install the Windows SDK on the build box. More specifically, I needed to grab the .NET SDK, which is now distributed as part of the Windows SDK as of the .NET 4.0 Framework. Thankfully the Web installer allows you to install just the .NET components, so I didn&#8217;t have to download the entire ISO image just to grab the .NET SDK.</p>
+
+<p>I ran msbuild again and got the following error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>C:<span class="se">\P</span>rogram Files<span class="se">\C</span>ruiseControl.NET<span class="se">\.</span>..<span class="se">\S</span>harePoint.WebParts.csproj<span class="o">(</span>153,3<span class="o">)</span>: er
+</span><span class='line'>ror MSB4019: The imported project <span class="s2">&quot;C:\Program Files\MSBuild\Microsoft\VisualStu</span>
+</span><span class='line'><span class="s2">dio\v10.0\SharePointTools\Microsoft.VisualStudio.SharePoint.targets&quot;</span> was not fo
+</span><span class='line'>und. Confirm that the path in the &lt;Import&gt; declaration is correct, and that the
+</span><span class='line'> file exists on disk.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I copied the targets over from another machine that had Visual Studio installed, and now I got another error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>C:<span class="se">\P</span>rogram Files<span class="se">\M</span>SBuild<span class="se">\M</span>icrosoft<span class="se">\V</span>isualStudio<span class="se">\v</span>10.0<span class="se">\S</span>harePointTools<span class="se">\M</span>icroso
+</span><span class='line'>ft.VisualStudio.SharePoint.targets<span class="o">(</span>343,5<span class="o">)</span>: error : Could not load file or assem
+</span><span class='line'>bly <span class="s1">&#39;Microsoft.VisualStudio.SharePoint.Designers.Models, Version=10.0.0.0, Cult</span>
+</span><span class='line'><span class="s1">ure=neutral, PublicKeyToken=b03f5f7f11d50a3a&#39;</span> or one of its dependencies. The s
+</span><span class='line'>ystem cannot find the file specified.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I searched around for Microsoft.VisualStudio.SharePoint.Designers.Models.dll but I didn&#8217;t find it right away. I thought that it was time to start Googling around to see where this tunnel ends and turned up <a href="http://msdn.microsoft.com/en-us/library/ff622991.aspx">this document</a> from Microsoft.</p>
+
+<p>This outlines exactly what I was trying to figure out in the steps above. Unfortunately it looks like a lot of work so I have to bail and just install CruiseControl on one of the SharePoint machines for now. I&#8217;ll be sure to update this if I give it another shot.</p>
+
+<p>UPDATE:
+I did get CruiseControl to build a SharePoint project on a machine without SharePoint installed on it. Every detail that you need to make this work is in the MSDN article for getting TFS builds to work. The only difference is that you will kick off the msbuild process from CruiseControl instead of TFS. One drawback to building on a machine that does not have SharePoint is that you won&#8217;t be able to run automated tests that involve calls to SharePoint functionality. If you are careful about your design though, a lot of functionality can be tested without SharePoint since most Web Part functionality is now actually part of ASP.NET.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-06T00:09:50-07:00" pubdate data-updated="true">Oct 6<span>th</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoursite.com/blog/2010/10/06/building-sharepoint-projects-with-cruisecontrol/" data-via="" data-counturl="http://yoursite.com/blog/2010/10/06/building-sharepoint-projects-with-cruisecontrol/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2010/09/21/key-properties-in-crm/" title="Previous Post: Key properties in CRM">&laquo; Key properties in CRM</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2010/10/11/silverlight-unit-testing/" title="Next Post: Silverlight unit testing">Silverlight unit testing &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

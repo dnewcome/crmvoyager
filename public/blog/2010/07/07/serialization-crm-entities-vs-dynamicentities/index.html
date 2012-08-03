@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Serialization: CRM entities vs DynamicEntities - My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="I did a quick experiment to see what the serialization formats look like for a DynamicEntity and a static entity type as found in the Microsoft.Crm. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/2010/07/07/serialization-crm-entities-vs-dynamicentities/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Serialization: CRM Entities vs DynamicEntities</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-07T20:46:46-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I did a quick experiment to see what the serialization formats look like for a DynamicEntity and a static entity type as found in the Microsoft.Crm.SdkTypeProxy namespace. The results were predictable by looking at the structure of each type of entity, but I thought that I&#8217;d post my results here if for no other reason than to provide you with some canned CRM data that you can use for testing, which was the entire point of this exercise for me. I also wanted to know if CRM entities could be &#8216;round-tripped&#8217; &#8211; that is, serialized to xml and then deserialized back to entity instances. The answer is yes, they certainly can. So we can grab some data from a live CRM installation and use it in offline tests.</p>
+
+<p>The following code illustrates the concept of using .NET serialization to round-trip a .NET type (a CRM entity in our specific case):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">public</span> <span class="k">static</span> <span class="n">Object</span> <span class="nf">RoundTrip</span><span class="p">(</span> <span class="n">Type</span> <span class="n">in_type</span><span class="p">,</span> <span class="n">Object</span> <span class="n">in_instance</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">System</span><span class="p">.</span><span class="n">Xml</span><span class="p">.</span><span class="n">Serialization</span><span class="p">.</span><span class="n">XmlSerializer</span> <span class="n">xser</span> <span class="p">=</span> <span class="k">new</span> <span class="n">System</span><span class="p">.</span><span class="n">Xml</span><span class="p">.</span><span class="n">Serialization</span><span class="p">.</span><span class="n">XmlSerializer</span><span class="p">(</span> <span class="n">in_type</span> <span class="p">);</span>
+</span><span class='line'>          
+</span><span class='line'>          <span class="n">MemoryStream</span> <span class="n">ms</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MemoryStream</span><span class="p">();</span>
+</span><span class='line'>          <span class="n">xser</span><span class="p">.</span><span class="n">Serialize</span><span class="p">(</span> <span class="n">ms</span><span class="p">,</span> <span class="n">in_instance</span> <span class="p">);</span>
+</span><span class='line'>          <span class="n">ms</span><span class="p">.</span><span class="n">Seek</span><span class="p">(</span> <span class="m">0</span><span class="p">,</span> <span class="n">SeekOrigin</span><span class="p">.</span><span class="n">Begin</span> <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="n">Object</span> <span class="n">retval</span> <span class="p">=</span> <span class="n">xser</span><span class="p">.</span><span class="n">Deserialize</span><span class="p">(</span> <span class="n">ms</span> <span class="p">);</span>
+</span><span class='line'>          <span class="n">ms</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+</span><span class='line'>          <span class="k">return</span> <span class="n">retval</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When we save the intermediate results to disk, we get a file like this for a static product type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;product</span> <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="na">xmlns:xsd=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;createdby</span> <span class="na">name=</span><span class="s">&quot;First name Last name&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>3bbf2574-c324-df11-b753-0800277bde92<span class="nt">&lt;/createdby&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;createdon</span> <span class="na">date=</span><span class="s">&quot;6/22/2010&quot;</span> <span class="na">time=</span><span class="s">&quot;3:06 PM&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>2010-06-22T15:06:20-04:00<span class="nt">&lt;/createdon&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;defaultuomid</span> <span class="na">name=</span><span class="s">&quot;Primary Unit&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>36d207f3-3d9e-4e29-abf7-de19896e78dc<span class="nt">&lt;/defaultuomid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;defaultuomscheduleid</span> <span class="na">name=</span><span class="s">&quot;Default Unit&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>999cdc43-8207-42f5-b15b-f4afdaee3f0f<span class="nt">&lt;/defaultuomscheduleid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;exchangerate</span> <span class="na">formattedvalue=</span><span class="s">&quot;1.0000000000&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>1<span class="nt">&lt;/exchangerate&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;iskit</span> <span class="na">name=</span><span class="s">&quot;No&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>false<span class="nt">&lt;/iskit&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;isstockitem</span> <span class="na">name=</span><span class="s">&quot;No&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>false<span class="nt">&lt;/isstockitem&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;modifiedby</span> <span class="na">name=</span><span class="s">&quot;First name Last name&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>3bbf2574-c324-df11-b753-0800277bde92<span class="nt">&lt;/modifiedby&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;modifiedon</span> <span class="na">date=</span><span class="s">&quot;6/22/2010&quot;</span> <span class="na">time=</span><span class="s">&quot;5:14 PM&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>2010-06-22T17:14:49-04:00<span class="nt">&lt;/modifiedon&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;name</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>Test Product<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;organizationid</span> <span class="na">name=</span><span class="s">&quot;danco&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>c1c701e4-f69c-4363-8dba-41aa5d5754ac<span class="nt">&lt;/organizationid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;pricelevelid</span> <span class="na">name=</span><span class="s">&quot;My Price List&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>4098399d-317e-df11-a711-0800277bde92<span class="nt">&lt;/pricelevelid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;productid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>40b0ae3d-317e-df11-a711-0800277bde92<span class="nt">&lt;/productid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;productnumber</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>PROD1<span class="nt">&lt;/productnumber&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;producttypecode</span> <span class="na">name=</span><span class="s">&quot;Sales Inventory&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>1<span class="nt">&lt;/producttypecode&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;quantitydecimal</span> <span class="na">formattedvalue=</span><span class="s">&quot;2&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>2<span class="nt">&lt;/quantitydecimal&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;statecode</span> <span class="na">formattedvalue=</span><span class="s">&quot;Active&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>Active<span class="nt">&lt;/statecode&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;statuscode</span> <span class="na">name=</span><span class="s">&quot;Active&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>1<span class="nt">&lt;/statuscode&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;transactioncurrencyid</span> <span class="na">name=</span><span class="s">&quot;US Dollar&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>447adec9-c324-df11-b753-0800277bde92<span class="nt">&lt;/transactioncurrencyid&gt;</span>
+</span><span class='line'><span class="nt">&lt;/product&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The DynamicEntity looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="p">=</span><span class="s">&quot;1.0&quot;</span><span class="p">?&gt;</span>
+</span><span class='line'><span class="p">&lt;</span><span class="n">DynamicEntity</span> <span class="n">xmlns</span><span class="p">:</span><span class="n">xsi</span><span class="p">=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="n">xmlns</span><span class="p">:</span><span class="n">xsd</span><span class="p">=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;product&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>  <span class="p">&lt;</span><span class="n">Properties</span> <span class="n">xmlns</span><span class="p">=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2006/WebServices&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;StateProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;statecode&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span><span class="p">&gt;</span><span class="n">Active</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;KeyProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;productid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span><span class="p">&gt;</span><span class="m">40</span><span class="n">b0ae3d</span><span class="p">-</span><span class="m">317</span><span class="n">e</span><span class="p">-</span><span class="n">df11</span><span class="p">-</span><span class="n">a711</span><span class="p">-</span><span class="m">0800277</span><span class="n">bde92</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmBooleanProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;iskit&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;No&quot;</span><span class="p">&gt;</span><span class="k">false</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmDateTimeProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;createdon&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">date</span><span class="p">=</span><span class="s">&quot;6/22/2010&quot;</span> <span class="n">time</span><span class="p">=</span><span class="s">&quot;3:06 PM&quot;</span><span class="p">&gt;</span><span class="m">2010</span><span class="p">-</span><span class="m">06</span><span class="p">-</span><span class="m">22</span><span class="n">T15</span><span class="p">:</span><span class="m">06</span><span class="p">:</span><span class="m">20</span><span class="p">-</span><span class="m">04</span><span class="p">:</span><span class="m">00</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmDateTimeProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;modifiedon&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">date</span><span class="p">=</span><span class="s">&quot;6/22/2010&quot;</span> <span class="n">time</span><span class="p">=</span><span class="s">&quot;5:14 PM&quot;</span><span class="p">&gt;</span><span class="m">2010</span><span class="p">-</span><span class="m">06</span><span class="p">-</span><span class="m">22</span><span class="n">T17</span><span class="p">:</span><span class="m">14</span><span class="p">:</span><span class="m">49</span><span class="p">-</span><span class="m">04</span><span class="p">:</span><span class="m">00</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;defaultuomscheduleid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;Default Unit&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;uomschedule&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">999</span><span class="n">cdc43</span><span class="p">-</span><span class="m">8207</span><span class="p">-</span><span class="m">42f5</span><span class="p">-</span><span class="n">b15b</span><span class="p">-</span><span class="n">f4afdaee3f0f</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;PicklistProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;producttypecode&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;Sales Inventory&quot;</span><span class="p">&gt;</span><span class="m">1</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;StringProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span><span class="p">&gt;</span><span class="n">Test</span> <span class="n">Product</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmBooleanProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;isstockitem&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;No&quot;</span><span class="p">&gt;</span><span class="k">false</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;StatusProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;statuscode&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;Active&quot;</span><span class="p">&gt;</span><span class="m">1</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;transactioncurrencyid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;US Dollar&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;transactioncurrency&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">447</span><span class="n">adec9</span><span class="p">-</span><span class="n">c324</span><span class="p">-</span><span class="n">df11</span><span class="p">-</span><span class="n">b753</span><span class="p">-</span><span class="m">0800277</span><span class="n">bde92</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmDecimalProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;exchangerate&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">formattedvalue</span><span class="p">=</span><span class="s">&quot;1.0000000000&quot;</span><span class="p">&gt;</span><span class="m">1.0000000000</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;pricelevelid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;My Price List&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;pricelevel&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">4098399d</span><span class="p">-</span><span class="m">317</span><span class="n">e</span><span class="p">-</span><span class="n">df11</span><span class="p">-</span><span class="n">a711</span><span class="p">-</span><span class="m">0800277</span><span class="n">bde92</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;modifiedby&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;First name Last name&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;systemuser&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">3</span><span class="n">bbf2574</span><span class="p">-</span><span class="n">c324</span><span class="p">-</span><span class="n">df11</span><span class="p">-</span><span class="n">b753</span><span class="p">-</span><span class="m">0800277</span><span class="n">bde92</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;StringProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;productnumber&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span><span class="p">&gt;</span><span class="n">PROD1</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;defaultuomid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;Primary Unit&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;uom&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">36d207f3</span><span class="p">-</span><span class="m">3d9e-4</span><span class="n">e29</span><span class="p">-</span><span class="n">abf7</span><span class="p">-</span><span class="n">de19896e78dc</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmNumberProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;quantitydecimal&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">formattedvalue</span><span class="p">=</span><span class="s">&quot;2&quot;</span><span class="p">&gt;</span><span class="m">2</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;createdby&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;First name Last name&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;systemuser&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">3</span><span class="n">bbf2574</span><span class="p">-</span><span class="n">c324</span><span class="p">-</span><span class="n">df11</span><span class="p">-</span><span class="n">b753</span><span class="p">-</span><span class="m">0800277</span><span class="n">bde92</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;organizationid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;danco&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;organization&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="n">c1c701e4</span><span class="p">-</span><span class="n">f69c</span><span class="p">-</span><span class="m">4363</span><span class="p">-</span><span class="m">8d</span><span class="n">ba</span><span class="p">-</span><span class="m">41</span><span class="n">aa5d5754ac</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>  <span class="p">&lt;/</span><span class="n">Properties</span><span class="p">&gt;</span>
+</span><span class='line'><span class="p">&lt;/</span><span class="n">DynamicEntity</span><span class="p">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I&#8217;ll be following up with how I&#8217;m using this in my mock CRM implementation that I&#8217;m going to use for testing.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-07T20:46:46-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoursite.com/blog/2010/07/07/serialization-crm-entities-vs-dynamicentities/" data-via="" data-counturl="http://yoursite.com/blog/2010/07/07/serialization-crm-entities-vs-dynamicentities/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2010/07/07/enabling-design-mode-in-asp-net-webparts/" title="Previous Post: Enabling design mode in ASP.NET WebParts">&laquo; Enabling design mode in ASP.NET WebParts</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2010/07/12/getting-a-remote-shell-with-windows/" title="Next Post: Getting a remote shell with Windows">Getting a remote shell with Windows &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

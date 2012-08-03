@@ -1,0 +1,1107 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="I was improving the design of some Silverlight code recently where the application was designed to be controlled externally from another Silverlight &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/page/3/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/04/12/scripting-silverlight-4-applications-with-javascript/">Scripting Silverlight 4 Applications With Javascript</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-12T13:31:36-07:00" pubdate data-updated="true">Apr 12<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I was improving the design of some Silverlight code recently where the application was designed to be controlled externally from another Silverlight application. I&#8217;ll cover how to do this in two parts. The first part is exposing some API to the browser via the <a href="http://msdn.microsoft.com/en-us/library/cc645076(v=vs.95">Html bridge</a>.aspx).</p>
+
+<p>In order to make a type scriptable in Silverlight all we need to do is add an attribute to the type definition and register it with the Html page. My code looks something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[ScriptableType]</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">partial</span> <span class="k">class</span> <span class="nc">MainPage</span> <span class="p">:</span> <span class="n">UserControl</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>          
+</span><span class='line'>      <span class="k">public</span> <span class="nf">MainPage</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">InitializeComponent</span><span class="p">();</span>
+</span><span class='line'>          <span class="n">HtmlPage</span><span class="p">.</span><span class="n">RegisterScriptableObject</span><span class="p">(</span><span class="s">&quot;MainPage&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+</span><span class='line'>          
+</span><span class='line'>  <span class="p">...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This code will register the class as scriptable on the page. Here is the method that I wanted to expose to Javascript:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">  [ScriptableMember]</span>
+</span><span class='line'>      <span class="k">public</span> <span class="k">void</span> <span class="nf">SetEventByID</span><span class="p">(</span> <span class="kt">string</span> <span class="n">in_eventID</span> <span class="p">)</span> <span class="p">{</span>       
+</span><span class='line'>              <span class="n">ApplicationState</span><span class="p">.</span><span class="n">SetEventByID</span><span class="p">(</span> <span class="n">in_eventID</span> <span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice that we have marked this member with a ScriptableMemberAttribute. Since the type is already marked as a ScriptableType, this is not necessary, I&#8217;ve just shown it as an alternative to marking the entire type as scriptable, thus exposing all of its immediate (non-inherited) members.</p>
+
+<p>For more details on exposing Silverlight code to Javascript, I highly recommend that you read <a href="http://msdn.microsoft.com/en-us/library/cc645085(v=vs.95">this MSDN article</a>.aspx).</p>
+
+<p>The calling code in Javascript looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;silverlight&#39;</span><span class="p">).</span><span class="nx">Content</span><span class="p">.</span><span class="nx">MainPage</span><span class="p">.</span><span class="nx">SetEventByID</span><span class="p">(</span> <span class="s1">&#39;097346E8-9917-DD11-96BD-0003FF464654&#39;</span> <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that we get the Silverlight host object on the page by ID (which happens to be &#8216;silverlight&#8217; in this example) and access the type by its name via the Content attribute exposed by Silverlight.</p>
+
+<p>In the next installment I&#8217;ll show how we can call out to a Javascript function in the page for the other half of our Silverlight-to-Silverlight communication scheme.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/04/01/using-asp-net-web-parts-in-sitecore-cms/">Using ASP.NET Web Parts in Sitecore CMS</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-01T17:22:21-07:00" pubdate data-updated="true">Apr 1<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;m going to share with you a technique for re-using simple Microsoft ASP.NET Web Parts in content management systems other than SharePoint. I&#8217;ll be using <a href="http://www.sitecore.net/">Sitecore </a>for this article but the technique should apply to DotNetNuke and others. This is useful for keeping a consistent library of Web components that can share the same code base. Of course, the limitation here is that if we use any SharePoint-specific code we&#8217;ll have to either write separate parts or try to abstract out the vendor-specific code. In my case, I had some code to retrieve the logged-in user. I won&#8217;t show that code in this post for simplicity, but later I&#8217;ll show you a technique that I&#8217;ve used to allow pluggable authentication code so the code is reusable except for the very small part that touches SharePoint directly.</p>
+
+<p>In this example I&#8217;m going to use a very simple Web Part that I&#8217;ve created to easily test and illustrate the concept and nothing more. Here is the code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">System.Data</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">System.Collections.Generic</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">System.ComponentModel</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">System.Web</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">System.Web.UI</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">System.Web.UI.HtmlControls</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">System.Web.UI.WebControls</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">System.Web.UI.WebControls.WebParts</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">namespace</span> <span class="nn">WebParts</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="na">    [ToolboxItemAttribute(false)]</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">class</span> <span class="nc">IFramePart</span> <span class="p">:</span> <span class="n">WebPart</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">CreateChildControls</span><span class="p">()</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="n">Title</span> <span class="p">=</span> <span class="s">&quot;IFrame&quot;</span><span class="p">;</span>
+</span><span class='line'>              <span class="n">HtmlGenericControl</span> <span class="n">iframe</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HtmlGenericControl</span><span class="p">(</span> <span class="s">&quot;iframe&quot;</span> <span class="p">);</span>
+</span><span class='line'>              <span class="n">iframe</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span> <span class="s">&quot;src&quot;</span><span class="p">,</span> <span class="s">&quot;http://www.google.com&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="n">Controls</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">iframe</span><span class="p">);</span>
+</span><span class='line'>            <span class="n">ChildControlsCreated</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This Web Part contains an IFrame that points to Google. If we render this and see the Google home page we know it is working. Later on we can use <a href="http://crmvoyager.wordpress.com/2010/11/16/creating-configurable-web-part-properties/">Web Part configurable properties</a> to allow this url to be set using the design mode of ASP.NET Web Parts.</p>
+
+<p>In Sitecore, in order to make this code available in the CMS, we&#8217;ll have to create an App_Code folder under the site root and place the file there. Sitecore is an ASP.NET Web site, and its behavior is no different than one that you&#8217;d create in Visual Studio. That is, there are special folders under the site like App_Code, App_Config and App_Data. Speaking of App_Data, some version of SQL Server (Express works) must be installed in order to take advantage of Web Part personalization features. That is, the state of the Web Part (hidden, collapsed) will be persisted to a database under App_Data automatically if we use personalization features. In my example we will so double-check that SQL Server is available and started, and that the App_Data folder is present under the Sitecore root.</p>
+
+<p>I&#8217;m going to create the Web Part UI in Sitecore as a sublayout. This is basically another name for an .ascx UserControl in Sitecore terminology. The code for the UserControl looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="err">&lt;</span>%@ Control Language=&quot;c#&quot; AutoEventWireup=&quot;true&quot; TargetSchema=&quot;http://schemas.microsoft.com/intellisense/ie5&quot; %&gt;
+</span><span class='line'><span class="err">&lt;</span>%@ register tagprefix=&quot;webParts&quot; Namespace=&quot;WebParts&quot;%&gt;
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;div&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;asp:WebPartManager</span> <span class="na">ID=</span><span class="s">&quot;WebPartManager1&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/asp:WebPartManager&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;table&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;tr&gt;&lt;td&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;asp:WebPartZone</span> <span class="na">ID=</span><span class="s">&quot;WebPartZone1&quot;</span> <span class="na">width=</span><span class="s">&quot;800px&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;zonetemplate&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;webParts:IFramePart</span> <span class="na">Height=</span><span class="s">&quot;200px&quot;</span>
+</span><span class='line'>              <span class="na">runat=</span><span class="s">&quot;server&quot;</span>
+</span><span class='line'>              <span class="na">id=</span><span class="s">&quot;IFramePart1&quot;</span>
+</span><span class='line'>              <span class="na">AllowZoneChange=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/zonetemplate&gt;</span>
+</span><span class='line'>      
+</span><span class='line'>  <span class="nt">&lt;/asp:WebPartZone&gt;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="nt">&lt;/td&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;td&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;asp:EditorZone</span> <span class="na">ID=</span><span class="s">&quot;EditorZone1&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;ZoneTemplate&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;asp:PropertyGridEditorPart</span> <span class="na">Title=</span><span class="s">&quot;Edit Custom Properties&quot;</span> <span class="na">ID=</span><span class="s">&quot;PropertyGridEditorPart1&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="nt">&lt;asp:AppearanceEditorPart</span> <span class="na">ID=</span><span class="s">&quot;AppearanceEditorPart1&quot;</span>
+</span><span class='line'>          <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;asp:LayoutEditorPart</span> <span class="na">ID=</span><span class="s">&quot;LayoutEditorPart1&quot;</span>
+</span><span class='line'>          <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;asp:BehaviorEditorPart</span> <span class="na">ID=</span><span class="s">&quot;BehaviorEditorPart1&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="nt">&lt;/ZoneTemplate&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/asp:EditorZone&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/td&gt;&lt;/tr&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/table&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;asp:Button</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="na">onclick=</span><span class="s">&quot;Reset_Personalization&quot;</span> <span class="na">Text=</span><span class="s">&quot;Reset Personalization&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;asp:Button</span> <span class="na">ID=</span><span class="s">&quot;Button1&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="na">onclick=</span><span class="s">&quot;Enable_Edit&quot;</span> <span class="na">Text=</span><span class="s">&quot;Enable Edit&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;script </span><span class="na">runat=</span><span class="s">&quot;server&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="k">void</span> <span class="nx">Reset_Personalization</span><span class="p">(</span> <span class="nx">object</span> <span class="nx">sender</span><span class="p">,</span> <span class="nx">EventArgs</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">WebPartManager1</span><span class="p">.</span><span class="nx">Personalization</span><span class="p">.</span><span class="nx">ResetPersonalizationState</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">void</span> <span class="nx">Enable_Edit</span><span class="p">(</span> <span class="nx">object</span> <span class="nx">sender</span><span class="p">,</span> <span class="nx">EventArgs</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">WebPartManager1</span><span class="p">.</span><span class="nx">DisplayMode</span> <span class="o">=</span> <span class="nx">WebPartManager</span><span class="p">.</span><span class="nx">EditDisplayMode</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="nt">&lt;/script&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In order to add this code to the site, we&#8217;ll have to create a new sublayout in the Sitecore manager view and browse to the new file under the Sitecore site on the filesystem. The sublayouts should end up under SitecoreWebsite\WebSite\Layouts.</p>
+
+<p>There is some extra code here that I should explain now. The primary advantage of having a Web Part, in addition to code reuse, is that there are built-in provisions for editing the part at design time once it is in the page. By adding an EditorZone in addition to the required WebPartZone and WebPartManager we are able to enable this default editor behavior in the page. I&#8217;ve added a button at the bottom of the UserControl that enables edit mode.</p>
+
+<p>In order to use this in a Sitecore layout, I applied the included SampleLayout to a Sitecore data object and added my custom control. Editing won&#8217;t work in the Sitecore designer, so go back to the data object and choose &#8220;preview&#8221;. In preview, all of the functionality of the WebPart should be available.</p>
+
+<p>Here is what it looks like when we are finished:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/04/sc-webpart.jpg"><img src="http://crmvoyager.files.wordpress.com/2011/04/sc-webpart.jpg" alt="" /></a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/02/25/assembly-binding-redirection-in-asp-net/">Assembly Binding Redirection in ASP.NET</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-25T12:07:05-08:00" pubdate data-updated="true">Feb 25<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>When dealing with signed strongly-named assemblies in .NET, we&#8217;ve all come across the dreaded</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>BadImageFormatException "An attempt was made to load a program with an incorrect format"
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Or</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>System.IO.FileLoadException: Could not load file or assembly 'Utility, Version=1.1.0.2, Culture=neutral, PublicKeyToken=37dd581281d764f7' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the first case, we need to find the right dll for the platform that we are on, i.e. 64bit vs 32bit. In my case the first error led to the second, since once I found the right dll, of course the version number was newer, and I could not find the older version to download.</p>
+
+<p>Of course in .NET desktop apps, we could add an assembly binding redirect to get the right .dll loaded up provided that we have it. In a Web application, it is just as easy, you just have to add a runtime section directly under the main configuration tag.</p>
+
+<p>For example, I wanted to drop a different version of SQLite into my SiteCore installation, so I grabbed the <a href="http://sourceforge.net/projects/sqlite-dotnet2/files/SQLite%20for%20ADO.NET%202.0/">System.Data.SQLite binaries</a> and dropped the one that I wanted into SiteCore&#8217;s \bin directory. Then I tried to load up the site and looked at the error message to see which version it was looking for. Once we know what it is looking for, we can write a binding redirection in the web.config file like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'> <span class="nt">&lt;runtime&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;assemblyBinding</span> <span class="na">xmlns=</span><span class="s">&quot;urn:schemas-microsoft-com:asm.v1&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;dependentAssembly&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;assemblyIdentity</span> <span class="na">name=</span><span class="s">&quot;System.Data.SQLite&quot;</span>
+</span><span class='line'>                          <span class="na">publicKeyToken=</span><span class="s">&quot;db937bc2d44ff139&quot;</span>
+</span><span class='line'>                          <span class="na">culture=</span><span class="s">&quot;neutral&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;bindingRedirect</span> <span class="na">oldVersion=</span><span class="s">&quot;1.0.48.0&quot;</span>
+</span><span class='line'>                         <span class="na">newVersion=</span><span class="s">&quot;1.0.66.0&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/dependentAssembly&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/assemblyBinding&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/runtime&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is the <a href="http://msdn.microsoft.com/en-us/library/eftw1fys.aspx">documentation for bindingRedirect</a> from MSDN. It doesn&#8217;t explicitly cover redirects in Web applications, and there is a lot of confusing information out on the web about this. Hopefully this post clears some of it up.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/02/25/how-to-list-process-ids-for-iis7-worker-processes/">How to List Process IDs for IIS7 Worker Processes</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-25T11:30:06-08:00" pubdate data-updated="true">Feb 25<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In Microsoft IIS7, all management commands have been consolidated under the appcmd.exe commandline tool. In the past there was a collection of VBscripts that allowed you to script access to IIS.</p>
+
+<p>One of the things that I need to do that can&#8217;t be done in the GUI is to list which application pools are running under which w3wp.exe worker process instances. Using the Windows task manager will show you the process IDs but won&#8217;t show you which application pools are being served by each. The inetmgr tool will show you the application pools but won&#8217;t show you the process information.</p>
+
+<p>Under IIS6 there was a script called iisapp.vbs that would show you the running w3wp processes, their PIDs and the application pool that they were serving. Under IIS7 this functionality has been merged into appcmd.exe.</p>
+
+<p>Appcmd was not in the path for me, so I had to add it using:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>c:\&gt; set path=%path%;C:\Windows\System32\inetsrv
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then we can run</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>C:\Program Files (x86)\ICW&gt;appcmd list wp
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>to get:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>WP "5260" (applicationPool:CRMAppPool)
+</span><span class='line'>WP "5736" (applicationPool:SharePoint - 80)
+</span><span class='line'>WP "4460" (applicationPool:SecurityTokenServiceApplicationPool)
+</span><span class='line'>WP "4700" (applicationPool:2d129968e2144980a7614f288ac778fd)
+</span><span class='line'>WP "5684" (applicationPool:Sitecore6.0AppPool)
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Short and sweet.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/02/18/accessing-metadata-in-microsoft-crm-2011/">Accessing Metadata in Microsoft CRM 2011</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-18T14:32:54-08:00" pubdate data-updated="true">Feb 18<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I have been porting a lot of code over from CRM4 to the new CRM 2011 recently. I was investigating how to get some code converted that uses the MetadataService in CRM4 but I wasn&#8217;t finding out much about it on the web.</p>
+
+<p>If you are looking for the metadata service in 2011 you can stop now, because there isn&#8217;t one. The new way of doing things is just to make your metadata requests to the main Web service.</p>
+
+<p>The message classes are named the same, so the code will be mostly compatible once you set things up to use the 2011 Web service.</p>
+
+<p>The namespaces you&#8217;ll need in most cases will be:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="c1">// for service proxy type, IOrganizationService/OrganizationServiceProxy</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Xrm.Sdk.Client</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// needed for &#39;RetrieveXXXRequest&#39; types</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Xrm.Sdk.Messages</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// needed for actual metadata descriptor types</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Xrm.Sdk.Metadata</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For example, one of the things that I use metadata for is to get the text values that are in a CRM picklist. The following code snippet will query CRM 2011 metadata for the gendercode field on the contact entity and print out the values.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">IOrganizationService</span> <span class="n">serviceProxy</span> <span class="p">=</span> <span class="k">new</span> <span class="n">OrganizationServiceProxy</span><span class="p">(</span>
+</span><span class='line'>  <span class="n">Config</span><span class="p">.</span><span class="n">OrganizationUri</span><span class="p">,</span>
+</span><span class='line'>  <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>  <span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Net</span><span class="p">.</span><span class="n">NetworkCredential</span><span class="p">)</span><span class="n">System</span><span class="p">.</span><span class="n">Net</span><span class="p">.</span><span class="n">CredentialCache</span><span class="p">.</span><span class="n">DefaultCredentials</span><span class="p">,</span>
+</span><span class='line'>  <span class="k">null</span>
+</span><span class='line'><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">RetrieveAttributeRequest</span> <span class="n">request</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RetrieveAttributeRequest</span><span class="p">();</span>
+</span><span class='line'><span class="n">request</span><span class="p">.</span><span class="n">EntityLogicalName</span> <span class="p">=</span> <span class="s">&quot;contact&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">request</span><span class="p">.</span><span class="n">LogicalName</span> <span class="p">=</span> <span class="s">&quot;gendercode&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">RetrieveAttributeResponse</span> <span class="n">response</span> <span class="p">=</span> <span class="p">(</span> <span class="n">RetrieveAttributeResponse</span> <span class="p">)</span><span class="n">serviceProxy</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span> <span class="n">request</span> <span class="p">);</span>
+</span><span class='line'><span class="n">PicklistAttributeMetadata</span> <span class="n">picklist</span> <span class="p">=</span> <span class="p">(</span> <span class="n">PicklistAttributeMetadata</span> <span class="p">)</span><span class="n">response</span><span class="p">.</span><span class="n">AttributeMetadata</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span> <span class="n">OptionMetadata</span> <span class="n">option</span> <span class="k">in</span> <span class="n">picklist</span><span class="p">.</span><span class="n">OptionSet</span><span class="p">.</span><span class="n">Options</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span> <span class="n">option</span><span class="p">.</span><span class="n">Label</span><span class="p">.</span><span class="n">UserLocalizedLabel</span><span class="p">.</span><span class="n">Label</span> <span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/02/12/create-a-fully-standalone-crm-2011-environment-on-amazon-ec2/">Create a Fully Standalone Microsoft CRM 2011 Environment on Amazon EC2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-12T23:57:22-08:00" pubdate data-updated="true">Feb 12<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I set up a development environment that I can share in the cloud with my colleagues and partners for sharing ideas and quick demos. There are already a few articles out there that can help you get the latest CRM 2011 bits set up on a virtual machine, but I didn&#8217;t find anything specific to EC2 or anything on installing everything on one server including Active Directory (so the whole setup is completely self-contained), so I&#8217;m writing up my experiences here for you. Keep in mind that we are installing a release candidate here, as the final bits aren&#8217;t available yet.</p>
+
+<p>Briefly, the steps are:</p>
+
+<ul>
+<li><p>Create Windows Server 2008 EC2 instance</p></li>
+<li><p>Promote instance to Active Directory domain controller</p></li>
+<li><p>Install IIS+ASP.NET</p></li>
+<li><p>Install Sql Server 2008 R2</p></li>
+<li><p>Install CRM 2011</p></li>
+</ul>
+
+
+<p>For this guide I&#8217;m assuming that you have met a few prerequisites:</p>
+
+<ul>
+<li><p>An Amazon AWS account</p></li>
+<li><p>An MSDN subscription or retail copy of SQL Server 2008 R2</p></li>
+<li><p>The CRM 2011 RC <a href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=c3f82c6f-c123-4e80-b9b2-ee422a16b91d">bits</a></p></li>
+</ul>
+
+
+<p>Also, I won&#8217;t belabor every individual installation step. I&#8217;ll cover the high points necessary to get things installed so that CRM 2011 won&#8217;t have any installation issues. This means I&#8217;ll be accepting the default installation details for SQL Server. If you need to customize things feel free to do so, but I haven&#8217;t tested other configurations so it may not work as expected.</p>
+
+<p>There is a great guide <a href="http://crmscape.blogspot.com/2010/09/creating-ms-crm-2011-vm-part-1-of-2.html">here</a> for installing the CRM 2011 Beta on a local virtual machine. He mentions that it will take a full day to set up, but using Amazon&#8217;s available Windows images, we should be able to get that time down to about 3 hours. If you already have an EC2 image set up with a password set and have the SQL Server installation media you might be able to do this in just over two hours.</p>
+
+<h2>Start the EC2 instance</h2>
+
+<p>Signing up for an Amazon Web Services account is a prerequisite for all of this. I won&#8217;t go into it here, but there is now a nice <a href="https://console.aws.amazon.com">management console</a> for AWS, so starting up EC2 instances is now pretty easy using the web. The critical piece is getting the right server image the first time. We want the following three things:</p>
+
+<ul>
+<li><p>An EBS based image</p></li>
+<li><p>Windows Server 2008 64bit</p></li>
+<li><p>Without SQL Server pre-installed</p></li>
+</ul>
+
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/ami.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/ami.png" alt="" /></a>
+It is important not to use a SQL server image, as you will pay more per hour and it won&#8217;t have Reporting Services installed anyway. 64bit is important because the CRM release candidate is 64bit only. EBS is important if you want to stop the server later without rebuilding everything. The alternative to EBS is AMI, which is backed by S3. In order to keep your changes (i.e. all of the stuff we are going to be installing) with an AMI instance will require you to &#8220;bundle&#8221; the instance every time new changes are made that you want to keep. I recommend EBS since it is much simpler and only slightly more expensive. Detailed instructions on launching a Windows instance and decrypting the admin password can be found <a href="http://www.michaelckennedy.net/blog/2010/01/31/BuildingWindowsMachinesInAmazonEC2.aspx">here</a>. I won&#8217;t go into it here since it is beyond the scope of this article.</p>
+
+<p>There is one critical configuration step to take before we proceed. By default, Windows EC2 instances have dynamic hostnames which are generated when the instance boots up. This will cause problems later on once we have promoted the box to the domain controller role and have SQL server installed. Forgetting this step is not fatal, but changing the host name on a domain controller can be a pain, so best to avoid having to do it altogether.</p>
+
+<p>Amazon achieves the dynamic naming using a Windows service that is installed on the base image. We can configure the behavior of this service using a tool called ec2 service properties, which can be found in the start menu. All we need to do is uncheck the setting for &#8220;Set Computer Name&#8221; per the following screenshot:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/ec2-setname.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/ec2-setname.png" alt="" /></a></p>
+
+<h2>Promote server to Active Directory domain controller</h2>
+
+<p>The first thing that I do (after changing the admin password - we&#8217;ll be rebooting a few times) is promote the server to an Active Directory domain controller. CRM requires a domain, and since we are going for a self-contained installation, we have to promote the CRM server itself to the domain controller role. Ordinarily it is a bad idea for a domain controller to have any other server role, but for a development environment this will be fine. Additionally, promoting the server before we install SQL helps avoid additional configuration steps as a result of the server&#8217;s name and user accounts changing.</p>
+
+<p>Promoting a domain controller is done from the commandline by running</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>c:\&gt;dcpromo.exe </span></code></pre></td></tr></table></div></figure>
+
+
+<p>The promotion takes a while, so I grab the SQL Server install media from MSDN during this time. Transfer rates from MS are pretty fast and it should download by the time the DC is ready to go.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/newdomain.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/newdomain.png" alt="" /></a></p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/domain-name.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/domain-name.png" alt="" /></a></p>
+
+<p>We&#8217;ll also need to install an ISO mounting program to install SQL Server. I use MagicDisc, which can be found <a href="http://www.magiciso.com/tutorials/miso-magicdisc-overview.htm">here</a>. Get the 64 bit Vista version for Server 2008. In the case that you are using Server 2008 R2, get the Windows 7 version.</p>
+
+<p>You&#8217;ll have to reboot after dcpromo has done its thing. Remember to use the new domain name when you log back into the server. The login will require domain\user now that the server is in a domain (it <em>is</em> the domain!).</p>
+
+<h2>Install SQL Server 2008 R2</h2>
+
+<p>Once the SQL installation media is ready, install MagicDisc and mount the ISO. Run the setup and select a new SQL installation. I used the defaults for everything, installing all services. The most important thing to get installed beyond SQL Server itself is SSRS, so at the very least make sure that Reporting Services is checked off.</p>
+
+<p>Since we have promoted the server to domain controller status, the default local accounts cannot be used as the SQL Server service accounts. Create a new non-admin user called &#8216;sqlserver&#8217; and use that as the service account.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/sqlserver-account.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/sqlserver-account.png" alt="" /></a></p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/sqlserver-user.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/sqlserver-user.png" alt="" /></a></p>
+
+<p>Also note that the SQL Browser service needs to be manually enabled and started. This will be necessary later on in order for the CRM installer to find the SQL server instance.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/sql-default-install.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/sql-default-install.png" alt="" /></a></p>
+
+<h2>Install IIS and ASP.NET</h2>
+
+<p>Installing IIS is accomplished by adding the Web server role to the server using the server management console. Just note that in addition to the IIS role we&#8217;ll need ASP.NET, which must be selected separately. Once these two things are selected, the installer will install them both simultaneously.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/webserver-role.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/webserver-role.png" alt="" /></a></p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/asp-net.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/asp-net.png" alt="" /></a></p>
+
+<h2>Install CRM 2011 Release Candidate</h2>
+
+<p>Now for the moment we have been waiting for. Run the CRM 2011 RC installer. If the .NET Framework 4.0 is not installed, the CRM installer will install it and ask you to reboot, which is a minor annoyance, but the installer will stop and wait for you to do it, so don&#8217;t let it go unattended for too long or you&#8217;ll never make it in under three hours! I used the defaults everywhere possible and set the service accounts to &#8220;Network Service&#8221;. You&#8217;ll have to browse for the SQL Server instance but the installer should find the SRSS server automatically.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/orgname.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/orgname.png" alt="" /></a></p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/02/service-accounts.png"><img src="http://crmvoyager.files.wordpress.com/2011/02/service-accounts.png" alt="" /></a></p>
+
+<p>I had a lot of missteps along the way to getting all of this installed, but on the last run I sailed through it in under 3 hours including getting the 4GB SQL Server installation media from MSDN. Hopefully you have similar results and you won&#8217;t have to spend a whole day setting things up.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/01/16/setting-up-a-silverlight-4-development-environment/">Setting Up a Silverlight 4 Development Environment</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-16T19:51:31-08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I had to run through a complete workstation setup recently including installation of Visual Studio and the Silverlight development tools so I wanted to write up a quick blog post to document the process.</p>
+
+<p>I started off with a clean installation of Visual Studio 2010. This will install some project templates for Silverlight by default but unfortunately this will not be sufficient for development out of the box. At the minimum we will need to have the Silverlight developer runtime in addition to the project templates. Additionally, the templates included in the VS2010 installer are for an older 3.0 version of Silverlight. Not quite what we want.</p>
+
+<p>To rectify all of this, we need to install the Silverlight 4 Tools for Visual studio, available from Microsoft <a href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=b3deb194-ca86-4fb6-a716-b67c2604a139&amp;displaylang=en">here</a>.</p>
+
+<p>The installer includes the following components. This can be used to check for previously installed software that may have come from previous attempts to get everything installed.</p>
+
+<ul>
+<li><p>Silverlight 4 developer runtime</p></li>
+<li><p>Silverlight 4 SDK (software development kit)</p></li>
+<li><p>Update for Visual Studio 2010 and Visual Web Developer Express 2010 (KB982218)</p></li>
+<li><p>Silverlight 4 Tools for Visual Studio 2010</p></li>
+<li><p>WCF RIA Services V1.0 for Silverlight 4</p></li>
+<li><p>F# Runtime for Silverlight 4</p></li>
+</ul>
+
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/01/sl4tools-install.png"><img src="http://crmvoyager.files.wordpress.com/2011/01/sl4tools-install.png?w=300" alt="" /></a>
+Although the developer runtime is listed among the components that this package should install, I&#8217;ve found that it must be installed separately as outlined below.</p>
+
+<p>Grab the file Silverlight_Developer.exe from <a href="http://go.microsoft.com/fwlink/?LinkId=146060">here</a> and install.
+<a href="http://crmvoyager.files.wordpress.com/2011/01/sl4-developer-install.png"><img src="http://crmvoyager.files.wordpress.com/2011/01/sl4-developer-install.png?w=300" alt="" /></a></p>
+
+<p>Once both of these packages have been installed you should be able to open Visual Studio and create a new Silverlight project as shown in the screenshot below.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/01/new-sl-project.png"><img src="http://crmvoyager.files.wordpress.com/2011/01/new-sl-project.png?w=300" alt="" /></a></p>
+
+<p>If everything has been installed properly you should get prompted for a project options dialog for setting up the new Silverlight project.
+<a href="http://crmvoyager.files.wordpress.com/2011/01/new-sl4-app.png"><img src="http://crmvoyager.files.wordpress.com/2011/01/new-sl4-app.png?w=300" alt="" /></a></p>
+
+<p>Hopefully this helps you get up and running with your Silverlight development environment.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/01/14/how-to-enable-trace-logging-in-microsoft-crm-2011/">How to Enable Trace Logging in Microsoft CRM 2011</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-14T22:59:16-08:00" pubdate data-updated="true">Jan 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hello again CRM fans. I&#8217;m tearing through a bunch of client code upgrades from the old CRM to the new 2011 stuff. In the process, I&#8217;m taking notes on what is different and what is the same. Fortunately enabling tracing is just the same as it was in CRM 4.0, but since there don&#8217;t seem to be any articles out there that validate this, I&#8217;m posting it here.</p>
+
+<p>In case you didn&#8217;t know already, there are a few registry keys that control the behavior of the CRM trace log file. Here is the <a href="http://support.microsoft.com/kb/907490">MSDN article</a> that describes the different registry keys involved.</p>
+
+<p>If you are in a hurry, there are only three keys that you really need: one to specify the file name, and two flags to actually enable tracing.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>TraceDirectory
+</span><span class='line'>TraceEnabled
+</span><span class='line'>TraceRefresh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is a screenshot to help you out:
+<a href="http://crmvoyager.files.wordpress.com/2011/01/registry.png"><img src="http://crmvoyager.files.wordpress.com/2011/01/registry.png?w=300" alt="" /></a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/01/14/deploying-referenced-assemblies-in-crm-2011-plugins-and-workflows/">Deploying Referenced Assemblies in CRM 2011 Plugins and Workflows</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-14T21:31:04-08:00" pubdate data-updated="true">Jan 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>If you&#8217;ve ever developed a more complex plugin or custom workflow for Microsoft CRM that relies on external libraries you know that it can be tricky to get everything working correctly. The problem is that when the dll is registered using the Plugin Registration Tool included with the CRM SDK, only the metadata for the assembly containing the plugin is actually considered by the tool. This can cause issues at runtime even if the plugin appears to have been registered correctly.</p>
+
+<p>Briefly, there are three ways to deal with referenced code:</p>
+
+<h4>1 - Install the assemblies in the Global Assembly Cache.</h4>
+
+<p>Installing the assemblies into the assembly cache will allow you to take full advantage of the GACs versioning system, preventing conflicting versions of the same assembly if multiple versions are needed. The downside is that installation of the plugin will require a separate step potentially involving gacutil.exe, which may not be desirable for some deployments. If possible though, the GAC method is the preferred installation method.</p>
+
+<h4>2 - Install the assemblies in %Program Files%\Microsoft Dynamics CRM\Server\bin\assembly</h4>
+
+<p>As a stopgap method that avoids the GAC but still allows you to deploy referenced assemblies to the CRM server, CRM 2011 will look in the assembly folder under its own installation path while probing for needed assemblies. The upside of this method is that it is easy to deploy dlls by simply copying them to the appropriate folder. The downside is that if many plugins use different versions of the same assembly there could be version conflicts that are difficult to track down.</p>
+
+<h4>3 - Include all code in one assembly.</h4>
+
+<p>The least desirable option in my opinion is to cram all of the code into the same assembly. If you have access to all of the source code involved you could implement a solution like <a href="http://blogs.inetium.com/blogs/azimmer/archive/2010/03/27/another-options-for-referencing-external-assemblies-from-plugins.aspx">this</a> where all of the source files are linked from external locations into the same Visual Studio project. If you don&#8217;t have the source code, there is a tool from Microsoft called ILMerge that can take multiple assemblies and combine them into a single output assembly. This kind of thing should be taken as a last resort only if for some reason it is not feasible to install the assemblies in one of the first two ways I outlined above.</p>
+
+<p>Hopefully this gives you some insight on how assembly references work in CRM 2011 and lets you hit the ground running.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/12/08/migrating-sdk-code-from-crm4-to-crm5-2011/">Migrating SDK Code From CRM4 to CRM5 (2011)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-08T20:58:30-08:00" pubdate data-updated="true">Dec 8<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Now that the CRM5 beta is <a href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=0c7dcc45-9d41-4e2e-8126-895517b4274c">generally available</a> (and many of us were privy to the preview code) it&#8217;s time to start dusting off those data access libraries and shaking them up to 2011 spec. If you&#8217;ve written any custom application code using the Microsoft.Crm.Sdk library, you&#8217;ll want to tune in here. Fortunately, I didn&#8217;t run into too many issues but there were a few gotchas that I&#8217;ll go into here in this post.</p>
+
+<p>I was upgrading my open-source CRM query library, <a href="https://github.com/dnewcome/crmQuery">CrmQuery</a> (which has saved us a ton of time over in our shop - I highly recommend that you check it out), so what I cover here is going to be limited to what I ran into during that migration. I&#8217;ll follow up with more posts when I start finding out more.</p>
+
+<h2>Namespace and Library Differences</h2>
+
+<p>First off, you&#8217;ll need to reference the Microsoft.Xrm.Sdk.dll library in your project. This replaces the CRM4 library Microsoft.Crm.Sdk.dll. Most of the types are the same name. Anywhere you&#8217;d use the namespaces:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Crm.Sdk</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Crm.Sdk.Query</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Becomes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Xrm.Sdk</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Xrm.Sdk.Query</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This was a bit confusing to me since I was familiar with the interim 4.0 SDK release that introduced what Microsoft referred to as &#8220;Xrm&#8221; which was basically a set of extensions and a new code generator to allow building proxies for the CRM services that could be queried using Linq. However in the 5.0 SDK, Microsoft has used the Xrm naming convention throughout the entire SDK, replacing most of the old Crm namespaces.</p>
+
+<h2>Type Differences</h2>
+
+<p>Certain base types have been removed, one of which being the column set base type which was used for anything that specified a list of columns to return or deal with in CRM. The use of the following type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ColumnSetBase</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Becomes simply:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ColumnSet</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As a consequence, there is no Allcolumns type to represent all of the fields of an entity. Instead we create an instance of ColumnSet using a specialized constructor to indicate that we intend to specify all columns:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ColumnSet</span> <span class="n">cols</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ColumnSet</span><span class="p">(</span> <span class="k">true</span> <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Collection Types</h2>
+
+<p>Members that formerly used the ArrayList type are now implemented using generic lists in the form of DataCollection For example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">LinkEntity</span><span class="p">.</span><span class="n">LinkEntities</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Is no longer an ArrayList. Likewise, ConditionExpression.Values is now of the type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[DataMemberAttribute]</span>
+</span><span class='line'><span class="k">public</span> <span class="n">DataCollection</span><span class="p">&lt;</span><span class="n">Object</span><span class="p">&gt;</span> <span class="n">Values</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice also that there is no setter, so code that creates a collection and set this property will no longer work.</p>
+
+<p>That&#8217;s it for now. If you liked this articled be sure to follow me on <a href="http://twitter.com/dnewcome">Twitter</a> and if you&#8217;re interested in what we&#8217;re doing with CRM and other Microsoft technologies, be sure to follow us on Twitter <a href="http://twitter.com/AltaiSystems">here</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/4/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/2/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

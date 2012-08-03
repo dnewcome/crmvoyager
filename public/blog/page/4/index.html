@@ -1,0 +1,941 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="One aspect of Silverlight application deployment recently caused me a significant amount of pain &#8211; the security rules governing where the &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/page/4/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/12/07/cross-domain-silverlight-4-application-xap-hosting/">Cross-Domain Silverlight 4 Application (.xap) Hosting</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-07T06:03:08-08:00" pubdate data-updated="true">Dec 7<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>One aspect of Silverlight application deployment recently caused me a significant amount of pain &#8211; the security rules governing where the Silverlight browser plug-in will and will not load code from and under what circumstances.</p>
+
+<p>There is a lot of talk about making cross-domain service calls from Silverlight, but not a lot of coverage given to hosting the application packages (.xap files) themselves. In my case, I was loading the .xap file in a SharePoint Web Part. The .xap file was hosted on a separate IIS web site on the same server but running on a different port. This had always worked for me in the past so I thought nothing of hosting the code on a separate site.</p>
+
+<p>However, later on after adding some new features to the Silverlight application I was no longer able to deploy my code to SharePoint successfully. I tried a small &#8220;hello world&#8221; Silverlight application and everything worked fine. I also tried moving my application under the SharePoint site and got it to work.</p>
+
+<p>So the question I had was, what was different about my application that was preventing it from working in a cross-domain situation? Fortunately I found out about <a href="http://msdn.microsoft.com/en-us/library/cc838264(VS.95">EnableHtmlAccess</a>.aspx) via this <a href="http://timheuer.com/blog/archive/2010/06/10/troubleshooting-debugging-silverlight-cross-domain-xap-hosting.aspx">blog post</a> by Tim Heuer.</p>
+
+<p>It turns out that the Silverlight browser plug-in will happily load code from any domain as long as it doesn&#8217;t try to access the host page in any way, including reading any Javascript variables on the page. The change that I made to my application was a call to read some configuration value from the Web Part that hosted the Silverlight application, thus triggering the security restriction. Here is what the code looked like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">static</span> <span class="n">ScriptObject</span> <span class="nf">GetJsVariable</span><span class="p">(</span> <span class="kt">string</span> <span class="n">in_name</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">(</span> <span class="n">ScriptObject</span> <span class="p">)</span><span class="n">HtmlPage</span><span class="p">.</span><span class="n">Window</span><span class="p">.</span><span class="n">GetProperty</span><span class="p">(</span> <span class="n">in_name</span> <span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To solve this problem, we can either just host the code on the same domain, or we can make a small change to the way that the Silverlight plugin is embedded in the page. I don&#8217;t want to have to maintain a static source file in the SharePoint hive, so I added the following code to my Web Part:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;object</span> <span class="na">data=</span><span class="s">&#39;data:application/x-silverlight-2,&#39;</span> <span class="na">type=</span><span class="s">&#39;application/x-silverlight-2&#39;</span> <span class="na">width=</span><span class="s">&#39;100%&#39;</span> <span class="na">height=</span><span class="s">&#39;100%&#39;</span><span class="nt">&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;param</span> <span class="na">name=</span><span class="s">&#39;source&#39;</span> <span class="na">value=</span><span class="s">&#39;ClientBin/MyApplication.xap&#39;</span><span class="nt">/&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;param</span> <span class="na">name=</span><span class="s">&#39;onError&#39;</span> <span class="na">value=</span><span class="s">&#39;onSilverlightError&#39;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;param</span> <span class="na">name=</span><span class="s">&#39;background&#39;</span> <span class="na">value=</span><span class="s">&#39;white&#39;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;param</span> <span class="na">name=</span><span class="s">&#39;minRuntimeVersion&#39;</span> <span class="na">value=</span><span class="s">&#39;4.0.50401.0&#39;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;param</span> <span class="na">name=</span><span class="s">&#39;autoUpgrade&#39;</span> <span class="na">value=</span><span class="s">&#39;true&#39;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;param</span> <span class="na">name=</span><span class="s">&#39;enableHtmlAccess&#39;</span> <span class="na">value=</span><span class="s">&#39;true&#39;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&#39;http://go.microsoft.com/fwlink/?LinkID=149156&amp;v=4.0.50401.0&#39;</span> <span class="na">style=</span><span class="s">&#39;text-decoration:none&#39;</span><span class="nt">&gt;</span>
+</span><span class='line'>                  <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&#39;http://go.microsoft.com/fwlink/?LinkId=161376&#39;</span> <span class="na">alt=</span><span class="s">&#39;Get Microsoft Silverlight&#39;</span> <span class="na">style=</span><span class="s">&#39;border-style:none&#39;</span><span class="nt">/&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;/object&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note the addition of</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;param</span> <span class="na">name=</span><span class="s">&#39;enableHtmlAccess&#39;</span> <span class="na">value=</span><span class="s">&#39;true&#39;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once I had this parameter set everything started working again. One thing that I&#8217;d like to be able to do is to display an error message instead of just displaying an empty Silverlight plugin. The SharePoint Silverlight content control that ships with SharePoint 2010 does this, but I&#8217;m not sure what how it does it. I&#8217;ll look into it at some point when I get time, but in the meantime if anyone knows I&#8217;d love to hear from you.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/12/06/full-stack-sharepoint-silverlight-debugging-with-visual-studio-2010/">Full-Stack SharePoint + Silverlight Debugging With Visual Studio 2010</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-06T22:33:29-08:00" pubdate data-updated="true">Dec 6<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>So you&#8217;ve gotten your Silverlight-based SharePoint Web Parts working in a test harness but when it comes time to get the whole stack out there under the target SharePoint site things aren&#8217;t working. Of course it helps to have good logging in place, but sometimes we just want to get the debugger attached to see what is going on.</p>
+
+<p>Creating a SharePoint project in Visual Studio sets things up to attach the debugger to the SharePoint site automatically, so stepping through ASP.NET Web Part code is easy enough right off the bat. Likewise, creating a Silverlight application prompts you to enable Silverlight debugging on the host site.</p>
+
+<p>The question I had recently is, what happens when you want to attach the debugger to a Silverlight project while it is actually running inside of SharePoint and not the generated test site in Visual Studio?</p>
+
+<p>Fortunately the answer is very simple. Assuming the SharePoint Web Part project is already set up to deploy to the target SharePoint site, we only need to make one more configuration change to the SharePoint project to turn on Silverlight debugging. The screen shot below shows it all:</p>
+
+<p><em>Visual Studio 2010 SharePoint Project Properties Pane</em>
+<a href="http://crmvoyager.files.wordpress.com/2010/12/silverlight-sharepoint-debug.jpg"><img src="http://crmvoyager.files.wordpress.com/2010/12/silverlight-sharepoint-debug.jpg" alt="" /></a></p>
+
+<p>All we need to do is go under the SharePoint tab of the Web Part project and specify Silverlight debugging instead of Javascript debugging. Once this is set, running the project will attach the debugger to SharePoint, letting you set breakpoints in the Web Part code itself and also set breakpoints in any Silverlight code that gets loaded up.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/12/05/scripting-sharepoint-2010-solution-installations/">Scripting SharePoint 2010 Solution Installations</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-05T04:56:06-08:00" pubdate data-updated="true">Dec 5<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I was just working up some installation instructions for a client&#8217;s SharePoint solutions when I realized that I should probably be creating some scripts to reduce the number of manual steps required to get the solution installed and working.</p>
+
+<p>The thing that really pushed the issue for me was the initial addition of the SharePoint solution to the farm solution store. As you may know, the Web interface for managing farm solutions only allows the removal of existing solutions, <a href="http://msdn.microsoft.com/en-us/library/aa544500.aspx">not the addition of new ones.</a> So as a first step I thought I&#8217;d share what I figured out initially about scripting the SharePoint Management Shell.</p>
+
+<h3>SharePoint Management Shell Overview</h3>
+
+<p>Before we go any further, we need to understand what the SharePoint Management Shell is all about. In versions of SharePoint prior to 2010 Microsoft included a command line tool called stsadm.exe for scripting operations against the server. Although it is included in 2010, it has been deprecated in favor of the <a href="http://en.wikipedia.org/wiki/Windows_PowerShell">PowerShell</a>-based management shell.</p>
+
+<p>In order to figure out what is going on when we run the management shell, take a look at the shortcut properties to find out which script is being run. Here is the path that I found:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\CONFIG\POWERSHELL\Registration\SharePoint.ps1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Taking a look at the contents of the script we see something like the following:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ver = $host | select version
+</span><span class='line'>if ($ver.Version.Major -gt 1)  {$Host.Runspace.ThreadOptions = "ReuseThread"}
+</span><span class='line'>Add-PsSnapin Microsoft.SharePoint.PowerShell
+</span><span class='line'>Set-location $home</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ok now we are getting somewhere. In order to write a PowerShell script that imports the SharePoint management cmdlets we can call Add-PsSnapin and gain access to the tools that we need. I later found this to be documented on MSDN <a href="http://msdn.microsoft.com/en-us/library/ee537913.aspx">here</a>.</p>
+
+<h3>Creating a SharePoint Solution Upload Script</h3>
+
+<p>The simple script that I came up with to get the client through the hoop of getting the solution imported into SharePoint looks like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>C:\Windows\System32\WindowsPowerShell\v1.0\PowerShell.exe  ^
+</span><span class='line'>  -Command  "& { "^
+</span><span class='line'>      "Add-PsSnapin Microsoft.SharePoint.PowerShell; "^
+</span><span class='line'>      "Add-SPSolution -LiteralPath %cd%\ClientSolution.wsp "^
+</span><span class='line'>  "}"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that this is a batch file which invokes the PowerShell Windows executable. We could probably just write a PowerShell script and hope that the client&#8217;s machine is set up correctly so that he can run the .ps1 file directly, but I didn&#8217;t want to count on it. The downside is that the version of PowerShell is hard coded into the path. These are all refinements for a later date though.</p>
+
+<p>The command syntax for PowerShell literal command scripts looks like  where  is any number of semicolon-delimited PowerShell commands. The carets are just Windows batch file line break characters so that we can format the script for readability.</p>
+
+<p>One last thing about the SharePoint Add-SPSolution cmdlet. I covered this in a <a href="http://crmvoyager.wordpress.com/2010/11/19/deploying-web-parts-to-microsoft-sharepoint/">previous post</a>, but it bears repeating here &#8211; we must use the full path to the .wsp file in the -LiteralPath argument. In the script above I used %cd% to pass the current directory in, but we could use other tricks to allow this to be independent of how we call the script. I&#8217;ll save that for a later post on Windows batch files.</p>
+
+<p>Hopefully this gives you a jump on automating some SharePoint tasks. There are a lot of ways to improve this, so I&#8217;ll be sure to post more as I go.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/12/02/attaching-visual-studio-as-a-silverlight-debugger/">Attaching Visual Studio 2010 as a Silverlight Debugger</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-02T07:50:29-08:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Debugging Silverlight 4 applications under Visual Studio is a nice advantage of the tight integration that Microsoft provides with their tooling for rich Internet application development. However, it can be somewhat confusing if you get off the beaten path at all or if you end up with a mis-configured project setting somewhere down the road.</p>
+
+<p>As you might have seen in one of my <a href="http://crmvoyager.wordpress.com/2010/10/19/silverlight-host-page-for-development-and-debugging/">previous posts</a>, setting up one of the Web applications in your solution as the host project for your Silverlight code is not very difficult.</p>
+
+<p>When the project is started for the first time Visual Studio will prompt you with the following dialog:
+<a href="http://crmvoyager.files.wordpress.com/2010/12/warningmessage.png"><img src="http://crmvoyager.files.wordpress.com/2010/12/warningmessage.png" alt="" /></a></p>
+
+<p>Choosing yes to this dialog will enable Silverlight debugging and save the dialog preference in the .user file for the project. Deleting the .user file will cause Visual Studio to prompt you once again for this setting. However, we can manually enable Silverlight debugging very easily on the properties pane for the Web site that is hosting the Silverlight component. The following screen shot shows you where the setting is:
+<a href="http://crmvoyager.files.wordpress.com/2010/12/hostproject.png"><img src="http://crmvoyager.files.wordpress.com/2010/12/hostproject.png" alt="" /></a></p>
+
+<p>It is worth noting that the tradeoff we make for Silverlight debugging is that Visual Studio will not attach itself as a Javascript debugger as it normally would. If you are having trouble visualizing what that means, consider the next screenshot showing how Visual Studio normally loads the Javascript code up for inspection right in the Solution Explorer:
+<a href="http://crmvoyager.files.wordpress.com/2010/12/scriptdebugging.png"><img src="http://crmvoyager.files.wordpress.com/2010/12/scriptdebugging.png" alt="" /></a></p>
+
+<p>Attaching Visual Studio as a Silverlight debugger affects System.Diagnostics.Debugger.IsAttached in the running Silverlight code. The default boilerplate code that is generated by Visual Studio uses this to detect how to deal with unhandled exceptions at the top level of the application in App.xaml.cs. If a debugger isn&#8217;t attached it attempts to write the exception details out to the browser using Javascript. See the following code snippet:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">private</span> <span class="k">void</span> <span class="nf">Application_UnhandledException</span><span class="p">(</span> <span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">ApplicationUnhandledExceptionEventArgs</span> <span class="n">e</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="c1">// If the app is running outside of the debugger then report the exception using</span>
+</span><span class='line'>          <span class="c1">// the browser&#39;s exception mechanism. On IE this will display it a yellow alert </span>
+</span><span class='line'>          <span class="c1">// icon in the status bar and Firefox will display a script error.</span>
+</span><span class='line'>          <span class="k">if</span><span class="p">(</span> <span class="p">!</span><span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Debugger</span><span class="p">.</span><span class="n">IsAttached</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="c1">// NOTE: This will allow the application to continue running after an exception has been thrown</span>
+</span><span class='line'>              <span class="c1">// but not handled. </span>
+</span><span class='line'>              <span class="c1">// For production applications this error handling should be replaced with something that will </span>
+</span><span class='line'>              <span class="c1">// report the error to the website and stop the application.</span>
+</span><span class='line'>              <span class="n">e</span><span class="p">.</span><span class="n">Handled</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>              <span class="n">Deployment</span><span class="p">.</span><span class="n">Current</span><span class="p">.</span><span class="n">Dispatcher</span><span class="p">.</span><span class="n">BeginInvoke</span><span class="p">(</span> <span class="k">delegate</span> <span class="p">{</span> <span class="n">ReportErrorToDOM</span><span class="p">(</span> <span class="n">e</span> <span class="p">);</span> <span class="p">}</span> <span class="p">);</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>      <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Hopefully this give you a little insight on what is going on when you attempt to debug Silverlight code from within Visual Studio and how to get the debugger attached again if something gets messed up.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/30/sharepoint-web-part-error-when-switching-deployment-types/">SharePoint Web Part Error When Switching Deployment Types</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-30T06:32:49-08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I just had to deal with this error once again after having redeployed some SharePoint 2010 Web Part code as a farm solution after having been installed as a sandboxed solution.</p>
+
+<p>The error text is:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Web Part Error: The request could not be completed because the specified solution was not found.
+</span><span class='line'>
+</span><span class='line'>Show Error Details 
+</span><span class='line'>Hide Error Details 
+</span><span class='line'>
+</span><span class='line'>[SPUserCodeExecutionPipelineFailedException: The request could not be completed because the specified solution was not found.]
+</span><span class='line'>  at Microsoft.SharePoint.UserCode.SPUserCodeExecutionManager.VerifyExecutionAllowed(Guid siteCollectionId, SPUserCodeExecutionContext executionContext) 
+</span><span class='line'>  at Microsoft.SharePoint.UserCode.SPUserCodeExecutionManager.Execute(Type userCodeWrapperType, SPSite site, SPUserCodeExecutionContext executionContext) 
+</span><span class='line'>  at Microsoft.SharePoint.UserCode.SPUserCodeWebPartRemoteExecutionHelper.&lt;&gt;c__DisplayClassa.b__9() 
+</span><span class='line'>  at Microsoft.SharePoint.Utilities.SecurityContext.RunAsProcess(CodeToRunElevated secureCode) 
+</span><span class='line'>  at Microsoft.SharePoint.UserCode.SPUserCodeWebPartRemoteExecutionHelper.ExecuteRequestInSandBox(HttpContext context, SPWeb web, SPWebPartManager manager, SPUserCodeWebPart userCodeWebPart)  </span></code></pre></td></tr></table></div></figure>
+
+
+<p>This typically happens when either a web part has been added to a SharePoint page already and then the code is redeployed in another location or the Web Part gallery has not updated after the code was redeployed.</p>
+
+<p>In the first case, all that we need to do is delete the Web Part from the page and re-add it from the gallery. In the latter case, we&#8217;ll have to go into the web part gallery and delete all of the web parts and then re-deploy the solution.</p>
+
+<p>Either way it is not a big deal, but it helps to know where to look and what is going on.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/25/sharepoint-2010-web-parts-vs-visual-web-parts/">SharePoint 2010 Web Parts vs. Visual Web Parts</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-25T03:30:23-08:00" pubdate data-updated="true">Nov 25<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I have read a lot of SharePoint documentation and articles recently, and one confusing point that kept getting glossed over was whether there was a difference between what was called a &#8220;Visual&#8221; Web Part and a Web Part by any other name.</p>
+
+<p>The answer is, there is a difference, but not in the .NET type. There is a difference in how the part is implemented and its project type in Visual Studio. The short answer is that a Web Part is &#8220;visual&#8221; if its implementation includes an ASP.NET user control, i.e. an .ascx file. Creating a project of type &#8220;Visual Web Part&#8221; from the Visual Studio project wizard creates a project that looks like this:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2010/11/solution.png"><img src="http://crmvoyager.files.wordpress.com/2010/11/solution.png" alt="" /></a></p>
+
+<p>Notice the automatically-created .ascx user control. Indeed, the code in the Web Part is the same as we would find on a normal part, but in the implementation the user control is instantiated programmatically like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>    <span class="k">public</span> <span class="k">class</span> <span class="nc">VisualWebPart1</span> <span class="p">:</span> <span class="n">WebPart</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">private</span> <span class="k">const</span> <span class="kt">string</span> <span class="n">_ascxPath</span> <span class="p">=</span>
+</span><span class='line'>          <span class="s">@&quot;~/_CONTROLTEMPLATES/VisualWebPartProject2/VisualWebPart1/VisualWebPart1UserControl.ascx&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">CreateChildControls</span><span class="p">()</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="n">Control</span> <span class="n">control</span> <span class="p">=</span> <span class="n">Page</span><span class="p">.</span><span class="n">LoadControl</span><span class="p">(</span><span class="n">_ascxPath</span><span class="p">);</span>
+</span><span class='line'>            <span class="n">Controls</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">control</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Trying to deploy this project as a sandboxed solution will fail, since user controls violate the constraints placed on code that runs in the sandbox. There is nothing intrinsically about the code that would prevent its installation as a sandboxed solution, but it will fail when the solution is activated.</p>
+
+<h3>Changing a Visual Web Part to a regular Web Part</h3>
+
+<p>We can change the Web Part type by manually editing the .spdata file in the project. Visual Studio won&#8217;t allow direct access to this file, so we&#8217;ll have to browse to it on the filesystem and edit it in notepad.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;ProjectItem</span> <span class="na">Type=</span><span class="s">&quot;Microsoft.VisualStudio.SharePoint.VisualWebPart&quot;</span> <span class="na">DefaultFile=</span><span class="s">&quot;VisualWebPart1UserControl.ascx&quot;</span> <span class="na">SupportedTrustLevels=</span><span class="s">&quot;FullTrust&quot;</span> <span class="na">SupportedDeploymentScopes=</span><span class="s">&quot;Site&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/VisualStudio/2010/SharePointTools/SharePointProjectItemModel&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;Files&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;ProjectItemFile</span> <span class="na">Source=</span><span class="s">&quot;Elements.xml&quot;</span> <span class="na">Target=</span><span class="s">&quot;VisualWebPart1\&quot;</span> <span class="na">Type=</span><span class="s">&quot;ElementManifest&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;ProjectItemFile</span> <span class="na">Source=</span><span class="s">&quot;VisualWebPart1.webpart&quot;</span> <span class="na">Target=</span><span class="s">&quot;VisualWebPart1\&quot;</span> <span class="na">Type=</span><span class="s">&quot;ElementFile&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;ProjectItemFile</span> <span class="na">Source=</span><span class="s">&quot;VisualWebPart1UserControl.ascx&quot;</span> <span class="na">Target=</span><span class="s">&quot;CONTROLTEMPLATES\VisualWebPartProject2\VisualWebPart1\&quot;</span> <span class="na">Type=</span><span class="s">&quot;TemplateFile&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/Files&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;SafeControls&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;SafeControl</span> <span class="na">Name=</span><span class="s">&quot;SafeControlEntry1&quot;</span> <span class="na">Assembly=</span><span class="s">&quot;$SharePoint.Project.AssemblyFullName$&quot;</span> <span class="na">Namespace=</span><span class="s">&quot;VisualWebPartProject2.VisualWebPart1&quot;</span> <span class="na">TypeName=</span><span class="s">&quot;*&quot;</span> <span class="na">IsSafe=</span><span class="s">&quot;true&quot;</span> <span class="na">IsSafeAgainstScript=</span><span class="s">&quot;false&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/SafeControls&gt;</span>
+</span><span class='line'><span class="nt">&lt;/ProjectItem&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We are interested only in this line:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;ProjectItem</span> <span class="na">Type=</span><span class="s">&quot;Microsoft.VisualStudio.SharePoint.VisualWebPart&quot;</span> <span class="na">DefaultFile=</span><span class="s">&quot;VisualWebPart1UserControl.ascx&quot;</span> <span class="na">SupportedTrustLevels=</span><span class="s">&quot;FullTrust&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can change the Type from VisualWebPart to WebPart and SupportedTrustLevels from FullTrust to All.</p>
+
+<p>The resulting code looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;ProjectItem</span> <span class="na">Type=</span><span class="s">&quot;Microsoft.VisualStudio.SharePoint.WebPart&quot;</span> <span class="na">DefaultFile=</span><span class="s">&quot;VisualWebPart1UserControl.ascx&quot;</span> <span class="na">SupportedTrustLevels=</span><span class="s">&quot;All&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once the change is made, reload the project in Visual Studio, and its type should be recognized as a normal web part. Be sure to remove the user control before attempting to deploy as a sandboxed solution!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/25/enabling-user-sandboxed-code-in-sharepoint-2010/">Enabling User (Sandboxed) Code in SharePoint 2010</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-25T02:17:34-08:00" pubdate data-updated="true">Nov 25<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>With SharePoint 2010 Microsoft has added the ability to run code in a more protected and limited environment than the fully-trusted farm deployment level. This allows individual site owners to install third-party code without risking the stability and integrity of the entire SharePoint server farm or even an individual server.</p>
+
+<p>As you&#8217;d expect, there are certain things you won&#8217;t be able to do from the sandbox, such as access the filesystem or use .ascx user controls in your web parts. However, the added control over the code can make this tradeoff worth it if you can deal with the limitations.</p>
+
+<p>I&#8217;m going to show a few points of configuration for the user code service in this post. The user code service is the mechanism by which SharePoint runs the sandboxed code. In normal non-sandbox code execution, the third-party code runs in-process with the rest of SharePoint in the ASP.NET w3wp.exe process. As you probably know, this is the familiar ASP.NET worker process that forms the actual IIS application pool that runs our .NET code within IIS. In order to isolate the sandbox from this main SharePoint process, Microsoft has another process that is hosted outside of IIS completely. In order to do this, there is a Windows service called the SharePoint 2010 User Code Host. The short name of the service is SPUserCodeV4 and the process name is SPUCHostService.exe.</p>
+
+<p><em>Windows services console</em>
+<a href="http://crmvoyager.files.wordpress.com/2010/11/uc-service.png"><img src="http://crmvoyager.files.wordpress.com/2010/11/uc-service.png" alt="" /></a></p>
+
+<p>This process also spawns two other processes, SPUCWorkerProcess.exe and SPUCWorkerProcessProxy.exe. We can attach a debugger to SPUCWorkerProcess.exe in order to debug user code.</p>
+
+<p><em>Process Explorer showing the process hierarchy of SPUCHostService</em>
+<a href="http://crmvoyager.files.wordpress.com/2010/11/processes.png"><img src="http://crmvoyager.files.wordpress.com/2010/11/processes.png" alt="" /></a></p>
+
+<p>Ok, now that we know a bit about how the code is run on the server at the OS level, we need to look at one more thing. Under the SharePoint central administration site we can go to the server and look at all of the services that are running on the machine.</p>
+
+<p><em>SharePoint service administration console</em>
+<a href="http://crmvoyager.files.wordpress.com/2010/11/central-admin-services.png"><img src="http://crmvoyager.files.wordpress.com/2010/11/central-admin-services.png" alt="" /></a></p>
+
+<p>Although we can start and stop the service directly in Windows, the SharePoint management console will not always stay in sync with whether the service is actually running. It is better to manage the services through the central administration console, as stopping the service there will also set its startup type to &#8220;Disabled&#8221; so that the service does not start back up on a server reboot.</p>
+
+<p>Hopefully this gives you a bit more background on the sandbox or user code service in SharePoint 2010.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/19/deploying-web-parts-to-microsoft-sharepoint/">Deploying Web Parts to Microsoft SharePoint 2010</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-19T09:35:53-08:00" pubdate data-updated="true">Nov 19<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><em>This is the first of several SharePoint-related articles that I have in the works, all dealing with code deployment and feature configuration.</em></p>
+
+<h3>Background</h3>
+
+<p>Microsoft SharePoint allows developers to build custom UI pieces called Web Parts that plug into a standard SharePoint page at design time. These Web Parts can be extremely powerful, but unfortunately deployment scenarios can be confusing since Web Parts are just one small part of the SharePoint extensibility story and the documentation can be difficult to decipher as a result. In this post I&#8217;m going to go through the most straightforward deployment scenario, perhaps mentioning other possibilities in passing, to be covered in later articles.</p>
+
+<p>Although there are other ways to get code deployed to SharePoint, the main mechanism by which custom or third-party code is introduced to a running SharePoint environment is via the <a href="http://msdn.microsoft.com/en-us/library/bb862721(office.12">SharePoint solution</a>.aspx) package. Solutions typically have a .wsp file extension, and are actually archives in the Microsoft .cab file format. Solution packages contain an XML manifest file, .NET assemblies and other resources.</p>
+
+<p>One other important thing to note regarding the layout of a SharePoint solution is that a solution may contain one or more features. Features are units of functionality that may be enabled and disabled from within SharePoint. The relationship between features and solutions allows quite a bit of flexibility when setting up the capabilities of individual site collections, but again poses many opportunities for error and confusion.</p>
+
+<p>The last thing to note before we get started with an example is that as of SharePoint 2010 solutions may be deployed in a sandbox environment in addition to being deployed at the farm level. It is possible to deploy the same solution at many levels, but unpredictable behavior may result if the features from both deployments of the solution are available in the same site.</p>
+
+<h3>Creating the Package</h3>
+
+<p>We are going to build a .wsp package using Visual Studio 2010 and deploy it at the farm level of a fresh installation of Windows Sharepoint Foundation 2010. Assuming you already have a Web Part project in your Visual Studio solution, all we need to do is check a few properties on the project and build the package. Take a look at the following screenshot of the project properties for the Web Part project. The most important things here are the Sandboxed Solution and Assembly Deployment Target. We will need to create a non-sandboxed package in order to accommodate visual web parts &#8211; that is, web parts whose layout is determined by an ascx user control. Visual Studio has a special project type for visual Web Parts and it will generate an error if we try to build a sandboxed package that contains visual web parts. The second issue is that for a farm-level deployment we must use the global assembly cache, hence the Assembly Deployment Target setting.</p>
+
+<p><em>Visual Studio project properties pane</em>
+<a href="http://crmvoyager.files.wordpress.com/2010/11/visual-studio-properties.png"><img src="http://crmvoyager.files.wordpress.com/2010/11/visual-studio-properties.png" alt="" /></a></p>
+
+<p>Once these settings are checked and we are sure that our web parts are included in the feature and the feature is included in the package, we can build the .wsp file. The build is triggered via the project context menu. Open the menu and select Package in order to build the .wsp, which will appear in the /bin folder of the Web Part project.</p>
+
+<p><em>Creating the .wsp Package in Visual Studio</em>
+<a href="http://crmvoyager.files.wordpress.com/2010/11/visual-studio-package.png"><img src="http://crmvoyager.files.wordpress.com/2010/11/visual-studio-package.png" alt="" /></a></p>
+
+<h3>Deploying the Code</h3>
+
+<p>Now that we have the .wsp file, we need to pull the package into SharePoint. SharePoint provides a scriptable tool called stsadm as well as a PowerShell cmdlet, since the PowerShell interface is what Microsoft will be moving forward with in the future, I&#8217;ll stick with using the cmdlet. We&#8217;ll need to have access to the SharePoint Central Administration site in order to complete the deployment. Open the SharePoint Management Shell from the Start menu and type the following:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Add-SPSolution -LiteralPath c:<span class="se">\p</span>ath<span class="se">\t</span>o<span class="se">\s</span>olution.wsp
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice that the <strong>full</strong> path to the package is necessary.</p>
+
+<p>Once the solution is added, we should browse to the System Settings area and click on Manage Farm Solutions as seen here:</p>
+
+<p><em>Taking a Look at the Installed Package</em>
+ <a href="http://crmvoyager.files.wordpress.com/2010/11/central-admin.png"><img src="http://crmvoyager.files.wordpress.com/2010/11/central-admin.png" alt="" /></a></p>
+
+<p>This lets us see the added package and deploy it to any site collections that we wish to use the features on. Since we are deploying the .wsp files from the farm level, we &#8220;push&#8221; the solution down to the individual site collections, making the features visible to the sites. Once the feature is enabled the web parts should be visible in the web part gallery.</p>
+
+<p>There are several other paths that we could have taken to get our code onto the SharePoint server, but this will suffice for the time being. Hopefully this helps out others in their journey to deploy code successfully to SharePoint.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/16/creating-configurable-web-part-properties/">Creating Configurable Web Part Properties</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-16T06:43:06-08:00" pubdate data-updated="true">Nov 16<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;ve been creating tons of ASP.NET Web Parts for use in various clients&#8217; SharePoint portals recently, and I&#8217;ve come to a point where I need to handle some configuration in some of the parts.</p>
+
+<p>For those of you familiar with SharePoint, you&#8217;ll recall that each SharePoint site has its own web.config file under the site root of the particular site that you are working with. The configuration that I&#8217;m going to detail here could be done by adding an element to the web.config site or even via a web service call or other custom configuration mechanism. However, while looking around for solutions I realized that there is a powerful and flexible configuration system built in to the ASP.NET Web Parts mechanism in the form of <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.webparts.iwebeditable.aspx">IWebEditable</a>. Using this mechanism we will be able to allow our configuration options to be set by users during the page editing process right on the SharePoint site. Unfortunately, the <a href="http://msdn.microsoft.com/en-us/library/dd584174(office.11">code samples</a>.aspx) from Microsoft are pretty verbose and don&#8217;t explain the basics in a very straightforward manner. We don&#8217;t have to implement IWebEditable ourselves, as WebPart already implements it for us, we just have to know how to mark our properties so that they can be changed by the configuration mechanism.</p>
+
+<h3>The Scenario:</h3>
+
+<p>Let&#8217;s say I have a <a href="http://crmvoyager.wordpress.com/2010/10/12/embedding-silverlight-into-a-webpart/">Web Part that displays a Silverlight application</a>. Silverlight apps are deployed using <a href="http://crmvoyager.wordpress.com/2010/10/15/whats-in-a-silverlight-xap/">.xap archives</a>, which are simply .zip files with an included manifest telling Silverlight which resources are included and where any WCF service endpoints are located. In my Web Part I&#8217;d like to be able to specify the location of the Silverlight application so that I don&#8217;t have to hard-code the path.</p>
+
+<h3>The Solution:</h3>
+
+<p>Fortunately the solution is pretty simple. We just need to add a .NET property to the Web Part class and adorn it with the right attributes. In the following code snippet I have defined a string property called SilverlightUrl that I&#8217;ll use for storing my Silverlight .xap file path:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[WebBrowsable( true ), Category( &quot;Silverlight&quot; ),</span>
+</span><span class='line'><span class="na">WebDisplayName( &quot;Silverlight URL&quot; ),</span>
+</span><span class='line'><span class="na">WebDescription( &quot;web url to Silverlight XAP package&quot; ),</span>
+</span><span class='line'><span class="na">Personalizable( PersonalizationScope.User )]</span>
+</span><span class='line'><span class="k">public</span> <span class="kt">string</span> <span class="n">SilverlightUrl</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that there are five different attributes applied to this single property. The most important attribute is WebBrowsable. This makes the field visible to an editor part. I&#8217;ll cover editor parts in the next section, but just know that most of the attributes are for controlling how the field shows up in the property editor part. Category,WebDisplayNameandWebDescription describe how the field is grouped, named, and described in the editor part, respectively. The Personalizable attribute is important in controlling the conditions under which the editor part is shown at all. In our example I have set it to User scope in order to get the editor to show up without toggling the <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.webparts.personalizationscope.aspx">personalization scope</a>. I&#8217;ll cover personalization scope in another post, but just know that if we aren&#8217;t in the right scope the editor will not be shown when we put the page into edit mode. This is something that tripped me up for a while when trying to get WebBrowsale properties working initially.</p>
+
+<h3>Testing:</h3>
+
+<p>Just publishing our code to SharePoint as-is will be enough for us to configure our Web Part as desired. However, I always develop and debug my code in a simple test page outside of SharePoint, so I&#8217;ll cover setting things up to test EditDisplayMode also.</p>
+
+<p>In addition to the typical WebPartManager and WebPartZone on the page we will need an EditorZone. The particular editor that we are interested in is the <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.webparts.propertygrideditorpart.aspx">PropertyGridEditorPart</a>. The ASP.NET markup would look something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;asp:EditorZone</span> <span class="na">ID=</span><span class="s">&quot;EditorZone1&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;ZoneTemplate&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;asp:PropertyGridEditorPart</span> <span class="na">Title=</span><span class="s">&quot;Edit Custom Properties&quot;</span> <span class="na">ID=</span><span class="s">&quot;PropertyGridEditorPart1&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/ZoneTemplate&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/asp:EditorZone&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In order to toggle edit mode, we&#8217;ll want to put an ASP.NET button on the page and wire it up to something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">void</span> <span class="nf">Enable_Edit</span><span class="p">(</span> <span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">EventArgs</span> <span class="n">e</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">WebPartManager1</span><span class="p">.</span><span class="n">DisplayMode</span> <span class="p">=</span> <span class="n">WebPartManager</span><span class="p">.</span><span class="n">EditDisplayMode</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>By default, ASP.NET will set the Web Part page up in PersonalizationScope.User mode, meaning that we are editing per-user configuration rather than configuration that all site users will see. If we set the Personalizable attribute on our property to PersonalizationScope.Shared we would not see the editor part at all.</p>
+
+<p>If everything is working correctly, when EditDisplayMode is toggled, the PropertyGridEditorPart will show up on the page like this:<a href="http://crmvoyager.files.wordpress.com/2010/11/propertygrideditor.jpg"><img src="http://crmvoyager.files.wordpress.com/2010/11/propertygrideditor.jpg" alt="" /></a></p>
+
+<p>There are some more related areas to explore when dealing with Web Part user configuration but I&#8217;ll have to follow up on these topics in a future post.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/01/silverlight-single-click-checkbox-datagrid-columns/">Silverlight Single-click Checkbox DataGrid Columns</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-01T17:22:43-07:00" pubdate data-updated="true">Nov 1<span>st</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The title for this post is a mouthful so let me describe the back story a little bit. In Microsoft Silverlight applications we often use DataGrid controls that are databound with a boolean data field that is represented by a check box. Silverlight provides a built-in column type of DataGridCheckBoxColumn, which will display the underlying boolean data field as a standard CheckBox control inline in the DataGrid cell.</p>
+
+<p>Setting up a DataGrid column using a DataGridCheckBoxColumn looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;sdk:DataGrid.Columns&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;sdk:DataGridTextColumn</span> <span class="na">Header=</span><span class="s">&quot;Name&quot;</span> <span class="na">Binding=</span><span class="s">&quot;{Binding Name}&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>             <span class="nt">&lt;sdk:DataGridCheckBoxColumn</span> <span class="na">Header=</span><span class="s">&quot;Select&quot;</span> <span class="na">Binding=</span><span class="s">&quot;{Binding Selected}&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/sdk:DataGrid.Columns&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However the default behavior of a databound cell in a DataGrid is to require a click on the cell itself before we can edit its contents. In the case of text fields this makes a lot of sense. You don&#8217;t want to enter edit mode immediately upon selecting a row in the grid. However, in the case of a check box, it is often the case that we&#8217;ll want to quickly check off several items in the list. Having to select the cell first means that each selection action requires two clicks in order to change the state of the check box.</p>
+
+<p>The first click on the check box leaves the DataGrid looking like this:
+<a href="http://newcome.files.wordpress.com/2010/11/checkbox1.png"><img src="http://newcome.files.wordpress.com/2010/11/checkbox1.png" alt="" /></a></p>
+
+<p>There doesn&#8217;t seem to be much out there on forums or blogs about this issue save for <a href="http://forums.silverlight.net/forums/p/35476/106883.aspx">this forum posting</a>. One of the commenters has it almost right and a second commenter corrects him, but the resulting code is never provided. I had to fix this in my own application, so here is what I came up with:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>           <span class="nt">&lt;sdk:DataGridTemplateColumn&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;sdk:DataGridTemplateColumn.CellEditingTemplate&gt;</span>
+</span><span class='line'>                            <span class="nt">&lt;DataTemplate&gt;</span>
+</span><span class='line'>                                <span class="nt">&lt;CheckBox</span> <span class="na">IsThreeState=</span><span class="s">&quot;False&quot;</span> <span class="na">IsChecked=</span><span class="s">&quot;{Binding Path=Selected, Mode=TwoWay}&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>                            <span class="nt">&lt;/DataTemplate&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;/sdk:DataGridTemplateColumn.CellEditingTemplate&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;/sdk:DataGridTemplateColumn&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The solution to this problem was out there, but none of the sources described the actual problem well enough to be found easily by searching. Hopefully this post rectifies that situation.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/5/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/3/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Attaching Visual Studio 2010 as a Silverlight Debugger - My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="Debugging Silverlight 4 applications under Visual Studio is a nice advantage of the tight integration that Microsoft provides with their tooling for &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/2010/12/02/attaching-visual-studio-as-a-silverlight-debugger/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Attaching Visual Studio 2010 as a Silverlight Debugger</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-02T07:50:29-08:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Debugging Silverlight 4 applications under Visual Studio is a nice advantage of the tight integration that Microsoft provides with their tooling for rich Internet application development. However, it can be somewhat confusing if you get off the beaten path at all or if you end up with a mis-configured project setting somewhere down the road.</p>
+
+<p>As you might have seen in one of my <a href="http://crmvoyager.wordpress.com/2010/10/19/silverlight-host-page-for-development-and-debugging/">previous posts</a>, setting up one of the Web applications in your solution as the host project for your Silverlight code is not very difficult.</p>
+
+<p>When the project is started for the first time Visual Studio will prompt you with the following dialog:
+<a href="http://crmvoyager.files.wordpress.com/2010/12/warningmessage.png"><img src="http://crmvoyager.files.wordpress.com/2010/12/warningmessage.png" alt="" /></a></p>
+
+<p>Choosing yes to this dialog will enable Silverlight debugging and save the dialog preference in the .user file for the project. Deleting the .user file will cause Visual Studio to prompt you once again for this setting. However, we can manually enable Silverlight debugging very easily on the properties pane for the Web site that is hosting the Silverlight component. The following screen shot shows you where the setting is:
+<a href="http://crmvoyager.files.wordpress.com/2010/12/hostproject.png"><img src="http://crmvoyager.files.wordpress.com/2010/12/hostproject.png" alt="" /></a></p>
+
+<p>It is worth noting that the tradeoff we make for Silverlight debugging is that Visual Studio will not attach itself as a Javascript debugger as it normally would. If you are having trouble visualizing what that means, consider the next screenshot showing how Visual Studio normally loads the Javascript code up for inspection right in the Solution Explorer:
+<a href="http://crmvoyager.files.wordpress.com/2010/12/scriptdebugging.png"><img src="http://crmvoyager.files.wordpress.com/2010/12/scriptdebugging.png" alt="" /></a></p>
+
+<p>Attaching Visual Studio as a Silverlight debugger affects System.Diagnostics.Debugger.IsAttached in the running Silverlight code. The default boilerplate code that is generated by Visual Studio uses this to detect how to deal with unhandled exceptions at the top level of the application in App.xaml.cs. If a debugger isn&#8217;t attached it attempts to write the exception details out to the browser using Javascript. See the following code snippet:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">private</span> <span class="k">void</span> <span class="nf">Application_UnhandledException</span><span class="p">(</span> <span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">ApplicationUnhandledExceptionEventArgs</span> <span class="n">e</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="c1">// If the app is running outside of the debugger then report the exception using</span>
+</span><span class='line'>          <span class="c1">// the browser&#39;s exception mechanism. On IE this will display it a yellow alert </span>
+</span><span class='line'>          <span class="c1">// icon in the status bar and Firefox will display a script error.</span>
+</span><span class='line'>          <span class="k">if</span><span class="p">(</span> <span class="p">!</span><span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Debugger</span><span class="p">.</span><span class="n">IsAttached</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="c1">// NOTE: This will allow the application to continue running after an exception has been thrown</span>
+</span><span class='line'>              <span class="c1">// but not handled. </span>
+</span><span class='line'>              <span class="c1">// For production applications this error handling should be replaced with something that will </span>
+</span><span class='line'>              <span class="c1">// report the error to the website and stop the application.</span>
+</span><span class='line'>              <span class="n">e</span><span class="p">.</span><span class="n">Handled</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>              <span class="n">Deployment</span><span class="p">.</span><span class="n">Current</span><span class="p">.</span><span class="n">Dispatcher</span><span class="p">.</span><span class="n">BeginInvoke</span><span class="p">(</span> <span class="k">delegate</span> <span class="p">{</span> <span class="n">ReportErrorToDOM</span><span class="p">(</span> <span class="n">e</span> <span class="p">);</span> <span class="p">}</span> <span class="p">);</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>      <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Hopefully this give you a little insight on what is going on when you attempt to debug Silverlight code from within Visual Studio and how to get the debugger attached again if something gets messed up.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-02T07:50:29-08:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoursite.com/blog/2010/12/02/attaching-visual-studio-as-a-silverlight-debugger/" data-via="" data-counturl="http://yoursite.com/blog/2010/12/02/attaching-visual-studio-as-a-silverlight-debugger/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2010/11/30/sharepoint-web-part-error-when-switching-deployment-types/" title="Previous Post: SharePoint Web Part Error When Switching Deployment Types">&laquo; SharePoint Web Part Error When Switching Deployment Types</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2010/12/05/scripting-sharepoint-2010-solution-installations/" title="Next Post: Scripting SharePoint 2010 Solution Installations">Scripting SharePoint 2010 Solution Installations &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

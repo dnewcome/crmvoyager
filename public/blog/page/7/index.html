@@ -1,0 +1,1239 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="I was deploying an application for a client today when I realized that they didn&#8217;t have the 4.0 framework installed on the target machine. I&# &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/page/7/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/02/installing-asp-net-4-0-on-server2003iis6/">Installing ASP.NET 4.0 on Server2003/IIS6</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-08-02T16:35:20-07:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I was deploying an application for a client today when I realized that they didn&#8217;t have the 4.0 framework installed on the target machine. I&#8217;ve done this plenty of times, but apparently I forget this one configuration step each time. For the benefit of myself and hopefully others, here is a description of the problem and the solution.</p>
+
+<p>Problem: we need to install a 4.0 application to a server that is running IIS6 and doesn&#8217;t have the 4.0 framework yet installed.</p>
+
+<p>Initially, hitting the page gives us the following error:</p>
+
+<p>Line 19:    /> Line 20:     &lt;system.web> Line 21:       <compilation debug="true" targetFramework="4.0"/> Line 22:  &lt;/system.web> Line 23: </configuration></p>
+
+<p>Ok, great, so all we have to do is install .NET 4.0. We&#8217;ll fire off the web installer from <a href="http://www.microsoft.com/downloads/details.aspx?familyid=9cfb2d51-5ff4-4491-b0e5-b386f32c0992&amp;displaylang=en">here</a></p>
+
+<p>Once we have things installed, we can select 4.0 as the framework for our site in the IIS6 configuration page for the site:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2010/08/set-site-4-0.png"><img src="http://crmvoyager.files.wordpress.com/2010/08/set-site-4-0.png" alt="" /></a></p>
+
+<p>So far, so good. Restart IIS and browse to the page, and:</p>
+
+<h1>The page cannot be found</h1>
+
+<p>The page you are looking for might have been  removed, had its name changed, or is temporarily unavailable.</p>
+
+<hr />
+
+<p>Please try the following:</p>
+
+<ul>
+<li><p>Make sure that the Web site address displayed in the address bar of your  browser is spelled and formatted correctly.</p></li>
+<li><p>If you reached this page by clicking a link, contact the Web site  administrator to alert them that the link is incorrectly formatted.</p></li>
+<li><p>Click the <a href="http://localhost:9982/bacb/Default.aspx">Back</a> button to try  another link.</p></li>
+</ul>
+
+
+<h2>HTTP Error 404 - File or directory not found.</h2>
+
+<p>Internet Information  Services (IIS)</p>
+
+<p>Hmm.. a 404 error? Double check that .aspx files are registered to the new aspnet ISAPI filter:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2010/08/aspx-registration.png"><img src="http://crmvoyager.files.wordpress.com/2010/08/aspx-registration.png" alt="" /></a></p>
+
+<p>Yes, they are registered. What else could cause a 404 error for our aspx pages? Other file types work: xml, html, etc.</p>
+
+<p>This is the part that I always forget:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2010/08/service-extension-4.png"><img src="http://crmvoyager.files.wordpress.com/2010/08/service-extension-4.png" alt="" /></a></p>
+
+<p>By default, new extensions are disabled. We have to enable the ISAPI extension that processes 4.0 framework pages.</p>
+
+<p>Hopefully this helps someone out. It will help me the next time.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/16/net-references-not-found-in-visual-studio/">.NET References Not Found in Visual Studio</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-16T19:31:27-07:00" pubdate data-updated="true">Jul 16<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I just had this happen to me a second time, and I didn&#8217;t recall what I did the first time so I&#8217;m blogging it now. The issue is that you add a reference to some library in Visual Studio and it just won&#8217;t pick up the reference. There are a lot of things that can cause this, but the one that gets me is the platform target setting of the project. If you are building for a specific CPU the project will try to resolve references to any assemblies using the same CPU target. Most of the time we are building purely managed assemblies, so the setting is &#8216;Any CPU&#8217;. Sometimes new projects get created by Visual studio with x86 as the target platform (not sure why this is) so none of your references work until you recall to change the setting back to &#8216;Any CPU&#8217;. If you don&#8217;t know what I&#8217;m talking about, take a look at the following screenshots:
+[gallery order=&#8221;DESC&#8221;]</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/13/understanding-crm-linkentities/">Understanding CRM LinkEntities</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-13T03:37:22-07:00" pubdate data-updated="true">Jul 13<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Anyone that has spent some time developing solutions for Microsoft CRM should be familiar at least with grabbing an entity instance or collection of instances from CRM using CrmService.Retrieve() or CrmSevice.RetrieveMultiple(). It is conceptually straightforward to pass CRM an ID and get the corresponding instance back. While a little more advanced, <a href="http://crmvoyager.wordpress.com/2010/07/07/querying-crm-with-conditions-and-filters/">using FilterExpressions</a> is still pretty easy to visualize, since we are dealing with properties of a single entity. Things start to get a little more complex if we&#8217;d like to involve more than a single entity in our selection criteria however.</p>
+
+<p>In CRM, in order to perform a query that takes more than a single entity into consideration we need to use a LinkEntity. Notice that I didn&#8217;t say that we&#8217;d like to perform a query that returns more than a single entity type, since CRM QueryExpression queries are limited to returning a single type of entity. We can get around this limitation by using the FetchXml interface, but the data is returned as Xml rather than BusinessEntity instances, so we would have to pull out what we need by hand.</p>
+
+<p>One of the things that makes LinkEntities confusing initially is the idea that we are traversing the relationship in a particular direction &#8211; that is, there is a &#8216;from&#8217; entity and a &#8216;to&#8217; entity. In terms of a typical SQL join, we are dealing with sets, so we can express the relation from either end. That is, we could write a query that returns a parent row along with the related detail rows using either of the following SQL statements:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="n">detail</span><span class="p">.</span><span class="o">*</span> <span class="k">from</span> <span class="n">parent</span>
+</span><span class='line'><span class="k">inner</span> <span class="k">join</span> <span class="n">detail</span>
+</span><span class='line'><span class="k">on</span> <span class="n">detail</span><span class="p">.</span><span class="n">parentid</span> <span class="o">=</span> <span class="n">parent</span><span class="p">.</span><span class="n">id</span>
+</span><span class='line'><span class="k">where</span> <span class="n">parent</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">select</span> <span class="n">detail</span><span class="p">.</span><span class="o">*</span> <span class="k">from</span> <span class="n">detail</span>
+</span><span class='line'><span class="k">inner</span> <span class="k">join</span> <span class="n">parent</span>
+</span><span class='line'><span class="k">on</span> <span class="n">detail</span><span class="p">.</span><span class="n">parentid</span> <span class="o">=</span> <span class="n">parent</span><span class="p">.</span><span class="n">id</span>
+</span><span class='line'><span class="k">where</span> <span class="n">parent</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However, in CRM, we must start the relation with the entity that we wish to return as the result. So, if we&#8217;d like to return the detail entities for a particular parent entity, we&#8217;d need to traverse the relationship from detail to parent rather than parent to detail.</p>
+
+<p>Let&#8217;s try to write a LinkEntity expression using the example given above. We know that the corresponding SQL statement would be of the second form in the code listing. The LinkEntity is constructed using the entity name and field on each side of the SQL &#8216;on&#8217; clause. The only thing to watch out for is the order &#8211; that is, which entity is used as the &#8216;from&#8217; side and which is the &#8216;to&#8217; side. Since we are going from detail to parent given that we&#8217;d like to return the detail entities as the result, we&#8217;d use SQL of the form:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">detail</span><span class="p">.</span><span class="n">parentid</span> <span class="o">=</span> <span class="n">parent</span><span class="p">.</span><span class="n">id</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>which corresponds to the following LinkEntity construction:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">LinkEntity</span> <span class="n">linkEntity</span> <span class="p">=</span> <span class="k">new</span> <span class="n">LinkEntity</span><span class="p">();</span>            
+</span><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">LinkFromEntityName</span> <span class="p">=</span> <span class="s">&quot;detail&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">LinkFromAttributeName</span> <span class="p">=</span> <span class="s">&quot;parentid&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">LinkToEntityName</span> <span class="p">=</span> <span class="s">&quot;parent&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">LinkToAttributeName</span> <span class="p">=</span> <span class="s">&quot;id&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">JoinOperator</span> <span class="p">=</span> <span class="n">JoinOperator</span><span class="p">.</span><span class="n">Inner</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That seemed pretty straightforward. There is one more thing that we must do in order to construct a useful query &#8211; add the condition that selects which parent instance we are interested in. I&#8217;ve covered FilterConditions in a <a href="http://crmvoyager.wordpress.com/2010/07/07/querying-crm-with-conditions-and-filters/">previous post</a>, and we are going to construct a FilterCondition in just the same way. Here is the code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">FilterExpression</span> <span class="n">filter</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FilterExpression</span><span class="p">();</span>
+</span><span class='line'><span class="n">filter</span><span class="p">.</span><span class="n">FilterOperator</span> <span class="p">=</span> <span class="n">LogicalOperator</span><span class="p">.</span><span class="n">And</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">ConditionExpression</span> <span class="n">condition</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConditionExpression</span><span class="p">();</span>
+</span><span class='line'><span class="n">condition</span><span class="p">.</span><span class="n">AttributeName</span> <span class="p">=</span> <span class="s">&quot;id&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">condition</span><span class="p">.</span><span class="n">Operator</span> <span class="p">=</span> <span class="n">ConditionOperator</span><span class="p">.</span><span class="n">Equal</span><span class="p">;</span>
+</span><span class='line'><span class="n">condition</span><span class="p">.</span><span class="n">Values</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[]</span> <span class="p">{</span> <span class="m">123</span> <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">filter</span><span class="p">.</span><span class="n">Conditions</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConditionExpression</span><span class="p">[]</span> <span class="p">{</span> <span class="n">condition</span> <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now that we have the filter, the only tricky part is where to put it. Since FilterExpressions don&#8217;t specify the entity to which they apply, the placement of the expression is critical. Since we want to apply this filter to the parent entity, and the parent entity is the &#8216;from&#8217; entity of the LinkCriteria, we&#8217;ll need to attach it to the LinkCriteria of the LinkEntity rather than the FilterCriteria of the QueryExpression like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">LinkCriteria</span> <span class="p">=</span> <span class="n">filter</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The full query code looks like this, including the creating of the QueryExpression:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">LinkEntity</span> <span class="n">linkEntity</span> <span class="p">=</span> <span class="k">new</span> <span class="n">LinkEntity</span><span class="p">();</span>            
+</span><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">LinkFromEntityName</span> <span class="p">=</span> <span class="s">&quot;detail&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">LinkFromAttributeName</span> <span class="p">=</span> <span class="s">&quot;parentid&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">LinkToEntityName</span> <span class="p">=</span> <span class="s">&quot;parent&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">LinkToAttributeName</span> <span class="p">=</span> <span class="s">&quot;id&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">JoinOperator</span> <span class="p">=</span> <span class="n">JoinOperator</span><span class="p">.</span><span class="n">Inner</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">FilterExpression</span> <span class="n">filter</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FilterExpression</span><span class="p">();</span>
+</span><span class='line'><span class="n">filter</span><span class="p">.</span><span class="n">FilterOperator</span> <span class="p">=</span> <span class="n">LogicalOperator</span><span class="p">.</span><span class="n">And</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">ConditionExpression</span> <span class="n">condition</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConditionExpression</span><span class="p">();</span>
+</span><span class='line'><span class="n">condition</span><span class="p">.</span><span class="n">AttributeName</span> <span class="p">=</span> <span class="s">&quot;id&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">condition</span><span class="p">.</span><span class="n">Operator</span> <span class="p">=</span> <span class="n">ConditionOperator</span><span class="p">.</span><span class="n">Equal</span><span class="p">;</span>
+</span><span class='line'><span class="n">condition</span><span class="p">.</span><span class="n">Values</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[]</span> <span class="p">{</span> <span class="m">123</span> <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">filter</span><span class="p">.</span><span class="n">Conditions</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConditionExpression</span><span class="p">[]</span> <span class="p">{</span> <span class="n">condition</span> <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">linkEntity</span><span class="p">.</span><span class="n">LinkCriteria</span> <span class="p">=</span> <span class="n">filter</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">QueryExpression</span> <span class="n">query</span> <span class="p">=</span> <span class="k">new</span> <span class="n">QueryExpression</span><span class="p">(</span> <span class="n">in_fromEntity</span> <span class="p">);</span>
+</span><span class='line'><span class="n">query</span><span class="p">.</span><span class="n">LinkEntities</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span> <span class="n">linkEntity</span> <span class="p">);</span>
+</span><span class='line'><span class="n">query</span><span class="p">.</span><span class="n">ColumnSet</span> <span class="p">=</span> <span class="k">new</span> <span class="n">AllColumns</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Hopefully this post clears up some of the confusing aspects of using LinkEntities. I have spent a long time trying to track down mysterious bugs related to getting the entity order wrong or attaching the FilterCriteria in the wrong place. The documentation doesn&#8217;t explain this well in my opinion, so hopefully this saves you some grief.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/12/getting-a-remote-shell-with-windows/">Getting a Remote Shell With Windows</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-12T06:50:57-07:00" pubdate data-updated="true">Jul 12<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Have you ever wanted to do a quick IISReset on a remote server without having to switch to or start a remote desktop session? Shouldn&#8217;t it be as easy as it is on Linux where you can have a console open for any machine that is running SSH (which is just about every Linux box)?</p>
+
+<p>There are several different ways to get remote commandline access to a Windows machine. The guys at Sysinternals have offered a free tool called <a href="http://technet.microsoft.com/en-us/sysinternals/bb897553.aspx">PSExec</a> for years now that works great if you are on a local network. However, it relies on a lot of tricks that include the Windows file sharing ports which are typically blocked if the machine is behind a firewall. Microsoft, starting with Windows Server 2008, provides its own next-generation shell called PowerShell that is supposed to make all of this pain go away. My experience is that there are so many steps needed to get two machines talking remotely over PowerShell (I&#8217;ll blog about this sometime, as it can be worth it in some cases &#8211; PowerShell really is quite, er, powerful).</p>
+
+<p>Recently I wrote <a href="http://crmvoyager.wordpress.com/2010/06/29/connecting-to-ms-crm-over-ssh/">an article</a> about creating backhaul SSH tunnels from a remote host back into your development machine. Today, I&#8217;m going to show you how you can use a tunnel set up using SSH to get a Windows command prompt on the remote server.</p>
+
+<p>We are going to use a tool called Netcat to accomplish our goal. Netcat for Windows can be downloaded <a href="http://joncraton.org/files/nc111nt.zip">here</a>. We will need this tool on both ends of the connection &#8211; client and server. Netcat needs no installation, but it is handy if we have it in the path somewhere so it can be invoked from the commandline easily.</p>
+
+<p>Once we have Netcat on both machines we can set up the server to listen on a port of our choosing and serve up cmd.exe over the network. On the client end, we will use Netcat again, but in client mode, to connect to the server and display the output from cmd.exe on the local machine.</p>
+
+<p>On the server we invoke Netcat like so:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&gt; nc -l -p 7777 -e "cmd.exe"
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here we are telling Netcat to enter listen mode on port 7777, executing &#8216;cmd.exe&#8217; when a client connects. Netcat will forward all input from the network to cmd.exe and return all output back over the network.</p>
+
+<p>On the client end, we connect</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&gt; nc localhost 7777
+</span><span class='line'>Microsoft Windows [Version 6.0.6001]
+</span><span class='line'>Copyright (c) 2006 Microsoft Corporation.  All rights reserved.
+</span><span class='line'>&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Wait a minute, why are we connecting to &#8216;localhost&#8217; if we really want to get a remote shell? Well in the <a href="http://crmvoyager.wordpress.com/2010/06/29/connecting-to-ms-crm-over-ssh/">previous article</a>, where we set up the SSH tunnel, we configured our backhaul connection to listen on the remote port 7777, and the client is that remote host, so from the client&#8217;s perspective we need to connect to localhost. Then the tunnel does its thing, which is to forward traffic from the local port 7777 to the remote port, where we have Netcat listening.</p>
+
+<p>We can prove that we are actually on the remote host by doing something like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&gt; hostname
+</span><span class='line'>remote-srvr
+</span><span class='line'>&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Hopefully this saves you some time, since now you can just switch to your command window and type &#8216;iisreset&#8217; instead of messing with remote desktop. One thing that I&#8217;d like to get working, but haven&#8217;t yet, is some console text editor. I have tried VIM and some others, but they all try to access the local console via some mechanism other than standard out, so they don&#8217;t work. VIM tries to change the display mode of the console window that the remote Netcat process is running under rather than the local console window that the client is running in. Perhaps if we ran the Netcat server as a service without an attached console things would work. Hopefully someone can help me out in the comments.</p>
+
+<p>One parting note &#8211; the listening Netcat has no security, so anyone on the remote network can connect to it. As long as the remote network is secure and behind the firewall, using Netcat for remote connections shouldn&#8217;t pose much of a risk, especially since once you are connected no one else can connect to your running Netcat process.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/07/serialization-crm-entities-vs-dynamicentities/">Serialization: CRM Entities vs DynamicEntities</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-07T20:46:46-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I did a quick experiment to see what the serialization formats look like for a DynamicEntity and a static entity type as found in the Microsoft.Crm.SdkTypeProxy namespace. The results were predictable by looking at the structure of each type of entity, but I thought that I&#8217;d post my results here if for no other reason than to provide you with some canned CRM data that you can use for testing, which was the entire point of this exercise for me. I also wanted to know if CRM entities could be &#8216;round-tripped&#8217; &#8211; that is, serialized to xml and then deserialized back to entity instances. The answer is yes, they certainly can. So we can grab some data from a live CRM installation and use it in offline tests.</p>
+
+<p>The following code illustrates the concept of using .NET serialization to round-trip a .NET type (a CRM entity in our specific case):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">public</span> <span class="k">static</span> <span class="n">Object</span> <span class="nf">RoundTrip</span><span class="p">(</span> <span class="n">Type</span> <span class="n">in_type</span><span class="p">,</span> <span class="n">Object</span> <span class="n">in_instance</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">System</span><span class="p">.</span><span class="n">Xml</span><span class="p">.</span><span class="n">Serialization</span><span class="p">.</span><span class="n">XmlSerializer</span> <span class="n">xser</span> <span class="p">=</span> <span class="k">new</span> <span class="n">System</span><span class="p">.</span><span class="n">Xml</span><span class="p">.</span><span class="n">Serialization</span><span class="p">.</span><span class="n">XmlSerializer</span><span class="p">(</span> <span class="n">in_type</span> <span class="p">);</span>
+</span><span class='line'>          
+</span><span class='line'>          <span class="n">MemoryStream</span> <span class="n">ms</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MemoryStream</span><span class="p">();</span>
+</span><span class='line'>          <span class="n">xser</span><span class="p">.</span><span class="n">Serialize</span><span class="p">(</span> <span class="n">ms</span><span class="p">,</span> <span class="n">in_instance</span> <span class="p">);</span>
+</span><span class='line'>          <span class="n">ms</span><span class="p">.</span><span class="n">Seek</span><span class="p">(</span> <span class="m">0</span><span class="p">,</span> <span class="n">SeekOrigin</span><span class="p">.</span><span class="n">Begin</span> <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="n">Object</span> <span class="n">retval</span> <span class="p">=</span> <span class="n">xser</span><span class="p">.</span><span class="n">Deserialize</span><span class="p">(</span> <span class="n">ms</span> <span class="p">);</span>
+</span><span class='line'>          <span class="n">ms</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+</span><span class='line'>          <span class="k">return</span> <span class="n">retval</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When we save the intermediate results to disk, we get a file like this for a static product type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;product</span> <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="na">xmlns:xsd=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;createdby</span> <span class="na">name=</span><span class="s">&quot;First name Last name&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>3bbf2574-c324-df11-b753-0800277bde92<span class="nt">&lt;/createdby&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;createdon</span> <span class="na">date=</span><span class="s">&quot;6/22/2010&quot;</span> <span class="na">time=</span><span class="s">&quot;3:06 PM&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>2010-06-22T15:06:20-04:00<span class="nt">&lt;/createdon&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;defaultuomid</span> <span class="na">name=</span><span class="s">&quot;Primary Unit&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>36d207f3-3d9e-4e29-abf7-de19896e78dc<span class="nt">&lt;/defaultuomid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;defaultuomscheduleid</span> <span class="na">name=</span><span class="s">&quot;Default Unit&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>999cdc43-8207-42f5-b15b-f4afdaee3f0f<span class="nt">&lt;/defaultuomscheduleid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;exchangerate</span> <span class="na">formattedvalue=</span><span class="s">&quot;1.0000000000&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>1<span class="nt">&lt;/exchangerate&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;iskit</span> <span class="na">name=</span><span class="s">&quot;No&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>false<span class="nt">&lt;/iskit&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;isstockitem</span> <span class="na">name=</span><span class="s">&quot;No&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>false<span class="nt">&lt;/isstockitem&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;modifiedby</span> <span class="na">name=</span><span class="s">&quot;First name Last name&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>3bbf2574-c324-df11-b753-0800277bde92<span class="nt">&lt;/modifiedby&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;modifiedon</span> <span class="na">date=</span><span class="s">&quot;6/22/2010&quot;</span> <span class="na">time=</span><span class="s">&quot;5:14 PM&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>2010-06-22T17:14:49-04:00<span class="nt">&lt;/modifiedon&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;name</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>Test Product<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;organizationid</span> <span class="na">name=</span><span class="s">&quot;danco&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>c1c701e4-f69c-4363-8dba-41aa5d5754ac<span class="nt">&lt;/organizationid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;pricelevelid</span> <span class="na">name=</span><span class="s">&quot;My Price List&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>4098399d-317e-df11-a711-0800277bde92<span class="nt">&lt;/pricelevelid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;productid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>40b0ae3d-317e-df11-a711-0800277bde92<span class="nt">&lt;/productid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;productnumber</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>PROD1<span class="nt">&lt;/productnumber&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;producttypecode</span> <span class="na">name=</span><span class="s">&quot;Sales Inventory&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>1<span class="nt">&lt;/producttypecode&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;quantitydecimal</span> <span class="na">formattedvalue=</span><span class="s">&quot;2&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>2<span class="nt">&lt;/quantitydecimal&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;statecode</span> <span class="na">formattedvalue=</span><span class="s">&quot;Active&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>Active<span class="nt">&lt;/statecode&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;statuscode</span> <span class="na">name=</span><span class="s">&quot;Active&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>1<span class="nt">&lt;/statuscode&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;transactioncurrencyid</span> <span class="na">name=</span><span class="s">&quot;US Dollar&quot;</span> <span class="na">dsc=</span><span class="s">&quot;0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="nt">&gt;</span>447adec9-c324-df11-b753-0800277bde92<span class="nt">&lt;/transactioncurrencyid&gt;</span>
+</span><span class='line'><span class="nt">&lt;/product&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The DynamicEntity looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="p">=</span><span class="s">&quot;1.0&quot;</span><span class="p">?&gt;</span>
+</span><span class='line'><span class="p">&lt;</span><span class="n">DynamicEntity</span> <span class="n">xmlns</span><span class="p">:</span><span class="n">xsi</span><span class="p">=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="n">xmlns</span><span class="p">:</span><span class="n">xsd</span><span class="p">=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;product&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>  <span class="p">&lt;</span><span class="n">Properties</span> <span class="n">xmlns</span><span class="p">=</span><span class="s">&quot;http://schemas.microsoft.com/crm/2006/WebServices&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;StateProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;statecode&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span><span class="p">&gt;</span><span class="n">Active</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;KeyProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;productid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span><span class="p">&gt;</span><span class="m">40</span><span class="n">b0ae3d</span><span class="p">-</span><span class="m">317</span><span class="n">e</span><span class="p">-</span><span class="n">df11</span><span class="p">-</span><span class="n">a711</span><span class="p">-</span><span class="m">0800277</span><span class="n">bde92</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmBooleanProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;iskit&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;No&quot;</span><span class="p">&gt;</span><span class="k">false</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmDateTimeProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;createdon&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">date</span><span class="p">=</span><span class="s">&quot;6/22/2010&quot;</span> <span class="n">time</span><span class="p">=</span><span class="s">&quot;3:06 PM&quot;</span><span class="p">&gt;</span><span class="m">2010</span><span class="p">-</span><span class="m">06</span><span class="p">-</span><span class="m">22</span><span class="n">T15</span><span class="p">:</span><span class="m">06</span><span class="p">:</span><span class="m">20</span><span class="p">-</span><span class="m">04</span><span class="p">:</span><span class="m">00</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmDateTimeProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;modifiedon&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">date</span><span class="p">=</span><span class="s">&quot;6/22/2010&quot;</span> <span class="n">time</span><span class="p">=</span><span class="s">&quot;5:14 PM&quot;</span><span class="p">&gt;</span><span class="m">2010</span><span class="p">-</span><span class="m">06</span><span class="p">-</span><span class="m">22</span><span class="n">T17</span><span class="p">:</span><span class="m">14</span><span class="p">:</span><span class="m">49</span><span class="p">-</span><span class="m">04</span><span class="p">:</span><span class="m">00</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;defaultuomscheduleid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;Default Unit&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;uomschedule&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">999</span><span class="n">cdc43</span><span class="p">-</span><span class="m">8207</span><span class="p">-</span><span class="m">42f5</span><span class="p">-</span><span class="n">b15b</span><span class="p">-</span><span class="n">f4afdaee3f0f</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;PicklistProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;producttypecode&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;Sales Inventory&quot;</span><span class="p">&gt;</span><span class="m">1</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;StringProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span><span class="p">&gt;</span><span class="n">Test</span> <span class="n">Product</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmBooleanProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;isstockitem&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;No&quot;</span><span class="p">&gt;</span><span class="k">false</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;StatusProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;statuscode&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;Active&quot;</span><span class="p">&gt;</span><span class="m">1</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;transactioncurrencyid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;US Dollar&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;transactioncurrency&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">447</span><span class="n">adec9</span><span class="p">-</span><span class="n">c324</span><span class="p">-</span><span class="n">df11</span><span class="p">-</span><span class="n">b753</span><span class="p">-</span><span class="m">0800277</span><span class="n">bde92</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmDecimalProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;exchangerate&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">formattedvalue</span><span class="p">=</span><span class="s">&quot;1.0000000000&quot;</span><span class="p">&gt;</span><span class="m">1.0000000000</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;pricelevelid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;My Price List&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;pricelevel&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">4098399d</span><span class="p">-</span><span class="m">317</span><span class="n">e</span><span class="p">-</span><span class="n">df11</span><span class="p">-</span><span class="n">a711</span><span class="p">-</span><span class="m">0800277</span><span class="n">bde92</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;modifiedby&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;First name Last name&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;systemuser&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">3</span><span class="n">bbf2574</span><span class="p">-</span><span class="n">c324</span><span class="p">-</span><span class="n">df11</span><span class="p">-</span><span class="n">b753</span><span class="p">-</span><span class="m">0800277</span><span class="n">bde92</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;StringProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;productnumber&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span><span class="p">&gt;</span><span class="n">PROD1</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;defaultuomid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;Primary Unit&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;uom&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">36d207f3</span><span class="p">-</span><span class="m">3d9e-4</span><span class="n">e29</span><span class="p">-</span><span class="n">abf7</span><span class="p">-</span><span class="n">de19896e78dc</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;CrmNumberProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;quantitydecimal&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">formattedvalue</span><span class="p">=</span><span class="s">&quot;2&quot;</span><span class="p">&gt;</span><span class="m">2</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;createdby&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;First name Last name&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;systemuser&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="m">3</span><span class="n">bbf2574</span><span class="p">-</span><span class="n">c324</span><span class="p">-</span><span class="n">df11</span><span class="p">-</span><span class="n">b753</span><span class="p">-</span><span class="m">0800277</span><span class="n">bde92</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;</span><span class="n">Property</span> <span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="p">=</span><span class="s">&quot;LookupProperty&quot;</span> <span class="n">Name</span><span class="p">=</span><span class="s">&quot;organizationid&quot;</span><span class="p">&gt;</span>
+</span><span class='line'>      <span class="p">&lt;</span><span class="n">Value</span> <span class="n">name</span><span class="p">=</span><span class="s">&quot;danco&quot;</span> <span class="n">type</span><span class="p">=</span><span class="s">&quot;organization&quot;</span> <span class="n">dsc</span><span class="p">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span><span class="n">c1c701e4</span><span class="p">-</span><span class="n">f69c</span><span class="p">-</span><span class="m">4363</span><span class="p">-</span><span class="m">8d</span><span class="n">ba</span><span class="p">-</span><span class="m">41</span><span class="n">aa5d5754ac</span><span class="p">&lt;/</span><span class="n">Value</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">&lt;/</span><span class="n">Property</span><span class="p">&gt;</span>
+</span><span class='line'>  <span class="p">&lt;/</span><span class="n">Properties</span><span class="p">&gt;</span>
+</span><span class='line'><span class="p">&lt;/</span><span class="n">DynamicEntity</span><span class="p">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I&#8217;ll be following up with how I&#8217;m using this in my mock CRM implementation that I&#8217;m going to use for testing.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/07/enabling-design-mode-in-asp-net-webparts/">Enabling Design Mode in ASP.NET WebParts</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-07T03:28:24-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>WebPart pages support lots of advanced functionality right out of the box, but there are some complexities in getting everything set up correctly. In a previous post, I pointed out an issue that I had with WebParts personalization support. Another thing that I got tripped up on recently was getting design mode working.</p>
+
+<p>Design mode is a page viewing mode in which the WebParts on the page can be moved around via drag-and-drop using the mouse. This support is baked in, you just need to know how to enable it. Intuitively it seems like there should be an enum somewhere with the different display modes that you can use to change the mode. It doesn&#8217;t quite work this way, and the documentation is a little bit confusing on exactly how things are supposed to work.</p>
+
+<p><a href="http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.webparts.webpartmanager.designdisplaymode.aspx">The documentation</a> gives an example in which the supported DisplayModes are queried from the WebPartManager and their names are added to a drop-down field on the page. Simply stated, all of the possible display modes are stored as static fields of the WebPartManager class rather than as an enum. The display modes supported at runtime for a given WebPartManager instance are found using the SupportedDisplayModes property.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">foreach</span><span class="p">(</span> <span class="n">WebPartDisplayMode</span> <span class="n">mode</span> <span class="k">in</span> <span class="n">WebPartManager1</span><span class="p">.</span><span class="n">SupportedDisplayModes</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>     <span class="c1">// .....</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Setting the display mode for the page is done like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">WebPartManager1</span><span class="p">.</span><span class="n">DisplayMode</span> <span class="p">=</span> <span class="n">WebPartManager</span><span class="p">.</span><span class="n">DesignDisplayMode</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that if we try to set a display mode that is not supported by the WebPartManager, a runtime error will result. Also, drag-and-drop doesn&#8217;t work in all browsers. It didn&#8217;t work in Google Chrome for me, but it worked fine (go figure) in IE8.</p>
+
+<p>Here is what it looks like in action:
+<a href="http://crmvoyager.files.wordpress.com/2010/07/webparts.png"><img src="http://crmvoyager.files.wordpress.com/2010/07/webparts.png" alt="" /></a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/07/querying-crm-with-conditions-and-filters/">Querying CRM With Conditions and Filters</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-07T03:03:13-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>On more than one occasion I&#8217;ve had to assemble a complex query for retrieving CRM entities. Unfortunately, the QueryExpression API can be pretty confusing. I&#8217;ve actually written several query APIs for other projects myself, and this one still trips me up sometimes.</p>
+
+<p>The basis for my confusion, and probably the confusion of many others, is that the naming is slightly confusing and it is not obvious at first blush why there is a need for both FilterExpression and ConditionExpression.</p>
+
+<p>To clear up the naming convention, there are two types that are used in the construction of the selection condition: FilterExpression and ConditionExpression. FilterExpression is used to express boolean conjunctions and disjunctions (and and or), and ConditionExpression is used to represent (in)equality, and set membership. There is an inconsistency in naming of the field that holds the filters at the top level however, there being a QueryExpression.Criteria property rather than QueryExpression.Filters.</p>
+
+<p>One way to look at a complex query is that the criteria consist of a tree of FilterExpressions with ConditionExpressions as the terminals. That is, FilterExpression has a collection of other FilterExpressions, whereas ConditionExpressions do not contain any further expressions.</p>
+
+<p>As an example, if we wanted to express the clause:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>( A = 1 and ( B = 2 or C = 3 ) ) </span></code></pre></td></tr></table></div></figure>
+
+
+<p>we would need two FilterExpressions and three ConditionExpressions. It is easy to see how to construct the ConditionExpressions - we simply create three instances using ConditionOperator.Equal as the operator. For example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ConditionExpression</span> <span class="n">conditionA</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConditionExpression</span><span class="p">();</span>
+</span><span class='line'><span class="n">conditionA</span><span class="p">.</span><span class="n">AttributeName</span> <span class="p">=</span> <span class="s">&quot;A&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">conditionA</span><span class="p">.</span><span class="n">Operator</span> <span class="p">=</span> <span class="n">ConditionOperator</span><span class="p">.</span><span class="n">Equal</span><span class="p">;</span>
+</span><span class='line'><span class="n">conditionA</span><span class="p">.</span><span class="n">Values</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[]</span> <span class="p">{</span> <span class="m">1</span> <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice that the value is placed in an array of integers. ConditionExpression.Values is a collection since we support the possibility of testing for set membership, thus necessitating the use of a collection for the possible values.</p>
+
+<p>Next we create two filters, one each for the &#8216;and&#8217; and &#8216;or&#8217; expressions:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">FilterExpression</span> <span class="n">andFilter</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FilterExpression</span><span class="p">();</span>
+</span><span class='line'><span class="n">andFilter</span><span class="p">.</span><span class="n">FilterOperator</span> <span class="p">=</span> <span class="n">LogicalOperator</span><span class="p">.</span><span class="n">And</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">FilterExpression</span> <span class="n">orFilter</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FilterExpression</span><span class="p">();</span>
+</span><span class='line'><span class="n">childFilter</span><span class="p">.</span><span class="n">FilterOperator</span> <span class="p">=</span> <span class="n">LogicalOperator</span><span class="p">.</span><span class="n">Or</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Now establish the filter hierarchy</span>
+</span><span class='line'><span class="n">andFilter</span><span class="p">.</span><span class="n">Filters</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FilterExpression</span><span class="p">[]</span> <span class="p">{</span> <span class="n">orFilter</span> <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once the filters are set up, we can apply the conditionals:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">andFilter</span><span class="p">.</span><span class="n">Conditions</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConditionExpression</span><span class="p">[]</span> <span class="p">{</span> <span class="n">conditionA</span> <span class="p">};</span>
+</span><span class='line'><span class="n">orFilter</span><span class="p">.</span><span class="n">Conditions</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConditionExpression</span><span class="p">[]</span> <span class="p">{</span> <span class="n">conditionB</span><span class="p">,</span> <span class="n">conditionC</span> <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I have organized the code slightly differently than most of the code samples available from Microsoft. I think that looking at the filters as a tree structure makes things clearer. Notice that a ConditionExpression is given the same consideration that a FilterExpression is given when evaluating the entire expression &#8211; the boolean operator is applied to conditionA and the result of  the evaluation of orFilter.</p>
+
+<p>Somehow, I think that this API could have been simpler. I might explore wrapping this API in something a little less confusing, perhaps at the expense of supporting less frequently used operations. Hopefully this gives you a slightly different perspective on constructing Criteria expressions in CRM. I&#8217;ll cover (the also confusing) LinkEntity in an upcoming post.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/07/code-spelunking-crm-web-service-internals/">Code Spelunking - CRM Web Service Internals</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-07T00:03:23-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I was poking around in some of the CRM libraries in the course of writing a mock CRM web service for testing purposes and I found a few interesting things that I thought would be useful to share. If you have never used the wonderful <a href="http://www.red-gate.com/products/reflector/">.NET Reflector</a> you really owe it to yourself to grab it and poke around in your favorite .NET libraries to see how they work under the hood.</p>
+
+<p>Anyway, on with the analysis. What I wanted to find out is how CRM knew what kind of entity was being passed in to it via the web service. If the entity happened to be a DynamicEntity, things are straightforward as there is a name field. BusinessEntity, however, has no such field. In fact, it seems to serve only as placeholder type, contributing no fields of its own. This was kind of surprising to me, as I would have thought that since every entity has a name, and every instance has an ID that we&#8217;d have some common fields here. Otherwise on the server, Microsoft would have to use reflection to figure out what we were passing.</p>
+
+<p>The definition of Microsoft.Crm.Sdk.BusinessEntity looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Serializable, XmlType(Namespace=&quot;http://schemas.microsoft.com/crm/2006/WebServices&quot;), XmlInclude(typeof(DynamicEntity))]</span>
+</span><span class='line'><span class="k">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">BusinessEntity</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="nf">BusinessEntity</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice that there is no superclass, and it does not implement any fields &#8211; only a protected default constructor. I went to the CRM server and grabbed the .NET assemblies for further inspection. I was looking for the implementation of the &#8216;Create()&#8217; web service method. It took a little guesswork, but I found the method Microsoft.Crm.Sdk.Crm2007.CrmService.Create(), which looks like the following:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[SoapHeader(&quot;CallerOriginToken&quot;), CrmSoapExtension(typeof(CrmAuthenticationSoapExtension)), SoapHeader(&quot;UnknownHeaders&quot;), SoapHeader(&quot;AuthenticationToken&quot;), WebMethod(Description=&quot;Creates an instance of an entity.&quot;), SoapHeader(&quot;CorrelationToken&quot;)]</span>
+</span><span class='line'><span class="k">public</span> <span class="n">Guid</span> <span class="nf">Create</span><span class="p">(</span><span class="n">BusinessEntity</span> <span class="n">entity</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">Exceptions</span><span class="p">.</span><span class="n">ThrowIfNull</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="s">&quot;entity&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">base</span><span class="p">.</span><span class="n">CheckUnknownHeaders</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">CrmServiceInternal</span> <span class="n">internal2</span> <span class="p">=</span> <span class="k">new</span> <span class="n">CrmServiceInternal</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">internal2</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="s">&quot;http://schemas.microsoft.com/crm/2007/WebServices&quot;</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="n">_correlationToken</span><span class="p">,</span> <span class="k">base</span><span class="p">.</span><span class="n">CallerOriginToken</span><span class="p">,</span> <span class="n">SecurityLibrary</span><span class="p">.</span><span class="n">GetCallerAndBusinessGuids</span><span class="p">(),</span> <span class="k">base</span><span class="p">.</span><span class="n">CurrentCallerId</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can see that the dirty work gets done by the Create() method on an internal class called CrmServiceInternal. Let&#8217;s take a look at this method to get the details on the BusinessEntity type that we are passing around:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">internal</span> <span class="n">Guid</span> <span class="nf">Create</span><span class="p">(</span><span class="kt">string</span> <span class="n">namespaceName</span><span class="p">,</span> <span class="n">BusinessEntityBase</span> <span class="n">entity</span><span class="p">,</span> <span class="n">CorrelationToken</span> <span class="n">correlationToken</span><span class="p">,</span> <span class="n">CallerOriginToken</span> <span class="n">originToken</span><span class="p">,</span> <span class="n">UserAuth</span> <span class="n">userAuth</span><span class="p">,</span> <span class="n">Guid</span> <span class="n">callerId</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">primaryObjectTypeCode</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="n">VerifyAndRetrieveEntityForCategoryMessage</span><span class="p">(</span><span class="s">&quot;Create&quot;</span><span class="p">,</span> <span class="s">&quot;Create&quot;</span><span class="p">,</span> <span class="n">namespaceName</span><span class="p">,</span> <span class="n">entity</span><span class="p">.</span><span class="n">LogicalName</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">PropertyBag</span> <span class="n">fields</span> <span class="p">=</span> <span class="k">new</span> <span class="n">PropertyBag</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">fields</span><span class="p">[</span><span class="s">&quot;OptionalParameters&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="k">new</span> <span class="n">OptionalParameter</span><span class="p">[</span><span class="m">0</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">fields</span><span class="p">[</span><span class="s">&quot;Target&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="n">entity</span><span class="p">.</span><span class="n">InternalEntity</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">(</span><span class="n">Guid</span><span class="p">)</span> <span class="n">ExternalMessageDispatcher</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span><span class="s">&quot;Create&quot;</span><span class="p">,</span> <span class="n">primaryObjectTypeCode</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">correlationToken</span><span class="p">,</span> <span class="n">originToken</span><span class="p">,</span> <span class="n">userAuth</span><span class="p">,</span> <span class="n">callerId</span><span class="p">)[</span><span class="s">&quot;id&quot;</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So here we use a field called LogicalName, which wasn&#8217;t on BusinessEntity when we looked at it before. Looking at the argument list, it takes a single argument of type BusinessEntity, which is what we were expecting, but on navigating to the type, I realized that it was a different type altogether than what we had in the client-side library. This version of BusinessEntity derives from a BusinessEntityBase type, as follows:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">BusinessEntity</span> <span class="p">:</span> <span class="n">BusinessEntityBase</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="nf">BusinessEntity</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">public</span> <span class="nf">BusinessEntity</span><span class="p">(</span><span class="n">DynamicEntity</span> <span class="n">entity</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">skipOuterNode</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And this base type has a field for the type of the entity:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">BusinessEntityBase</span> <span class="p">:</span> <span class="n">IXmlSerializable</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="n">DynamicEntity</span> <span class="n">InternalEntity</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">LogicalName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">PlatformName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So, by virtue of serialization, the types are effectively converted from a type in one hierarchy to one in another unrelated hierarchy. This was a great exercise in understanding what was going on under the hood, but unfortunately didn&#8217;t help me out much when creating my mock service. I might try to use the internal CRM classes for this to see where it gets me, but since I&#8217;m aiming to mock what the client sees, this doesn&#8217;t seem likely to help.</p>
+
+<p>As a parting note, I&#8217;ll add that the server side implementation of the web service does not actually implement ICrmService that is presented to the client via the SDK.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/06/getting-started-with-asp-net-web-parts/">Getting Started With ASP.NET Web Parts</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-06T18:28:30-07:00" pubdate data-updated="true">Jul 6<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>If you are developing Microsoft CRM solutions for clients like I am, you have probably gotten requests for Microsoft SharePoint integration. SharePoint provides a framework for user customization and authentication as well as providing users the ability to create dynamic content without any programming. However, this power comes at the price of slightly more complex development paradigms than what we are used to with plain ASP.NET. Fortunately, once we understand the basic building block, the WebPart, the rest should begin to fall into place.</p>
+
+<p>I&#8217;m going to be targeting SharePoint 2010, but the concepts should be similar for previous versions of SharePoint. It is worth noting that Microsoft recommends development of ASP.NET WebParts instead of SharePoint WebParts. There are some differences in capability, but for our purposes here it won&#8217;t matter. Also, to do the latter type of WebPart, we would need to have SharePoint installed locally on the development machine, which is a big drawback. ASP.NET WebParts can be developed as long as the .NET framework is installed (and if it isn&#8217;t you probably wouldn&#8217;t be reading this blog).</p>
+
+<p>Ok, for starters, although it is possible to use a plain UserControl as a WebPart, we&#8217;ll be creating a proper server control that implements System.Web.UI.WebControls.WebParts.WebPart.</p>
+
+<p>To get started, all we need is an empty ASP.NET web site. Once we have created a web site in Visual Studio, creating the web part is as simple as inheriting from WebPart and overriding a single method. Here is the shell of the class:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">public</span> <span class="k">class</span> <span class="nc">MyWebPart</span> <span class="p">:</span> <span class="n">System</span><span class="p">.</span><span class="n">Web</span><span class="p">.</span><span class="n">UI</span><span class="p">.</span><span class="n">WebControls</span><span class="p">.</span><span class="n">WebParts</span><span class="p">.</span><span class="n">WebPart</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">CreateChildControls</span><span class="p">()</span> <span class="p">{}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So, as you may have guessed, we need to implement code that generates the content for the WebPart just like we would when writing a server control. Probably the simplest thing we could do here is to insert a Label control, making our code look like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">public</span> <span class="k">class</span> <span class="nc">MyWebPart</span> <span class="p">:</span> <span class="n">System</span><span class="p">.</span><span class="n">Web</span><span class="p">.</span><span class="n">UI</span><span class="p">.</span><span class="n">WebControls</span><span class="p">.</span><span class="n">WebParts</span><span class="p">.</span><span class="n">WebPart</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">CreateChildControls</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">Label</span> <span class="n">label</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Label</span><span class="p">();</span>
+</span><span class='line'>          <span class="n">label</span><span class="p">.</span><span class="n">Text</span> <span class="p">=</span> <span class="s">&quot;Test&quot;</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">Controls</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span> <span class="n">label</span> <span class="p">);</span>
+</span><span class='line'>          <span class="n">ChildControlsCreated</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The code should look familiar if you have ever written an ASP.NET server control. What we have done so far is exactly what we would have done to create a server control. However, in order to use the WebPart in a page, we need some extra machinery: namely the WebPartManager and the WebPartZone. The WebPartManager coordinates all of the WebParts and WebPartZones on the page, so we only need one of them. WebPartZones can be thought of as the container for a WebPart.</p>
+
+<p>The markup for a basic WebPart page looks something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'> <span class="nt">&lt;asp:WebPartManager</span> <span class="na">ID=</span><span class="s">&quot;WebPartManager1&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/asp:WebPartManager&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;asp:WebPartZone</span> <span class="na">ID=</span><span class="s">&quot;WebPartZone1&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;zonetemplate&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;webparts:MyWebPart</span>
+</span><span class='line'>            <span class="na">runat=</span><span class="s">&quot;server&quot;</span>
+</span><span class='line'>            <span class="na">id=</span><span class="s">&quot;mywebpart&quot;</span>
+</span><span class='line'>            <span class="na">title=</span><span class="s">&quot;Simple Label WebPart&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/zonetemplate&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/asp:WebPartZone&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that the WebPart gets added to the page in much the same way as a normal ASP.NET custom control. We need to use something like this to register the tag name:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="err">&lt;</span>%@ register tagprefix=&quot;webparts&quot; Namespace=&quot;AppCode&quot; %&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With personalization enabled, the rendered control looks like this:
+<a href="http://crmvoyager.files.wordpress.com/2010/07/webpart.png"><img src="http://crmvoyager.files.wordpress.com/2010/07/webpart.png" alt="" /></a></p>
+
+<p>There is one final thing that I&#8217;ll leave you with. After playing around with the WebParts for a while, I accidentally deleted the WebPart from the page and I couldn&#8217;t get it to display again. This is due to the way that <a href="http://msdn.microsoft.com/en-us/library/z36h8be9.aspx">personalization</a> works. I didn&#8217;t set up a personalization provider, but somehow it was still being persisted. Personalization can be disabled on the WebPartManager by setting Personalization-Enabled to false, either in code or in the markup. Alternatively, if you&#8217;d like to keep personalization enabled, the state can be reset by calling ResetPersonalizationState() on the WebPartManager. I added a button to the page so that I could clear the state easily at runtime.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">void</span> <span class="nf">Reset_Personalization</span><span class="p">(</span> <span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">EventArgs</span> <span class="n">e</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">WebPartManager1</span><span class="p">.</span><span class="n">Personalization</span><span class="p">.</span><span class="n">ResetPersonalizationState</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I&#8217;ll talk a little bit more about developing WebParts in a later post.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/06/29/connecting-to-ms-crm-over-ssh/">Connecting to MS CRM Over SSH</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-06-29T15:42:44-07:00" pubdate data-updated="true">Jun 29<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>How many times have you been in the situation where, for whatever reason, you are stuck developing a CRM application against a customer&#8217;s test CRM installation where you don&#8217;t have a proper VPN setup so that you can develop locally? How about having to use 2 or more remote desktop sessions to even reach the box in question? Throw a Citrix connection into the mix and you have a sure recipe for pain. Not to mention that installing Visual Studio with all of its dependencies, along with the sheer size of it, is no walk in the park either.</p>
+
+<p>I had a situation recently where the customer was on CRM 3.0, making it nearly impossible for us to set up a local development server with their schema on it. The customer&#8217;s test environment was on a relatively slow internet link, and the only access that we had to the box was over a Citrix connection to a bastion host and then on to the target machine using RDP.</p>
+
+<p>Fortunately, there is a solution to our dilemma, and we don&#8217;t even have to install anything on the server! <a href="http://en.wikipedia.org/wiki/Secure_Shell">Secure shell</a> (SSH) is the traditional UNIX remote connection utility which has long had the ability to forward network connections from one machine to another along with its traditional command console duties. Unfortunately, since the server was a Windows machine, no SSH server was installed by default, and installation of a third-party SSH implementation would have been too intrusive.</p>
+
+<p>However, SSH has the ability to do both local and remote tunneling, so we can effectively reverse the roles of the client and server in order to create a backhaul link over which we can access CRM. This lets us install the SSH server on our client machine where we want to do the development work (eg, run Visual Studio) and use a simple client (<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">Putty</a>) on the server to initiate the tunnel.</p>
+
+<p>I installed the <a href="http://www.itefix.no/i2/copssh">CopSSH</a> SSH server on my laptop and opened port 22 on my firewall to let the remote connection through from the outside. I won&#8217;t cover installation of CopSSH here, but it is well documented and installation went smoothly for me on Windows Vista. Once CopSSH is set up, the only tricky part left is to configure Putty correctly to create a forwarded port over which we can access CRM services.</p>
+
+<p>Putty doesn&#8217;t need to be installed, just run putty.exe on the server and give it the IP address of your local development machine. My configuration looks like the following:
+<a href="http://crmvoyager.files.wordpress.com/2010/06/putty-crm.png"><img src="http://crmvoyager.files.wordpress.com/2010/06/putty-crm.png" alt="" /></a></p>
+
+<p>I chose port 9982 as the port I want to use on my laptop to access CRM. On the CRM server end, I used &#8216;localhost:80&#8217; as the destination, because the CRM server is running on the actual box that I&#8217;m connecting from (localhost) on the standard HTTP port (80).</p>
+
+<p>Now I just have to change my CRM URLs in development to something like:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost:9982/mscrmservices/2006/CrmService.asmx</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Why do we use &#8216;localhost&#8217; here if we are connecting to the server? Remember that the SSH tunnel is now listening on the laptop, so when we connect to this port that SSH is listening on, it takes the connection and forwards it on to the server. So, to our .NET code it looks like CRM is actually running locally on the laptop.</p>
+
+<p>As an added bonus, URLs like the following will also be available locally:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost:9982/sdk/list.aspx
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This can dramatically reduce your development cycle time when the environment is not ideal. Hope this saves you some time.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/8/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/6/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

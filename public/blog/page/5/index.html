@@ -1,0 +1,952 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="When you first get into Silverlight development using Visual Studio, you probably created a new project using the Visual Studio project wizard for &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/page/5/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/19/silverlight-host-page-for-development-and-debugging/">Silverlight Host Page for Development and Debugging</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-19T18:50:37-07:00" pubdate data-updated="true">Oct 19<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>When you first get into Silverlight development using Visual Studio, you probably created a new project using the Visual Studio project wizard for Silverlight applications. During this process you are asked if you want to create a default host page for the Silverlight application.
+<a href="http://crmvoyager.files.wordpress.com/2010/10/silverlight-project.png"><img src="http://crmvoyager.files.wordpress.com/2010/10/silverlight-project.png" alt="" /></a></p>
+
+<p>If we let Visual Studio create a new web site to host the Silverlight app as shown in the previous screenshot, it is equivalent to selecting the following option later on in an existing web site.
+<a href="http://crmvoyager.files.wordpress.com/2010/10/add-silverlight.png"><img src="http://crmvoyager.files.wordpress.com/2010/10/add-silverlight.png" alt="" /></a></p>
+
+<p>Adding a Silverlight project to a web site will cause that project to be built and the .xap archive will be published to a ClientBin/ folder under the web site.</p>
+
+<p>If we elect not to create a separate web site for the Silverlight application a test html page called TestPage.html is generated in the bin folder of the Silverlight project, and the web browser will be launched, referencing the file on the local filesystem rather than using a web server.</p>
+
+<p>The consequences of the local file access are that web service calls will not work unless a ClientAccessPolicy file is set up on the service. See my previous posts on this for details.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/19/allowing-cross-site-wcf-service-calls/">Allowing Cross-site WCF Service Calls</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-19T18:33:21-07:00" pubdate data-updated="true">Oct 19<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>One thing that I often forget during Silverlight development is that unless the Silverlight application and any services that it calls are hosted by the same server, the calls will fail due to security policy by default. This means that in Visual Studio you will have to use IIS for all sites and services unless everything is hosted under the same instance of WebDev.Webserver (the built-in development server in .NET).</p>
+
+<p>In order to run things under IIS in Vista we have to run Visual Studio as an administrator, which is a pain and seems unnecessary. Fortunately Microsoft supplies us with a security policy escape hatch for WCF services in the form of a ClientAccessPolicy.xml file.</p>
+
+<p>Here is a policy file that I use frequently that allows access from any client, but is also insecure, so you shouldn&#8217;t deploy something like this beyond your local development workstation:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;access-policy&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;cross-domain-access&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;policy&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;allow-from</span> <span class="na">http-request-headers=</span><span class="s">&quot;*&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;domain</span> <span class="na">uri=</span><span class="s">&quot;*&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/allow-from&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;grant-to&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;resource</span> <span class="na">path=</span><span class="s">&quot;/&quot;</span> <span class="na">include-subpaths=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/grant-to&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/policy&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/cross-domain-access&gt;</span>
+</span><span class='line'><span class="nt">&lt;/access-policy&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Place the file in the root of the domain, and Silverlight should be able to call it from a different server hostname or port. Note that this file needs to be at the <em>domain</em> root rather than the root of the WCF service in order to be found by the Silverlight plugin.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/19/dealing-with-exceptions-in-wcf-services/">Dealing With Exceptions in WCF Services</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-19T17:15:44-07:00" pubdate data-updated="true">Oct 19<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>Overview</strong></p>
+
+<p>Windows Communication Foundation Web services handle exceptions differently than regular .NET code. So in much the same that we re-throw CRM exceptions, we have to handle .NET exceptions at the top-level of our service methods in order to avoid the dreaded generic &#8220;NotFound&#8221; errors that we get when a WCF service fails for some reason.</p>
+
+<p>For code that calls WCF services we can construct a FaultException to wrap the general exception that is thrown like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>       <span class="k">try</span> <span class="p">{</span>
+</span><span class='line'>              
+</span><span class='line'>                            <span class="c1">// perform the action that could throw an exception</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>          <span class="k">catch</span><span class="p">(</span> <span class="n">Exception</span> <span class="n">e</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>              <span class="k">throw</span> <span class="k">new</span> <span class="nf">FaultException</span><span class="p">(</span>
+</span><span class='line'>                  <span class="k">new</span> <span class="nf">FaultReason</span><span class="p">(</span> <span class="n">e</span><span class="p">.</span><span class="n">Message</span> <span class="p">),</span>
+</span><span class='line'>                  <span class="k">new</span> <span class="nf">FaultCode</span><span class="p">(</span> <span class="n">e</span><span class="p">.</span><span class="n">GetType</span><span class="p">().</span><span class="n">ToString</span><span class="p">()</span> <span class="p">)</span>
+</span><span class='line'>              <span class="p">);</span>
+</span><span class='line'>          <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However in Silverlight this doesn&#8217;t seem to work as expected. I still get a &#8220;Not Found&#8221; exception. Back to the drawing board.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/15/whats-in-a-silverlight-xap/">What&#8217;s in a Silverlight .XAP</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-15T06:07:00-07:00" pubdate data-updated="true">Oct 15<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Microsoft Silverlight applications are distributed in archive files with a .xap file extension. This model mirrors the deployment strategy of Flash .swf files and several other binary web application types. However, these files aren&#8217;t as opaque as they seem on the surface. On further inspection we find that .xap files are simple zip archives with a different file extension.</p>
+
+<p>Using an archive viewer (<a href="http://www.7-zip.org/">7zip </a>is my tool of choice here &#8211; seriously, I&#8217;ll wait while you go grab it) we can open the .xap up and examine its contents.</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2010/10/xap.png"><img src="http://crmvoyager.files.wordpress.com/2010/10/xap.png" alt="" /></a></p>
+
+<p>We can see that along with the assemblies required to run the Silverlight code, we have two configuration files in the archive &#8211; AppManifest.xaml and ServiceReferences.ClientConfig. These two files provide the assembly references and service references for the application, respectively. Following are samples of these two files:</p>
+
+<p>AppManifest.xaml:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;Deployment</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/client/2007/deployment&quot;</span> <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span> <span class="na">EntryPointAssembly=</span><span class="s">&quot;SilverlightWizard&quot;</span> <span class="na">EntryPointType=</span><span class="s">&quot;SilverlightWizard.App&quot;</span> <span class="na">RuntimeVersion=</span><span class="s">&quot;4.0.50401.0&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;Deployment.Parts&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;AssemblyPart</span> <span class="na">x:Name=</span><span class="s">&quot;SilverlightWizard&quot;</span> <span class="na">Source=</span><span class="s">&quot;SilverlightWizard.dll&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;AssemblyPart</span> <span class="na">x:Name=</span><span class="s">&quot;SilverlightClassLibrary1&quot;</span> <span class="na">Source=</span><span class="s">&quot;SilverlightClassLibrary1.dll&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;AssemblyPart</span> <span class="na">x:Name=</span><span class="s">&quot;System.ComponentModel.DataAnnotations&quot;</span> <span class="na">Source=</span><span class="s">&quot;System.ComponentModel.DataAnnotations.dll&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;AssemblyPart</span> <span class="na">x:Name=</span><span class="s">&quot;System.ServiceModel.DomainServices.Client&quot;</span> <span class="na">Source=</span><span class="s">&quot;System.ServiceModel.DomainServices.Client.dll&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;AssemblyPart</span> <span class="na">x:Name=</span><span class="s">&quot;System.ServiceModel.DomainServices.Client.Web&quot;</span> <span class="na">Source=</span><span class="s">&quot;System.ServiceModel.DomainServices.Client.Web.dll&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;AssemblyPart</span> <span class="na">x:Name=</span><span class="s">&quot;System.ServiceModel.Web.Extensions&quot;</span> <span class="na">Source=</span><span class="s">&quot;System.ServiceModel.Web.Extensions.dll&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;AssemblyPart</span> <span class="na">x:Name=</span><span class="s">&quot;System.Windows.Controls.Data&quot;</span> <span class="na">Source=</span><span class="s">&quot;System.Windows.Controls.Data.dll&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;AssemblyPart</span> <span class="na">x:Name=</span><span class="s">&quot;System.Windows.Controls.Data.Input&quot;</span> <span class="na">Source=</span><span class="s">&quot;System.Windows.Controls.Data.Input.dll&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;AssemblyPart</span> <span class="na">x:Name=</span><span class="s">&quot;System.Windows.Controls&quot;</span> <span class="na">Source=</span><span class="s">&quot;System.Windows.Controls.dll&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;AssemblyPart</span> <span class="na">x:Name=</span><span class="s">&quot;System.Windows.Data&quot;</span> <span class="na">Source=</span><span class="s">&quot;System.Windows.Data.dll&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/Deployment.Parts&gt;</span>
+</span><span class='line'><span class="nt">&lt;/Deployment&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ServiceReferences.ClientConfig</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;system.serviceModel&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;bindings&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;basicHttpBinding&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;binding</span> <span class="na">name=</span><span class="s">&quot;EventsSoap&quot;</span> <span class="na">maxBufferSize=</span><span class="s">&quot;2147483647&quot;</span> <span class="na">maxReceivedMessageSize=</span><span class="s">&quot;2147483647&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;security</span> <span class="na">mode=</span><span class="s">&quot;None&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/binding&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/basicHttpBinding&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/bindings&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;client&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;endpoint</span> <span class="na">address=</span><span class="s">&quot;http://localhost:4589/Events.asmx&quot;</span> <span class="na">binding=</span><span class="s">&quot;basicHttpBinding&quot;</span>
+</span><span class='line'>                <span class="na">bindingConfiguration=</span><span class="s">&quot;EventsSoap&quot;</span> <span class="na">contract=</span><span class="s">&quot;ServiceReference1.EventsSoap&quot;</span>
+</span><span class='line'>                <span class="na">name=</span><span class="s">&quot;EventsSoap&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/client&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/system.serviceModel&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Normally we wouldn&#8217;t need to touch these files, but in the case of a moved webservice location, knowing that the endpoint is defined here can be a lifesaver. We can use 7zip to edit the client config in-place to change the endpoint url of a service that the Silverlight application references.</p>
+
+<p>Hopefully this shows you that you shouldn&#8217;t take .xap files at face value &#8211; there is more there than meets the eye.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/15/wspbuilder-and-sharepoint-deployment-layout-where-does-this-stuff-end-up/">WSPBuilder and SharePoint Deployment Layout - Where Does This Stuff End Up?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-15T01:29:50-07:00" pubdate data-updated="true">Oct 15<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I had the dubious pleasure of trying to figure out how to get some Web Parts that I developed deployed to a SharePoint site in order to demo for a client. I had the Web Parts working in a test host outside of SharePoint so I figured it wouldn&#8217;t be a big deal to get them pushed to a real SharePoint installation. Well, you might guess it took me a little longer to work this situation out, since I&#8217;m taking the time to write about it here.</p>
+
+<h2>First attempt &#8211; manual deployment</h2>
+
+<p>The first shot I took was to drop the binaries out to the SharePoint server as outlined <a href="http://technet.microsoft.com/en-us/library/cc261736.aspx">here</a>. It should be possible to drop the assemblies under the bin/ folder of the SharePoint site, allow the assembly as safe code in web.config, and pull it into the Web Part catalog using the following admin page:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>http://<span class="nt">&lt;MyServer&gt;</span>/_layouts/newdwp.aspx
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Individual SharePoint sites are set up under the IIS Inetpub/ folder structure by default, so this is roughly the path we are looking at:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>C:\inetpub\wwwroot\wss\VirtualDirectories\80
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Needless to say I couldn&#8217;t get this to work. The problem was that nothing showed up in the admin page. The assembly was being loaded since I was getting errors if I messed up the web.config file, but alas, no luck getting the parts to display.</p>
+
+<h2>Second attempt &#8211; using WSPBuilder</h2>
+
+<p>Having failed at a quick and dirty approach, I moved my Web Parts to proper WSPBuilder Web Part projects. This is what you get if you create a new Visual Web Part project in Visual Studio. I also tried to create a WSPBuilder deployment project, but this didn&#8217;t do what I wanted. There seemed to be a place where you could put your Web Part code, but it didn&#8217;t look like what I wanted. Someone feel free to correct me on this.</p>
+
+<p>One small note when creating a WSPBuilder project is that we want to give it the specific SharePoint site we want to work with, as this is the worker process that Visual Studio will attach to. So if the site is on a different port, you&#8217;ll want to specify the full URL like this assuming that the site is on port 5559:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>http://myhost:5559/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After un-mangling the default names and namespaces and moving my existing code into the new project layout, I hit F5 and crossed my fingers. The Web Parts get installed under a catalog section called &#8220;Custom&#8221;. I was almost there at this point, but for some reason WSPBuilder was not adding the correct namespaces to the trusted assemblies list in web.config. I figured this out by having the site open in Windows Explorer and noticing that WSPBuilder was making backup copies of web.config every time I deployed. When you stop debugging it restores the previous web.config, removing any changes to the trusted assemblies configuration.</p>
+
+<p>I manually added the assembly to web.confg like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>      <span class="nt">&lt;SafeControl</span> <span class="na">Assembly=</span><span class="s">&quot;EventWebParts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6e5bb8b2abdf55b5&quot;</span> <span class="na">Namespace=</span><span class="s">&quot;EventWebParts&quot;</span> <span class="na">TypeName=</span><span class="s">&quot;*&quot;</span> <span class="na">Safe=</span><span class="s">&quot;True&quot;</span> <span class="na">SafeAgainstScript=</span><span class="s">&quot;False&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So now that I had my code running I poked around to figure out where things were ending up. SharePoint puts things generally in one of three places:</p>
+
+<p>1) The GAC
+2) IIS root (inetpub)
+3) SharePoint &#8220;hive&#8221; C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\TEMPLATE\FEATURES\</p>
+
+<p>By default, WSPBuilder seems to install the assemblies in the GAC. There is a configuration option clearly visible on the project for this setting. The .webpart xml configuration goes into the hive, and changes to web.config happen under the IIS root.</p>
+
+<p>Hopefully this helps you to figure out where the heck all of this stuff ends up when deploying Web Parts to SharePoint. It takes a while to get used to.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/15/observations-on-observablecollection/">Observations on ObservableCollection</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-15T01:01:48-07:00" pubdate data-updated="true">Oct 15<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In a <a href="http://crmvoyager.wordpress.com/2010/10/13/data-binding-in-silverlight/">previous post</a> I extolled the virtues of the new .NET ObservableCollection and its wonderful databinding goodness. Well I have experienced the flip side of the coin today, having gotten the proverbial horns after taunting the bull.</p>
+
+<p>Ok enough bull. What happened was that I had a conflict between two different definitions of the same ObservableCollection type. Yes, it is defined in both System.Windows.dll and in System.dll. The difference is that System.Windows.dll is a Silverlight assembly and defines some types that are intended for use in the more limited Silverlight environment. So what happens is that I want to define an interface in my service that returns an ObservableCollection for me to consume in my Silverlight app. The service is a full-fledged .NET 4.0 app that references System.dll, and the Silverlight app references System.Windows.dll. We can reference Silverlight assemblies in regular .NET projects but we can&#8217;t reference regular .NET assemblies in Silverlight projects.</p>
+
+<p>Keeping the previous assertions in mind, my first thought was to just reference the Silverlight assembly, System.Windows.dll in my Service app and use the ObservableCollection type defined there. In order to do this, we have to disambiguate the assembly references by using an <a href="http://www.codeproject.com/KB/cs/aliases.aspx">alias</a>. In the property page of the assembly reference for System.Windows.dll, I changed the Alias &#8220;global&#8221; to &#8220;silverlight&#8221; and declared an extern at the top of my file like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">extern</span> <span class="k">alias</span> <span class="n">silverlight</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once I had this set up, I could reference the Silverlight version of ObservableCollection thusly:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">silverlight</span><span class="p">::</span><span class="n">System</span><span class="p">.</span><span class="n">Collections</span><span class="p">.</span><span class="n">ObjectModel</span><span class="p">.</span><span class="n">ObservableCollection</span> <span class="n">collection</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This seemed to work at first, but I ended up getting errors when I ran the project. I&#8217;m still not sure why this didn&#8217;t work out, maybe I&#8217;ll look into it some more. If anyone has any ideas let me know in the comments.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/14/applying-styles-in-silverlight/">Applying Styles in Silverlight</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-14T05:10:11-07:00" pubdate data-updated="true">Oct 14<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Microsoft made a big deal about the separation of design and application structure in Silverlight with the introduction of Expression Blend and Expression Studio. Now I&#8217;m at a point where I want to style my Silverlight applications, so I started digging into Silverlight styles.</p>
+
+<p>I was horrified initially when I started coming across code samples like this where we have to explicitly add the style rule that we want to apply to each individual control:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;Button</span> <span class="na">x:Name=</span><span class="s">&quot;button1&quot;</span> <span class="na">Content=</span><span class="s">&quot;First Button&quot;</span> <span class="na">Style=</span><span class="s">&quot;{StaticResource ButtonStyle}&quot;</span><span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I didn&#8217;t want to have to go through my application and add all of these Style attributes. I was expecting something like CSS where I could apply styles based on the existing document structure.</p>
+
+<p>Fortunately in Silverlight 4 there is a styling method referred to as implicit styling, where we can avoid having to set the style individually on each element. Most of the examples that I found initially were for earlier versions of Silverlight.</p>
+
+<p>This is what an expliclit style definition would look like when placed in a resources section:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;Style</span> <span class="na">x:Key=</span><span class="s">&quot;ButtonStyling&quot;</span> <span class="na">TargetType=</span><span class="s">&quot;Button&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;Background&quot;</span> <span class="na">Value=</span><span class="s">&quot;Yellow&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/Style&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is what the same style looks like when using implicit styling</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;Style</span> <span class="na">TargetType=</span><span class="s">&quot;Button&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;Background&quot;</span> <span class="na">Value=</span><span class="s">&quot;Yellow&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/Style&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The only difference is that we don&#8217;t specify a key. According to <a href="http://www.silverlightshow.net/items/Implicit-Styles-in-Silverlight-4.aspx">this blog post</a>, the key is actually set implicitly by Silverlight, much the same as an anonymous type actually has a name internally to the compiler.</p>
+
+<p>In case it wasn&#8217;t obvious, creating a control that receives an implicit style just means that we omit the Style attribute entirely:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;Button</span> <span class="na">x:Name=</span><span class="s">&quot;button1&quot;</span> <span class="na">Content=</span><span class="s">&quot;First Button&quot;</span><span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can override the implicit style with an explicit style by specifying the Style, however:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;Button</span> <span class="na">x:Name=</span><span class="s">&quot;button1&quot;</span> <span class="na">Content=</span><span class="s">&quot;First Button&quot;</span> <span class="na">Style=</span><span class="s">&quot;{StaticResource ButtonStyle}&quot;</span><span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point I should point out that Silverlight styles are implemented using a Silverlight mechanism called <a href="http://msdn.microsoft.com/en-us/library/system.windows.resourcedictionary(VS.95">ResourceDictionaries</a>.aspx). Many examples out on the net define dictionary items using x:Name, but in Silverlight 4 we should be using x:Key. Name still works but is considered to be a legacy attribute.</p>
+
+<p>ResourceDictionary implements DependencyProperty, and so we can define members of the Application or UserControl&#8217;s dictionaries using dot notation like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;Application.Resources&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;Style</span> <span class="na">TargetType=</span><span class="s">&quot;Button&quot;</span> <span class="na">x:Key=</span><span class="s">&quot;GelButton&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>   ...
+</span><span class='line'>   <span class="nt">&lt;/Style&gt;</span>
+</span><span class='line'><span class="nt">&lt;Application.Resources&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ResourceDictionaries <a href="http://weblogs.asp.net/fredriknormen/archive/2009/03/31/silverlight-3-0-split-style-and-template-into-different-files-and-merge-resources.aspx">can be merged</a>, so we can define styles in several places and merge them into a single dictionary. Unfortunately this is necessary for applying several style definitions to the same control, unlike in CSS where we are free to define as many cascading sections as we wish. Silverlight 4 supplies a mechanism for explicitly cascading styles using the BasedOn attribute.</p>
+
+<p>The following example from the <a href="http://www.silverlightshow.net/items/Implicit-Styles-in-Silverlight-4.aspx">Silverlight Show</a> blog shows how BasedOn works:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;Style</span> <span class="na">x:Key=</span><span class="s">&quot;BasedStyle&quot;</span> <span class="na">TargetType=</span><span class="s">&quot;Button&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;FontSize&quot;</span> <span class="na">Value=</span><span class="s">&quot;16&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/Style&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;Style</span> <span class="na">TargetType=</span><span class="s">&quot;Button&quot;</span> <span class="na">BasedOn=</span><span class="s">&quot;{StaticResource BasedStyle}&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;Background&quot;</span> <span class="na">Value=</span><span class="s">&quot;Red&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;Foreground&quot;</span> <span class="na">Value=</span><span class="s">&quot;Black&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/Style&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I&#8217;m going to get back to styling my app now. Till next time, style away.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/13/data-binding-in-silverlight/">Data Binding in Silverlight</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-13T03:22:59-07:00" pubdate data-updated="true">Oct 13<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>One of the most compelling features of Microsoft Silverlight is the ability to display data in a rich and dynamic grid view. This grid view shares many features of its big siblings over in ASP.NET, but there are some differences to watch out for. I&#8217;m going to focus on one difference that affected me in a recent project in order to focus this post and keep things short.</p>
+
+<p><strong>There is no DataSet in Silverlight</strong></p>
+
+<p>What, you ask, how can we do advanced data binding without DataSets? I asked the same thing, but the answer lies in the .NET Framework 4&#8217;s <a href="http://msdn.microsoft.com/en-us/library/ms668604.aspx">ObservableCollection</a>. System.Collections.ObjectModel.ObservableCollection provides a notification interface in the form of events that are raised when items are added or removed from the list. This allows the Silverlight GridView UI to stay updated when the underlying data changes.</p>
+
+<p>In order to create a bindable data structure, I created a POCO (plain old C# object) that had the fields I wished to display like so:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">public</span> <span class="kt">string</span> <span class="n">name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">public</span> <span class="kt">string</span> <span class="n">productid</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">public</span> <span class="kt">string</span> <span class="n">price</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>               <span class="p">...</span>
+</span><span class='line'>      <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once we have a class to represent the list items, we instantiate the generic list using the new type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ObservableCollection</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span> <span class="n">itemsource</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ObservableCollection</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The ObservableCollection supports all list operations, so building the list works just like any other IList:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">itemsource</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span> <span class="k">new</span> <span class="n">Product</span><span class="p">()</span> <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Finally we can bind the new collection to the grid as follows:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">dataGrid</span><span class="p">.</span><span class="n">ItemsSource</span> <span class="p">=</span> <span class="n">itemsource</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is just the tip of the iceberg with databinding in Silverlight. In a forthcoming post I&#8217;m going to show how Silverlight supports binding to nested collections.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/13/creating-a-silverlight-usercontrol/">Referencing a Silverlight UserControl</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-13T01:52:10-07:00" pubdate data-updated="true">Oct 13<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Funny how a lot of details are glossed over in the copious blog coverage that surrounds Silverlight. Creating UserControls is supposed to be dead easy, and it is relatively easy, but the method by which we register the control on the page eluded me for far too long, so here I aim to make the process just a little less painful for those who come after me.</p>
+
+<p>Creating the UserControl is very easy. Given that you probably already have at least one UserControl in your Silverlight application &#8211; the &#8220;main&#8221; page is a user control &#8211; you can simply copy this and use it as the base of your new user control.</p>
+
+<p>You&#8217;ll notice that some of the Microsoft-supplied controls use an XML prefix such as &#8220;sdk:&#8221; for their user controls. For example, putting a TabControl into the .xaml file results in some markup that looks like so:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;sdk:TabControl</span> <span class="na">Height=</span><span class="s">&quot;Auto&quot;</span> <span class="na">Width=</span><span class="s">&quot;Auto&quot;</span> <span class="na">Name=</span><span class="s">&quot;tabControl1&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    ...
+</span><span class='line'><span class="nt">&lt;/sdk:TabControl&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We must do the same when instantiating our UserControls,  so any markup we add to the XAML file must be declared as part of a namespace. The <a href="http://msdn.microsoft.com/en-us/library/cc189061(VS.95">documentation </a>.aspx)was difficult to find until I figured out what to search for &#8211; Microsoft has a particular namespace root for referencing assemblies and types in XAML files. This namespace root is &#8220;clr-namespace&#8221;. In order to add a namespace prefix that references our new UserControl types, we need to declare the namespace prefix using a literal &#8220;clr-namespace&#8221; in the URI. For example, if we have a type called MyUserControl that is in the .NET namespace MyProject, our namespace ends up being &#8220;clr-namespace:MyProject&#8221;. In a XAML file we just need to add this XML namespace prefix somewhere in the file so that it is in scope where we need it. Practically speaking such prefixes are nearly always declared in the root element of the document, so we&#8217;ll do the same. Here is what my code ended up looking like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;UserControl</span> <span class="na">x:Class=</span><span class="s">&quot;MyProject.MainPage&quot;</span>
+</span><span class='line'>    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+</span><span class='line'>     <span class="err">....</span>
+</span><span class='line'>    <span class="na">xmlns:myprefix=</span><span class="s">&quot;clr-namespace:MyProject&quot;</span><span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I have omitted several of the default namespace prefixes for clarity. To instantiate a UserControl type defined in the &#8220;MyProject&#8221; namespace, we need only to write an XML element with the name of our type, prefixed by the XML namespace prefix that we just defined. Here is a sample:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;myprefix:MyUserControl</span> <span class="na">Height=</span><span class="s">&quot;Auto&quot;</span> <span class="na">Width=</span><span class="s">&quot;Auto&quot;</span><span class="nt">&gt;&lt;/myprefix:MyUserControl&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>According to the more general <a href="http://msdn.microsoft.com/en-us/library/ms747086.aspx">documentation </a>for WPF, of which Silverlight is a derivative, the assembly name may be specified in the URI format as follows:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>xmlns:custom=&quot;clr-namespace:SDKSample;assembly=SDKSampleLibrary&quot;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Hopefully this sheds some light on a detail seemingly glossed over in many Silverlight articles and tutorials.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/12/embedding-silverlight-into-a-webpart/">Embedding Silverlight Into a WebPart</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-12T20:14:15-07:00" pubdate data-updated="true">Oct 12<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A current project required me to drop a <a href="http://www.silverlight.net/">Silverlight</a> control into a <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.webparts.webpart.aspx">WebPart </a>for inclusion in a Microsoft <a href="http://sharepoint.microsoft.com/en-us/Pages/default.aspx">SharePoint </a>site. In the past, I think that the Silverlight component could be created programmatically like any other ASP.NET control, but if I understand correctly, this support has been dropped from the latest version of Silverlight (4.0 as of this writing).</p>
+
+<p>As you may know, WebParts do not natively support the use of the ASP.NET templating engine in order to assist with rendering its contents. That is, we can&#8217;t create a corresponding markup file as we do with .aspx or .ascx components. We can work around this by using <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.page.loadcontrol.aspx">LoadControl()</a> in order to render a user control (.ascx file) within the body of the WebPart&#8217;s CreateChildControls() method, but I wanted to see if I could avoid having to create a separate user control just for embedding my Silverlight component.</p>
+
+<p>I found two currently supported approaches to adding Silverlight content to a page in version 4: using an object tag or <a href="http://msdn.microsoft.com/en-us/library/cc265155(VS.95">client-side using Javascript</a>.aspx). Since I wasn&#8217;t doing much else with Javascript on the client, I wanted to stick to a server-side solution. My attempts at programmatically creating the Silverlight control as <a href="http://blogs.msdn.com/b/andreww/archive/2009/03/12/silverlight-web-part-in-sharepoint.aspx">outlilned here</a> failed, so what I ended up doing was to embed the object tag into an <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.htmlcontrols.htmlgenericcontrol.aspx">HtmlGenericControl </a>directly in the WebPart. Here is the code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">public</span> <span class="k">class</span> <span class="nc">SilverlightPart</span> <span class="p">:</span> <span class="n">WebPart</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">CreateChildControls</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">this</span><span class="p">.</span><span class="n">Title</span> <span class="p">=</span> <span class="s">&quot;Embedded Silverlight&quot;</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">HtmlGenericControl</span> <span class="n">control</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HtmlGenericControl</span><span class="p">(</span> <span class="s">&quot;div&quot;</span> <span class="p">);</span>
+</span><span class='line'>          <span class="n">control</span><span class="p">.</span><span class="n">InnerHtml</span> <span class="p">=</span> <span class="s">@&quot;&lt;object data=&#39;data:application/x-silverlight-2,&#39; type=&#39;application/x-silverlight-2&#39; width=&#39;100%&#39; height=&#39;300px&#39;&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;source&#39; value=&#39;ClientBin/SilverlightWizard.xap&#39;/&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;onError&#39; value=&#39;onSilverlightError&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;background&#39; value=&#39;white&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;minRuntimeVersion&#39; value=&#39;4.0.50401.0&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;autoUpgrade&#39; value=&#39;true&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;a href=&#39;http://go.microsoft.com/fwlink/?LinkID=149156&amp;v=4.0.50401.0&#39; style=&#39;text-decoration:none&#39;&gt;</span>
+</span><span class='line'><span class="s">                  &lt;img src=&#39;http://go.microsoft.com/fwlink/?LinkId=161376&#39; alt=&#39;Get Microsoft Silverlight&#39; style=&#39;border-style:none&#39;/&gt;</span>
+</span><span class='line'><span class="s">              &lt;/a&gt;</span>
+</span><span class='line'><span class="s">          &lt;/object&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">Controls</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span> <span class="n">control</span> <span class="p">);</span>
+</span><span class='line'>          <span class="n">ChildControlsCreated</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One small thing to note is that we need to specify a height for the Silverlight control when it appears in a WebPart zone. Setting width to 100% is fine, but setting the height must be done using a specific height due to the layout logic used by the zones.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/6/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/4/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

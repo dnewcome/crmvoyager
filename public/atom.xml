@@ -1,0 +1,1544 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[My Octopress Blog]]></title>
+  <link href="http://yoursite.com/atom.xml" rel="self"/>
+  <link href="http://yoursite.com/"/>
+  <updated>2012-08-02T21:36:49-07:00</updated>
+  <id>http://yoursite.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Debugging Microsoft CRM "Generic SQL Error"]]></title>
+    <link href="http://yoursite.com/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/"/>
+    <updated>2011-11-21T20:16:38-08:00</updated>
+    <id>http://yoursite.com/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error</id>
+    <content type="html"><![CDATA[<p>Most of the time, when programming against the Microsoft CRM Web service, we get reasonable error messages. However, on occasion we get the inscrutable &#8220;Generic SQL Error&#8221;. I used to solve these by trial and error or intuition, but it turns out that there is better way.</p>
+
+<p>Using SQL Server profiler can give us the answers that we are looking for. Check out <a href="http://www.avanadeblog.com/xrm/2011/04/troubleshooting-crm-generic-sql-error.html">this blog post</a> for the details. Cheers.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Loading configuration from an alternative location in Microsoft .NET]]></title>
+    <link href="http://yoursite.com/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/"/>
+    <updated>2011-11-17T01:49:41-08:00</updated>
+    <id>http://yoursite.com/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net</id>
+    <content type="html"><![CDATA[<p>I&#8217;m continuing my series of posts on configuration patterns in .NET. One of the things I had to do recently was to retrofit some code that I was writing to use an alternate configuration file. That is, I needed the ability to specify file from the commandline to grab a config section rather than having the .NET framework use the default app.config file that resides in the application directory.</p>
+
+<p>It turns out that this is easy to do. There is a method on the ConfigurationManager called <a href="http://msdn.microsoft.com/en-us/library/system.configuration.configurationmanager.openmappedmachineconfiguration.aspx">OpenMappedMachineConfiguration</a> that will let you define another config file to use.</p>
+
+<p>I have a little method for pulling in the configuration from a given file:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="c1">// MSCrmConfigurationSection is my custom config section type</span>
+</span><span class='line'><span class="n">MSCrmConfigurationSection</span> <span class="nf">GetConfig</span><span class="p">(</span> <span class="kt">string</span> <span class="n">in_filename</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">ConfigurationFileMap</span> <span class="n">fileMap</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConfigurationFileMap</span><span class="p">(</span> <span class="n">in_filename</span> <span class="p">);</span>
+</span><span class='line'>  <span class="n">Configuration</span> <span class="n">configuration</span> <span class="p">=</span> <span class="n">System</span><span class="p">.</span><span class="n">Configuration</span><span class="p">.</span><span class="n">ConfigurationManager</span><span class="p">.</span><span class="n">OpenMappedMachineConfiguration</span><span class="p">(</span> <span class="n">fileMap</span> <span class="p">);</span>
+</span><span class='line'>  <span class="n">MSCrmConfigurationSection</span> <span class="n">config</span> <span class="p">=</span> <span class="p">(</span> <span class="n">MSCrmConfigurationSection</span> <span class="p">)</span><span class="n">configuration</span><span class="p">.</span><span class="n">GetSection</span><span class="p">(</span> <span class="s">&quot;MSCrm&quot;</span> <span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">config</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>A really nice feature that we get for free is that we can mix and match files at will, pulling configuration sections from different files. And, as a bonus, the app.config file still takes effect, so any assembly redirects or publisher policies that are defined there still work as usual. Pretty awesome.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Configuration types in Microsoft .NET]]></title>
+    <link href="http://yoursite.com/blog/2011/11/17/configuration-types-in-microsoft-net/"/>
+    <updated>2011-11-17T01:40:58-08:00</updated>
+    <id>http://yoursite.com/blog/2011/11/17/configuration-types-in-microsoft-net</id>
+    <content type="html"><![CDATA[<p>Here is a quick post to outline the different ways that .NET custom config files can be written. The MSDN documentation does a bad job generally at giving examples of what the actual XML markup looks like in their examples. They go through all of the different types involved without showing what the desired markup looks like.</p>
+
+<p>Briefly, by default, custom configuration uses XML attributes, unlike the AppSettings section, which uses a special configuration case of a key/value dictionary. I think that this is confusing and is not well treated in MSDN.</p>
+
+<p>If we want a custom appSettings-like config like the following:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>&lt;myAppSettings&gt;
+</span><span class='line'>      &lt;add key="NewKey0" value="Monday, March 30, 
+</span><span class='line'>           2009 1:36:33 PM" /&gt;
+</span><span class='line'>      &lt;add key="NewKey1" value="Monday, March 30, 
+</span><span class='line'>           2009 1:36:40 PM" /&gt;
+</span><span class='line'>  &lt;/myAppSettings&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We need to use a <a href="http://msdn.microsoft.com/en-us/library/system.configuration.dictionarysectionhandler.aspx">DictionarySectionHandler</a> instead of the usual ConfigurationSection.</p>
+
+<p>Using a ConfigurationSection, our XML markup would look like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>&lt;myAppSettings
+</span><span class='line'>     NewKey0="Monday, March 30, 2009 1:36:33 PM"
+</span><span class='line'>     NewKey1="Monday, March 30, 2009 1:36:40 PM"
+</span><span class='line'>/&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It is possible to create elements as children with some additional coding using ConfigurationElement.</p>
+
+<p>There is a long CodeProject article on this stuff that uses C++ <a href="http://www.codeproject.com/KB/mcpp/WorkingWithConfigFiles.aspx">here</a> that I found useful and there is an extensive treatment on configuration <a href="http://www.codeproject.com/KB/dotnet/mysteriesofconfiguration.aspx">here</a>, but I&#8217;ve abridged things greatly here for my own reference. Hopefully this helps you too.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Programmatically creating CRM 4 entity metadata]]></title>
+    <link href="http://yoursite.com/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/"/>
+    <updated>2011-11-17T01:27:28-08:00</updated>
+    <id>http://yoursite.com/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata</id>
+    <content type="html"><![CDATA[<p>I have built a few tools to make life easier for myself. One of the tools that has proven itself invaluable is a metadata generator that I use to create a list of entities in a newly-created CRM bizorg.</p>
+
+<p>Although the API supports most things that we&#8217;d want to do, there are a few tricky things that aren&#8217;t that obvious from the documentation. I&#8217;m going to go into this in more detail in a future post, but there are a few key takeaways that I want to make sure I remember, so I&#8217;m posting them here now.</p>
+
+<p>1) Creating an entity doesn&#8217;t create any attributes other than the primary attribute.
+Even if we give CRM a fully-populated entity metadata graph, only the primary attribute will be created on the CreateEntityRequest call.</p>
+
+<p>2) An entity must have a primary attribute specified.
+Creating the entity will fail if one string attribute is not provided and the primary attribute field is set to this entity. Both of these conditions must be met.</p>
+
+<p>3) Lookup attributes cannot be created via the normal attribute metadata service call.
+Entity references are created via a completely separate call.</p>
+
+<p>4) Creating lookup attributes will fail if the referenced entity does not exist.</p>
+
+<p>5) Entity names must adhere to the CRM naming prefix convention.
+Entity names and field names must have a prefix and an underscore in order to be considered valid schema names.</p>
+
+<p>6) Cryptic &#8220;Generic SQL&#8221; errors are often caused by missing labels
+I&#8217;m still compiling a checklist of things that cause this frustrating error. Many times a call will fail with a SQL error, and it is very difficult to figure out what went wrong since there is no detail given.</p>
+
+<p>7) Adding entities and fields don&#8217;t require that we publish, but adding new picklist options does require a separate publish action before the items can be used.</p>
+
+<p>8) Boolean fields must be specially treated and given labels for the true and false textual values.
+If this is not done, the field will silently fail to be created.</p>
+
+<p>That&#8217;s a brief list for now. Expanding on all of these things will take a whole series of posts I&#8217;m sure. This stuff is way under-documented and is hard-won knowledge, so I&#8217;ll be sure to give it a proper treatment here on the blog.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Configuration patterns in .NET]]></title>
+    <link href="http://yoursite.com/blog/2011/11/16/configuration-patterns-in-net/"/>
+    <updated>2011-11-16T18:55:47-08:00</updated>
+    <id>http://yoursite.com/blog/2011/11/16/configuration-patterns-in-net</id>
+    <content type="html"><![CDATA[<p>I have been meaning to write a post on configuration patterns in the .NET framework. Just about any app we write has some configuration data associated with it, and it sometimes gets ignored until the app is in production or at the very least until very late in the development cycle.</p>
+
+<p>Microsoft provides a lot of options out of the box with the .NET framework, and even more through the <a href="http://www.microsoft.com/download/en/details.aspx?displaylang=en&amp;id=22640">Configuration Management Application Block</a>. Most configuration concerns are the same whether it is a Windows app or a <a href="http://msdn.microsoft.com/en-us/library/ms178683.aspx">Web app</a>, but since there are a lot of different options, how do we pick what is best for our application?</p>
+
+<p>Before we get into any .NET-specific items, here are some general guidelines that I have used in the past:</p>
+
+<h2>Don&#8217;t rely on implicit configuration - allow the app to be explicitly configured programmatically</h2>
+
+<p>In the case of a library, we&#8217;ll want to be able to override configuration as needed for testing and special use cases. For example, I have a library for accessing CRM that has a configuration section. In some cases I want to test different configurations against different CRM servers in my tests, so I need a way to override the configuration file. Yes, you can do this in a convoluted way using the .NET framework, but it is much better to bake this into the library design. Another scenario is doing data export/import between multiple servers. I have a few tools that use the library I mentioned to take data from one CRM installation and move it to another one. If the library only supported one configuration section we&#8217;d have to build this functionality into the library, which is a concern that shouldn&#8217;t be part of the underlying, but of the application.</p>
+
+<p>However, a very nice feature of a library is to have a default configuration, as well as a default configuration location. This means that if we provide a config specifically it will override everything else, but if not, we can make it easy on ourselves by providing some sensible defaults or by using the app.config file if it exists. This kind of fallthrough can be a little tricky, so it is worth thinking about up-front so that things go smoothly and predictably as development progresses. Configuration behavior is one of those things that is tough to change once it gets into production.</p>
+
+<h2>Use separate classes to hold configuration data</h2>
+
+<p>This should go without saying, but I&#8217;ll say it anyway - don&#8217;t put configuration variables into any other classes. Keep these concerns separate. If a class needs the configuration data, use composition to make the configuration object a private member. Another thing to watch out for is not using a configuration data in their own objects at all. I&#8217;ve seen a lot of project where configuration data was scattered all over the place. Don&#8217;t do this!</p>
+
+<p>I&#8217;m going to follow up with some code examples soon so stay tuned.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using Active Directory domain accounts with CopSSH ]]></title>
+    <link href="http://yoursite.com/blog/2011/10/27/using-active-directory-domain-accounts-with-copssh/"/>
+    <updated>2011-10-27T21:04:58-07:00</updated>
+    <id>http://yoursite.com/blog/2011/10/27/using-active-directory-domain-accounts-with-copssh</id>
+    <content type="html"><![CDATA[<p>If you&#8217;re like me, you have clients behind firewalls and special development environments configured to mirror the client&#8217;s environment for local testing. In my case a lot of my development environments have Microsoft CRM installed on them as a <a href="http://crmvoyager.wordpress.com/2011/02/12/create-a-fully-standalone-crm-2011-environment-on-amazon-ec2/">self-contained development environment</a> replete with Active Directory. This means that the virtual machine does not have any local accounts, only domain accounts. When I log in, I&#8217;m logging into a domain.</p>
+
+<p>This works out pretty well most of the time. However, recently I wanted to use my <a href="http://crmvoyager.wordpress.com/2010/06/29/connecting-to-ms-crm-over-ssh/">SSH backhaul trick</a> to grab some data from a client&#8217;s site back through their firewall. In order to get this to work, I had to do some extra experimentation with <a href="http://www.itefix.no/i2/copssh">CopSSH </a>user accounts and my <a href="https://www.virtualbox.org/">VirtualBox</a> settings.</p>
+
+<p>First off, let me recap exactly what we are trying to do. It might be worthwhile to look at my <a href="http://crmvoyager.wordpress.com/2010/06/29/connecting-to-ms-crm-over-ssh/">SSH backhaul article</a> first, but what we are doing is running a secure shell server locally on the virtual machine and connecting to it from the remote server using <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">Putty</a>. This lets us access things like Microsoft CRM services on the remote machine for doing things like data dumps and schema upgrades.</p>
+
+<p>I&#8217;m using VirtualBox as my virtualization environment. I happen to be using NAT (network address translation) instead of bridged network connection. This means that there is one extra step that I didn&#8217;t cover in my previous article, which I will outline here. The complete end-to-end scenario becomes:</p>
+
+<p>Putty on remote server -> firewall on my local network -> VirtualBox NAT on my laptop -> VirtualBox VM -> CopSSH daemon</p>
+
+<p>So I covered everything in the previous article except for setting up VirtualBox NAT. Fortunately it is very simple. We need to set up port forwarding across the NAT. To do this go into the network settings of the running virtual machine and look for the button that says &#8220;port forwarding&#8221;. This lets you set up the host and guest port. I had to set the IP addresses rather than leave them blank, but what I did was set both to 0.0.0.0, which means &#8220;all addresses&#8221;. Here is a screenshot:
+<a href="http://crmvoyager.files.wordpress.com/2011/10/nat.png"><img src="http://crmvoyager.files.wordpress.com/2011/10/nat.png" alt="" /></a>
+I&#8217;m mapping the SSH port 22 to port 2222 to avoid conflicts with the native sshd daemon that is running on my Ubuntu laptop.</p>
+
+<p>Once we have this set up, we can test the connection locally by using Putty to connect to localhost on port 2222. We should get a login prompt from CopSSH.</p>
+
+<p>Once we know that CopSSH is working and reachable via the port forwarded over the VirtualBox NAT, we need to authorize the user accounts that can log in via SSH. This is where we have to pay close attention. The thing that caused me a lot of pain was that the domain and account names are case sensitive. When adding the user account put the domain name in all capitals and pay attention to the case. Check out the screenshots:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/10/copssh-user.png"><img src="http://crmvoyager.files.wordpress.com/2011/10/copssh-user.png" alt="" /></a></p>
+
+<p>One last thing: the user accounts will need the right to log on locally. Double check using the Local Security Policy tool (look in Administrative Tools):</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/10/copssh-domain.png"><img src="http://crmvoyager.files.wordpress.com/2011/10/copssh-domain.png" alt="" /></a></p>
+
+<p>Test logging in with the domain account using domain\user:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/10/putty-login.png"><img src="http://crmvoyager.files.wordpress.com/2011/10/putty-login.png" alt="" /></a></p>
+
+<p>If login works, set up the tunnel the same way as in my previous article and rock on!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Building multiple Visual Studio project configurations with msbuild]]></title>
+    <link href="http://yoursite.com/blog/2011/10/25/building-multiple-visual-studio-project-configurations-with-msbuild/"/>
+    <updated>2011-10-25T12:35:00-07:00</updated>
+    <id>http://yoursite.com/blog/2011/10/25/building-multiple-visual-studio-project-configurations-with-msbuild</id>
+    <content type="html"><![CDATA[<p>I&#8217;ve been cleaning up a lot of projects lately, and one of the things that I really needed to get sorted out was build scripts for everything so that I had a repeatable way of obtaining correct binary builds of all of my dependencies. Typically I would use msbuild or NAnt to define how the code should be built, but I already had Visual Studio project files for the projects in question and I wanted them to be resilient to having the project files messed with in Visual studio.</p>
+
+<p>Since Visual Studio project files are just custom msbuild definitions supplied by Microsoft, we can build them with msbuild on the commandline. I didn&#8217;t want to do any custom tweaking of the files themselves, since I&#8217;ve had issues with losing my changes when someone decided to mess with the project file. What I really want out of the project file is the list of the files that need to be built. In the future I&#8217;m thinking about devising a way to create a wrapper msbuild project that looks at the parts of the Visual Studio file for the source file list and dependencies and defines its own build targets, but I&#8217;m too busy to try to get that working for now.</p>
+
+<p>I&#8217;ve had all sorts of issues with trying to tweak msbuild files. Microsoft really came up with a powerful build system, but unfortunately it is hamstrung when trying to work with Visual studio. Some things I wanted to do in the past included getting a version number from the Assemblyinfo.cs file. This turned into a fiasco because of a silly limitation in the scope of property variables within the build targets.</p>
+
+<p>After all of this fiddling I have come to the conclusion that, at least for now, the best way to get msbuild to build a Visual Studio project in a particular way is to manhandle the property settings on the commandline when calling msbuild.</p>
+
+<p>Here is a sample batch file that I use to call msbuild. I want to set the .NET framework version and project configuration (debug/release) along with assertion of some conditional compilation flags used to generate different targeted versions of the code (CRM 4/CRM 2011):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>set msbuild=C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe
+</span><span class='line'>set PointVersion=1.0.0
+</span><span class='line'>set outpathprop=/property:OutputPath=..\release\%PointVersion%\3.5
+</span><span class='line'>
+</span><span class='line'>%msbuild% ^
+</span><span class='line'>    /property:Configuration=Debug ^
+</span><span class='line'>    /property:TargetFrameworkVersion=v3.5 ^
+</span><span class='line'>    %outpathprop%\CRM4\Debug ^
+</span><span class='line'>    /p:DefineConstants="CRM4" ^
+</span><span class='line'>    CrmQuery\CrmQuery.csproj
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can see that I set the output path to include the release version number and the framework version. I could parameterize this even further, but that&#8217;s an exercise I&#8217;ll leave to the reader or until I refine this technique next time around. Notice that I define a constant called &#8216;CRM4&#8217; which is responsible for triggering some #ifdefs in the code that include CRM4-specific code. The beauty of this script is that now I can just add a section for each configuration that I need to build, run it once and I&#8217;ve got all the debug and release configurations of both CRM4 and 2011 versions of my project.</p>
+
+<p>The file layout that I&#8217;ve chosen is:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>\release\&lt;version&gt;\&lt;crmversion&gt;\&lt;configuration\
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Effectively, this build script controls the versioning of the build. I got tired of trying to do this by reading Assemblyinfo.cs, but we&#8217;ll have to deal with this if we want to build a signed assembly.</p>
+
+<p>The advantage of having a consistent folder structure is that we can now put the built artifacts into an assembly cache and use a dependency management script to copy them to a local lib\ folder under the project directory. We can manage multiple versions of the same assembly and not get completely confused as to which version we are referencing in the project. Let me know about your quick-and-dirty build techniques in the comments!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Digging into Microsoft CRM 4 DynamicEntity properties]]></title>
+    <link href="http://yoursite.com/blog/2011/10/25/digging-into-microsoft-crm-4-dynamicentity-properties/"/>
+    <updated>2011-10-25T00:02:40-07:00</updated>
+    <id>http://yoursite.com/blog/2011/10/25/digging-into-microsoft-crm-4-dynamicentity-properties</id>
+    <content type="html"><![CDATA[<p>I&#8217;ve been meaning to write this post for a while. Even though CRM 4 is on the way out now, I still find myself working with clients that have legacy CRM 4 systems in production. Whether it is porting code or fixing bugs, CRM 4 is far from gone.</p>
+
+<p>For those of you that don&#8217;t know, the DynamicEntity type gives us a way to write code against an arbitrary CRM4 installation without having to generate a custom service proxy. We don&#8217;t get the advantages of having all of the field names specified (early binding) but we don&#8217;t have to recompile for different client installations in order to get access to new fields.</p>
+
+<p>However, despite of (or perhaps due to) the flexibility that DynamicEntities afford, there are some idiosyncratic things about how data property values are set and retrieved.</p>
+
+<p>The hallmark of CRM 4 DyanmicEntities is the use of property classes for the data fields of the entity. These classes are all of the form XXXProperty, where XXX is something like String, CrmMoney, etc. CRM 2011 has largely done away with these special-purpose field wrappers, but in CRM 4 we are stuck with them. This wouldn&#8217;t be so bad, but there are some inconsistencies in their use in the Microsoft CRM API. I&#8217;ll go over a few cases that have bitten me in the past here.</p>
+
+<h3>1. Iteration</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">foreach</span><span class="p">(</span> <span class="n">Property</span> <span class="n">prop</span> <span class="k">in</span> <span class="n">m_entity</span><span class="p">.</span><span class="n">Properties</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">/// do something</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When we use a foreach construct, the IEnumerator implementation returns a Property type. Why is this inconsistent? Well it isn&#8217;t from an API standpoint, but it was very confusing to me when I took a look at how the data was actually stored at runtime. Hint: there are no Property objects to be found in the backing store. They are created dynamically in the IEnumerator implementation. Take a look at the disassembly of IGetEnumerator():</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">private</span> <span class="n">IEnumerator</span><span class="p">&lt;</span><span class="n">Property</span><span class="p">&gt;</span> <span class="n">InternalGetEnumerator</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">List</span><span class="p">&lt;</span><span class="n">Property</span><span class="p">&gt;</span> <span class="n">list</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Property</span><span class="p">&gt;();</span>
+</span><span class='line'>    <span class="k">foreach</span> <span class="p">(</span><span class="n">KeyValuePair</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span> <span class="n">pair</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="n">_nameToPropertyValue</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">list</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">PropertyFactory</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">CreateInstance</span><span class="p">(</span><span class="n">pair</span><span class="p">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">pair</span><span class="p">.</span><span class="n">Value</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">list</span><span class="p">.</span><span class="n">GetEnumerator</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can see that the Property types are actually being created and returned on-the-fly from the internal data store _nameToPropertyValue.</p>
+
+<h3>2. Assignment</h3>
+
+<p>We can do assignment in one of two ways. In each case the value that we assign will be slightly different.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">DyanmicEntity</span> <span class="n">entity</span> <span class="p">=</span> <span class="k">new</span> <span class="n">DynamicEntity</span><span class="p">();</span>
+</span><span class='line'><span class="n">entity</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span> <span class="k">new</span> <span class="n">StringProperty</span><span class="p">(</span> <span class="n">key</span><span class="p">,</span> <span class="k">value</span> <span class="p">)</span> <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>or</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">entity</span><span class="p">[</span> <span class="n">key</span> <span class="p">]</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This example also applies to retrieval of the property value, that is, if we want to get the plain string without the StringProperty wrapper we would write:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="kt">string</span> <span class="n">val</span> <span class="p">=</span> <span class="n">entity</span><span class="p">[</span> <span class="n">key</span> <span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I&#8217;ve noticed that when we make an assignment using a Property, the SDK library actually throws it away and only stores the inner value! This makes the property simply an ephemeral container that is effectively used only for conveying the field name. Check out disassembly for PropertyCollection.Add():</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">Add</span><span class="p">(</span><span class="n">Property</span> <span class="n">property</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="n">_nameToPropertyValue</span><span class="p">[</span><span class="n">property</span><span class="p">.</span><span class="n">Name</span><span class="p">]</span> <span class="p">=</span> <span class="n">property</span><span class="p">.</span><span class="n">GetValue</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So when iterating and using Add() we are dealing with Property types. When using [] indexer notation we are dealing with the underlying value data type. I find this to be quite inconsistent and tedious, but as long as it is kept in mind, things work out ok.</p>
+
+<p>Hopefully this clears up some confusion about the finer points of DynamicEntities for you!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Implementing a custom IOrganizationService]]></title>
+    <link href="http://yoursite.com/blog/2011/10/24/implementing-a-custom-iorganizationservice/"/>
+    <updated>2011-10-24T21:21:42-07:00</updated>
+    <id>http://yoursite.com/blog/2011/10/24/implementing-a-custom-iorganizationservice</id>
+    <content type="html"><![CDATA[<p>This is a topic that I&#8217;ve wanted to talk about for a while. Some time ago I implemented a quick dummy CRM service for testing out code without having to run a full CRM server. The initial version I wrote was for CRM4, and unfortunately by some oversight, MS did not actually implement ICrmService in their actual server API. This created an awkward situation where I had to wrap the &#8220;real&#8221; CrmService in my own shim that implemented the actual interface.</p>
+
+<p>Fortunately CRM 2011 gets this right, so we no longer have to worry about that. In fact, MS has shown us how to implement our own IOrganizationService right in the sample code. Just look under samplecode\cs\client\soaplogger\soaplogger in the SDK. In the example, the SOAP requests are logged from the intermediate IOrganizationService implementation. However I have found using custom services to provide dummy data very useful for testing.</p>
+
+<p>Eventually I fleshed out the mock CRM service and released it as <a href="https://github.com/dnewcome/FakeCRM">FakeCRM</a>.</p>
+
+<p>I&#8217;ll be blogging more about this topic in the future, stay tuned!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[List of type differences between CRM4 and 2011]]></title>
+    <link href="http://yoursite.com/blog/2011/10/24/list-of-type-differences-between-crm4-and-2011/"/>
+    <updated>2011-10-24T18:19:50-07:00</updated>
+    <id>http://yoursite.com/blog/2011/10/24/list-of-type-differences-between-crm4-and-2011</id>
+    <content type="html"><![CDATA[<p>I&#8217;m posting this list since it seems to be difficult for me to find quickly in the SDK documentation. It is an incredibly handy list of type mappings that are useful for converting CRM4 code to 2011 or for (in my case) writing abstraction libraries that need to convert between the two different CRM versions.</p>
+
+<p>Without further ado, the <a href="http://msdn.microsoft.com/en-us/library/gg328507.aspx">list is here</a>.</p>
+
+<p>I&#8217;m including it inline here for quick reference:</p>
+
+<table style='border:1px solid black'>
+
+      <tr>
+
+        <th>
+
+          <strong>AttributeTypeCode</strong>
+
+        </th>
+
+        <th>
+
+                                
+
+                                    Microsoft Dynamics CRM 2011 type
+
+                            </th>
+
+        <th>
+Microsoft Dynamics CRM 4.0 type </th>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">AttributeTypeCode</a>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">BigInt</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>long</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>N/A</p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeTypeCode</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Boolean</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>bool</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928926.aspx">CrmBoolean</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributemetadata.attributetype.aspx">AttributeType</a>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">CalendarRules</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            
+
+          </p>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.entitycollection.aspx">EntityCollection</a> or <strong>CalendarRules</strong>[]</p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb956153.aspx">DynamicEntity</a>[] or <a href="http://msdn.microsoft.com/en-us/library/bb928506.aspx">calendarrule</a>[]</p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Customer</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.entityreference.aspx">EntityReference</a>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb955969.aspx">Customer</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">DateTime</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>System.DateTime</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928935.aspx">CrmDateTime</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Decimal</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>decimal</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928945.aspx">CrmDecimal</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Double</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>double</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928954.aspx">CrmFloat</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">EntityName</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>string</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>Attributes with <strong>ObjectTypeCode</strong> in <strong>DisplayMask</strong></p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Integer</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>int</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928972.aspx">CrmNumber</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Lookup</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>EntityReference</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb957132.aspx">Lookup</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">ManagedProperty</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.booleanmanagedproperty.aspx">BooleanManagedProperty</a>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>N/A</p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Memo</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>string</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>System.String</strong>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Money</a></p>
+
+        </td>
+
+        <td>
+
+          <p> <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.money.aspx">Money</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928963.aspx">CrmMoney</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Owner</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>EntityReference</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb670715.aspx">Owner</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">PartyList</a></p>
+
+        </td>
+
+        <td>
+
+          <p> <strong>EntityCollection</strong> or <strong>ActivityParty</strong>[]</p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb955715.aspx">activityparty[]</a> or <a href="http://msdn.microsoft.com/en-us/library/bb956153.aspx">DynamicEntity</a> []</p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Picklist</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.optionsetvalue.aspx">OptionSetValue</a>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb929048.aspx">Picklist</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>. <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Uniqueidentifier</a> (Formerly <strong>PrimaryKey</strong>)</p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>System.Guid</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb956919.aspx">Key</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">String</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>string</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>System.String</strong>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">State</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>OptionSetValue</strong> or enumeration generated for the entity state</p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <em>EntityName</em>StateInfo</p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Status</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>OptionSetValue</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb958198.aspx">Status</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<strong>Uniqueidentifier</strong></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>System.Guid</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb890012.aspx">UniqueIdentifier</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Virtual</a></p>
+
+        </td>
+
+        <td>
+
+          <p>Not used in records.</p>
+
+        </td>
+
+        <td>
+
+          <p>Not used in records.</p>
+
+        </td>
+
+      </tr>
+
+</table>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Running Microsoft CRM 4.0 apps when 2011 is installed]]></title>
+    <link href="http://yoursite.com/blog/2011/10/20/running-microsoft-crm-4-0-apps-when-2011-is-installed/"/>
+    <updated>2011-10-20T16:27:49-07:00</updated>
+    <id>http://yoursite.com/blog/2011/10/20/running-microsoft-crm-4-0-apps-when-2011-is-installed</id>
+    <content type="html"><![CDATA[<p>Hey guys, back after a bit of a break in blogging. I&#8217;ve been super busy on a lot of projects.</p>
+
+<p>Here is a little tip that I found out about when I tried to consolidate my development environment a bit. I&#8217;m now running a CRM 2011 server on my dev machine. Unfortunately I also still need to support clients that are on CRM 4.0.</p>
+
+<p>I didn&#8217;t think that this should be a problem since I have the 4.0 server on another box. However it seems that there is a conflict when the .NET runtime tries to locate the 4.0 SDK assembly. Since CRM 2011 supports backward compatibility by exposing support for the old SDK, it supplies its own version of Microsoft.Crm.Sdk.dll. The difference is that it is strongly signed with an updated version number of 5.0.0.0.</p>
+
+<p>Here is the error that we get if we try to run a project compiled against the 4.0 SDK on a machine that has CRM 2011 installed (even though we are using the service endpoint of the CRM 4.0 server):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>Error: Could not load file or assembly 'Microsoft.Crm.Sdk, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)      
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can force the runtime to load our own supplied version of Microsoft.Crm.Sdk by overriding the publisher policy. This is done in App.config (or Web.config for a web application) using the following code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>...
+</span><span class='line'> <span class="nt">&lt;runtime&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;assemblyBinding</span> <span class="na">xmlns=</span><span class="s">&quot;urn:schemas-microsoft-com:asm.v1&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;dependentAssembly&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;assemblyIdentity</span> <span class="na">name=</span><span class="s">&quot;Microsoft.Crm.Sdk&quot;</span> <span class="na">publicKeyToken=</span><span class="s">&quot;31bf3856ad364e35&quot;</span> <span class="na">culture=</span><span class="s">&quot;neutral&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;publisherPolicy</span> <span class="na">apply=</span><span class="s">&quot;no&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/dependentAssembly&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/assemblyBinding&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/runtime&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&#8217;s all there is to it. Now Fusion binding should find the correct assembly instead of trying to load the CRM 2011 out of the GAC.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Updating expired license key in CRM 2011]]></title>
+    <link href="http://yoursite.com/blog/2011/10/12/updating-expired-license-key-in-crm-2011/"/>
+    <updated>2011-10-12T13:04:07-07:00</updated>
+    <id>http://yoursite.com/blog/2011/10/12/updating-expired-license-key-in-crm-2011</id>
+    <content type="html"><![CDATA[<p>Like me, I&#8217;m sure that many of you are consultants who have clients running on a trial version of the CRM software. Also, like me, you probably have a lot of CRM installations for testing.</p>
+
+<p>Here is how you can update the product key in Microsoft CRM 2011. Get the new key from the client if it is a retail key that they purchased or grab a key from your MSDN subscription if it is one of your testing instances. Once you have the key, just open up the CRM Deployment Manager and look for the option hightlighted below:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/10/crm-productkey.png"><img src="http://crmvoyager.files.wordpress.com/2011/10/crm-productkey.png" alt="" /></a></p>
+
+<p>Enter the key in the pop up window and enjoy life again!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using ActivityParty in CRM 2011]]></title>
+    <link href="http://yoursite.com/blog/2011/06/05/using-activityparty-in-crm-2011/"/>
+    <updated>2011-06-05T11:53:09-07:00</updated>
+    <id>http://yoursite.com/blog/2011/06/05/using-activityparty-in-crm-2011</id>
+    <content type="html"><![CDATA[<p>I was writing some client code recently when I wanted to add a customer reference to a CRM campaignresponse entity instance. Using a simple EntityReference was giving me errors, so I looked to see what the data type was in CRM. Looking in the customisations screen, the type was &#8216;Party List&#8217;. The CRM SDK docs say that we should be able to use ActivityParty[] or EntityCollection for the field value.</p>
+
+<p>The only info on ActivityParty that I found was <a href="http://crmentropy.blogspot.com/2009/04/using-activityparty-in-partylist-for.html">for CRM4</a>. Through trial and error I arrived at the following code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Entity</span> <span class="n">customer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Entity</span><span class="p">(</span><span class="s">&quot;activityparty&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">customer</span><span class="p">[</span><span class="s">&quot;partyid&quot;</span> <span class="p">]=</span> <span class="k">new</span> <span class="n">EntityReference</span><span class="p">(</span> <span class="s">&quot;contact&quot;</span><span class="p">,</span> <span class="n">in_contactID</span> <span class="p">);</span>
+</span><span class='line'><span class="n">campaignResponse</span><span class="p">[</span><span class="s">&quot;customer&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="k">new</span> <span class="n">EntityCollection</span><span class="p">(</span> <span class="k">new</span> <span class="n">List</span><span class="p">(){</span> <span class="n">customer</span> <span class="p">}</span> <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So what I had to do was create a list of entities that had an EntityReference field set that pointed to the contact. You cannot set the EntityReference directly on the campaignresponse, it is expecting an EntityCollection. Hopefully this saves you some time.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Managing CRM 2011 from PowerShell]]></title>
+    <link href="http://yoursite.com/blog/2011/05/17/managing-crm-2011-from-powershell/"/>
+    <updated>2011-05-17T00:24:55-07:00</updated>
+    <id>http://yoursite.com/blog/2011/05/17/managing-crm-2011-from-powershell</id>
+    <content type="html"><![CDATA[<p>Starting with Windows Server 2008, Microsoft has stepped up its commitment to scriptable server management with the inclusion of PowerShell by default in the operating system. PowerShell enables the ease of scripting like batch files with the power of a scripting language like perl. Anyone that has done any extensive batch scripting will know what a pain it can be to do simple things like string handling.</p>
+
+<p>Microsoft has doubled down on PowerShell in both CRM and SharePoint. Both are able to be managed using PowerShell snapins. What is a snapin? Snapins are what Microsoft calls script modules that can be loaded into PowerShell. The management features of CRM 2011 are supplied via a snapin.</p>
+
+<p>The snapin will be installed on the CRM server by default, so to start powershell and load the snapin, we open up a console window and do the following:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>C:\&gt; powershell
+</span><span class='line'>Windows PowerShell
+</span><span class='line'>Copyright (C) 2009 Microsoft Corporation. All rights reserved.
+</span><span class='line'>
+</span><span class='line'>PS C:\Users\Administrator&gt; add-pssnapin Microsoft.CRM.Powershell
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we have access to all of the cmdlets (this is PowerShell terminology for a command tool).</p>
+
+<p>For example, we can get information on the default CRM organization:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>PS C:\Users\Administrator&gt; get-crmorganization
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>BaseCurrencyCode      : USD
+</span><span class='line'>BaseCurrencyName      : US Dollar
+</span><span class='line'>BaseCurrencyPrecision : 2
+</span><span class='line'>BaseCurrencySymbol    : $
+</span><span class='line'>BaseLanguageCode      : 1033
+</span><span class='line'>DatabaseName          : crmtest_MSCRM
+</span><span class='line'>FriendlyName          : CRM Test
+</span><span class='line'>Id                    : 04721a7a-e0f5-45dc-a4b7-57e02088a13a
+</span><span class='line'>SqlCollation          : Latin1_General_CI_AI
+</span><span class='line'>SqlServerName         : WIN-0VODKV30814\SQL2008R2STD
+</span><span class='line'>SqmIsEnabled          : False
+</span><span class='line'>SrsUrl                : http://win-0vodkv30814/reportserver_sql2008r2std
+</span><span class='line'>State                 : Enabled
+</span><span class='line'>UniqueName            : crmtest
+</span><span class='line'>Version               : 5.0.9688.34
+</span><span class='line'>ExtensionData         : System.Runtime.Serialization.ExtensionDataObject
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is a list of all of the <a href="http://msdn.microsoft.com/en-us/library/gg328563.aspx">available commands</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Crm 2011 Entity Metadata Browser]]></title>
+    <link href="http://yoursite.com/blog/2011/05/04/crm-2011-entity-metadata-browser/"/>
+    <updated>2011-05-04T19:49:34-07:00</updated>
+    <id>http://yoursite.com/blog/2011/05/04/crm-2011-entity-metadata-browser</id>
+    <content type="html"><![CDATA[<p>Any of you out there that have been working with Microsoft CRM for a while will remember that since CRM3.0 there has been a handy metadata browser built into the CRM server for quickly looking up things like field names and entity relationships. In CRM3.0 you just browsed to http://yourcrmserver/sdk/list.aspx and in 4.0 it was the same only we had to specify the organization name like http://yourcrmserver/orgname/sdk/list.aspx since 4.0 was a fully multi-tenant CRM solution.</p>
+
+<p>I was really disappointed to see that the metadata browser was omitted from CRM 2011. However, Microsoft came through recently by including an <a href="http://blogs.msdn.com/b/crm/archive/2011/03/09/metadata-browser-for-microsoft-dynamics-crm-2011.aspx">all-new version of the metadata browser</a> in the latest CRM 2011 SDK.</p>
+
+<p>The new browser is distributed as a managed CRM solution and can be installed and uninstalled just like any other CRM 2011 customization package. This is a really cool demonstration of what is possible with CRM solutions.</p>
+
+<p>To install, grab the latest SDK from <a href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=420f0f05-c226-4194-b7e1-f23ceaa83b69">here</a> and extract. Open up your CRM installation and browse to the customizations as shown in the following screenshot:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/05/import-solution.png"><img src="http://crmvoyager.files.wordpress.com/2011/05/import-solution.png" alt="" /></a></p>
+
+<p>The file that we want to import is located in the sdk under:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>sdk\tools\metadatabrowser\metadatabrowser_1_0_0_1_managed.zip
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/05/select-file.png"><img src="http://crmvoyager.files.wordpress.com/2011/05/select-file.png" alt="" /></a></p>
+
+<p>Once the import is complete you can navigate to the browser by going to settings/customizations/metadata browser as shown below:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/05/browser.png"><img src="http://crmvoyager.files.wordpress.com/2011/05/browser.png" alt="" /></a></p>
+
+<p>Enjoy not having to poke around in the customizations menu and drill into the individual entities just to figure out what you named that field.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Starting SQL Server 2008 in single-user mode]]></title>
+    <link href="http://yoursite.com/blog/2011/04/26/starting-sql-server-2008-in-single-user-mode/"/>
+    <updated>2011-04-26T00:01:45-07:00</updated>
+    <id>http://yoursite.com/blog/2011/04/26/starting-sql-server-2008-in-single-user-mode</id>
+    <content type="html"><![CDATA[<p>I had to go through the rain dance of <a href="http://msdn.microsoft.com/en-us/library/dd207004.aspx">adding the Administrator account back</a> to SQL Server after there were no admin accounts that could log in. This can happen if the SQL server box has been removed from a domain and SQL Server was installed using domain accounts. If mixed mode authentication is disabled and you can&#8217;t log in as the sa account, you&#8217;ll have to start SQL up in single-user mode in order to connect to it.</p>
+
+<p>Ordinarily you would give the -m flag to the sqlserver.exe executable and be on your merry way. However, this time around I ran into a perplexing issue. Take a look at the following screenshot to see the welcome that I received after running:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>C:<span class="se">\P</span>rogram Files<span class="se">\M</span>icrosoft SQL Server<span class="se">\M</span>SSQL10_50.SQL2008R2STD<span class="se">\M</span>SSQL<span class="se">\B</span>inn&gt;sqlservr.exe -m
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://crmvoyager.files.wordpress.com/2011/04/sqlsserver.png"><img src="http://crmvoyager.files.wordpress.com/2011/04/sqlsserver.png" alt="" /></a></p>
+
+<p>Quite informative. I took a look in the services administrative tool to see what the service commandline was and discovered that there is an <a href="http://msdn.microsoft.com/en-us/library/ms190737.aspx">-s flag</a> that starts a named instance. I also have SQL Server Express running on this same machine, so there was a conflict.</p>
+
+<p>I used the following command to get it started:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>C:<span class="se">\P</span>rogram Files<span class="se">\M</span>icrosoft SQL Server<span class="se">\M</span>SSQL10_50.SQL2008R2STD<span class="se">\M</span>SSQL<span class="se">\B</span>inn&gt;sqlservr.exe  -sSQL2008R2STD -m
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And you should be greeted by this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>2011-04-26 00:50:37.40 Server      Microsoft SQL Server 2008 R2 <span class="o">(</span>RTM<span class="o">)</span> - 10.50.16
+</span><span class='line'>00.1 <span class="o">(</span>X64<span class="o">)</span>
+</span><span class='line'>        Apr  2 2010 15:48:46
+</span><span class='line'>        Copyright <span class="o">(</span>c<span class="o">)</span> Microsoft Corporation
+</span><span class='line'>        Standard Edition <span class="o">(</span>64-bit<span class="o">)</span> on Windows NT 6.1 &lt;X64&gt; <span class="o">(</span>Build 7600: <span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>2011-04-26 00:50:37.41 Server      <span class="o">(</span>c<span class="o">)</span> Microsoft Corporation.
+</span><span class='line'>2011-04-26 00:50:37.41 Server      All rights reserved.
+</span><span class='line'>2011-04-26 00:50:37.41 Server      Server process ID is 4064.
+</span><span class='line'>2011-04-26 00:50:37.41 Server      System Manufacturer: <span class="s1">&#39;innotek GmbH&#39;</span>, System M
+</span><span class='line'>odel: <span class="s1">&#39;VirtualBox&#39;</span>.
+</span><span class='line'>2011-04-26 00:50:37.41 Server      Authentication mode is WINDOWS-ONLY.
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Storing a Guid in an ASP.NET CheckBox control]]></title>
+    <link href="http://yoursite.com/blog/2011/04/22/storing-a-guid-in-an-asp-net-checkbox-control/"/>
+    <updated>2011-04-22T16:13:33-07:00</updated>
+    <id>http://yoursite.com/blog/2011/04/22/storing-a-guid-in-an-asp-net-checkbox-control</id>
+    <content type="html"><![CDATA[<p>I recently had to build a simple UI for listing out a set of Microsoft CRM entities to choose from. The natural way of presenting this to the user was to give them a list of items with some associated checkboxes for selection. I wanted to associate a CRM entity ID with each checkbox so that I could update the entity in CRM when the user submitted the form.</p>
+
+<p>There are a number of different ways that this problem can be approached. One thing that I&#8217;ve done in the past is to use hidden form fields to store the data for postback. Another would be to use the entity Guid as the control ID. Yet another way would be to store a dictionary in ASP.NET session state, keyed by the control ID.</p>
+
+<p>However, I wanted to create a more elegant solution to this problem by attaching a Guid field directly to the CheckBox control so that we&#8217;d have easy access to it during page postback.</p>
+
+<p>My first thought was to create an ASP.NET server control that extends Microsoft&#8217;s own CheckBox control. This is easy to do, as I show in the following code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ExtendedCheckbox</span> <span class="p">:</span> <span class="n">CheckBox</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="n">Guid</span> <span class="n">ItemID</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="nf">ExtendedCheckbox</span><span class="p">()</span> <span class="p">{}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>All we did was add a single property to the basic CheckBox control. This code will let us use the ExtendedCheckbox control on our pages and allow us to set a property called ItemID. For example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;djn:ExtendedCheckbox</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="na">ItemID=</span><span class="s">&quot;&lt;%=myID%&gt;&quot;</span><span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However in order to be useful to us, the value of ItemID must persist when the page is posted back. When the user hits the &#8216;submit&#8217; button on our page, we presumably want to do something useful with this ID like make a CRM request to modify the entity with the checkbox information. All of the built-in properties of the CheckBox use the ASP.NET ViewState mechanism to accomplish this. Unfortunately our custom property doesn&#8217;t benefit from the base class&#8217;s ViewState implicitly, so we have to make a change to our property as follows:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="n">Guid</span> <span class="n">ItemID</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">get</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="n">ViewState</span><span class="p">[</span><span class="s">&quot;ItemID&quot;</span><span class="p">]</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">)</span>
+</span><span class='line'>          <span class="k">return</span> <span class="p">(</span> <span class="n">Guid</span> <span class="p">)</span><span class="n">ViewState</span><span class="p">[</span><span class="s">&quot;ItemID&quot;</span><span class="p">];</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nf">default</span><span class="p">(</span> <span class="n">Guid</span> <span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">set</span> <span class="p">{</span> <span class="n">ViewState</span><span class="p">[</span><span class="s">&quot;ItemID&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So you can see that we used the base class&#8217;s own ViewState collection to store our own data for the custom property. Now when we do a postback, the value of ItemID will be available to us.</p>
+
+<p>To use this new control, we have to register it in the page where we are going to use it. In my case, the code for the new control is in the App_Code folder, so my @register directive looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="err">&lt;</span>%@ Register TagPrefix=&quot;djn&quot; namespace=&quot;Djn.Controls&quot; Assembly=&quot;__code&quot; %&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that we can reference the assembly generated from App_Code by using __code as the assembly reference.</p>
+
+<p>We can now use the control just like a built in control, albeit with a new custom field. Accessing the ItemID later on in code is as simple as referencing the checkbox by name:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Guid</span> <span class="n">id</span> <span class="p">=</span> <span class="n">myCustomCheckbox</span><span class="p">.</span><span class="n">ItemID</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Hopefully this gives you some ideas when doing custom ASP.NET work for your clients.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Creating custom error pages in ASP.NET]]></title>
+    <link href="http://yoursite.com/blog/2011/04/20/creating-custom-error-pages-in-asp-net/"/>
+    <updated>2011-04-20T14:23:02-07:00</updated>
+    <id>http://yoursite.com/blog/2011/04/20/creating-custom-error-pages-in-asp-net</id>
+    <content type="html"><![CDATA[<p>How many times have you been in a client demo when your application throws an ugly stack trace up on the screen? Double points if it is up on the projector at about eight feet wide.</p>
+
+<p>Now, I don&#8217;t like to go overboard with excessive exception handling just to avoid the appearance of errors, but there is one thing that we can do easily that will still allow us to avoid swallowing exceptions all over and it is as easy as putting a few lines into your web.config.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;system.web&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;customErrors</span> <span class="na">mode=</span><span class="s">&quot;On&quot;</span> <span class="na">defaultRedirect=</span><span class="s">&quot;Error.aspx&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    ...
+</span><span class='line'><span class="nt">&lt;/system.web&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will redirect the browser to Error.aspx on any unhandled exception in the application. We can still do some error logging by looking at the results of:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Server</span><span class="p">.</span><span class="n">GetLastError</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://www.codeproject.com/KB/aspnet/Error_Page_for_aspnst.aspx">Here</a> are some more details about getting error details in the custom error page.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Programmatically executing workflows in CRM 2011]]></title>
+    <link href="http://yoursite.com/blog/2011/04/20/programmatically-executing-workflows-in-crm-2011/"/>
+    <updated>2011-04-20T08:52:47-07:00</updated>
+    <id>http://yoursite.com/blog/2011/04/20/programmatically-executing-workflows-in-crm-2011</id>
+    <content type="html"><![CDATA[<p>I came across some code recently that gave me pause, so I thought I&#8217;d explore it a little bit here.</p>
+
+<p>We&#8217;ve recently converted a lot of code from CRM 4.0 to CRM 2011, and one of those pieces of code involved kicking off a Windows workflow. The following code snippet is right out of the CRM 2011 SDK:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">using</span> <span class="p">(</span><span class="n">_serviceProxy</span> <span class="p">=</span> <span class="k">new</span> <span class="n">OrganizationServiceProxy</span><span class="p">(</span><span class="n">serverConfig</span><span class="p">.</span><span class="n">OrganizationUri</span><span class="p">,</span>
+</span><span class='line'>    <span class="n">serverConfig</span><span class="p">.</span><span class="n">HomeRealmUri</span><span class="p">,</span>
+</span><span class='line'>    <span class="n">serverConfig</span><span class="p">.</span><span class="n">Credentials</span><span class="p">,</span>
+</span><span class='line'>    <span class="n">serverConfig</span><span class="p">.</span><span class="n">DeviceCredentials</span><span class="p">))</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>     <span class="c1">// Create an ExecuteWorkflow request.</span>
+</span><span class='line'>     <span class="n">ExecuteWorkflowRequest</span> <span class="n">request</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ExecuteWorkflowRequest</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>         <span class="n">WorkflowId</span> <span class="p">=</span> <span class="n">_workflowId</span><span class="p">,</span>
+</span><span class='line'>         <span class="n">EntityId</span> <span class="p">=</span> <span class="n">_leadId</span>
+</span><span class='line'>     <span class="p">};</span>
+</span><span class='line'>     <span class="n">Console</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="s">&quot;Created ExecuteWorkflow request, &quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c1">// Execute the workflow.</span>
+</span><span class='line'>     <span class="n">ExecuteWorkflowResponse</span> <span class="n">response</span> <span class="p">=</span>
+</span><span class='line'>        <span class="p">(</span><span class="n">ExecuteWorkflowResponse</span><span class="p">)</span><span class="n">_serviceProxy</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I have paraphrased this code to illustrate my example more clearly. This is an example of a very typical workflow execution scenario. The thing that gave me pause was that I couldn&#8217;t resolve the type ExecuteWorkflowRequest or ExecuteWorkflowResponse.</p>
+
+<p>Looking more closely at the SDK example, I noticed the following at the top of the file:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="c1">// This namespace is found in Microsoft.Crm.Sdk.Proxy.dll assembly</span>
+</span><span class='line'><span class="c1">// found in the SDK\bin folder.</span>
+</span><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Crm.Sdk.Messages</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So even though most of the other types are in the Microsoft.Xrm namespace, for some reason these types were left behind in Microsoft.Crm.</p>
+
+<p>Hopefully this saves you some time.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Handling errors with the CRM 2011 Web services API]]></title>
+    <link href="http://yoursite.com/blog/2011/04/13/handling-errors-with-the-crm-2011-web-services-api/"/>
+    <updated>2011-04-13T11:59:42-07:00</updated>
+    <id>http://yoursite.com/blog/2011/04/13/handling-errors-with-the-crm-2011-web-services-api</id>
+    <content type="html"><![CDATA[<p>Early on in my experiences with CRM programming I learned to do whatever I can to get meaningful error responses from the server. Nothing is more difficult than having a Web service call fail and not being able to tell what happened by looking at the stack trace.</p>
+
+<p>Since the CRM API is delivered using .NET Web services, we are crossing some process and protocol boundaries. In particular, CRM adheres to the SOAP standard of returning errors as <a href="http://www.w3.org/TR/2000/NOTE-SOAP-20000508/#_Toc478383507">SOAP faults</a>.</p>
+
+<p>In order to implement this feature with .NET exceptions, Microsoft has created a custom exception type - the SoapException. The meaningful data of the SOAP fault is contained in a field called SoapException.Detail.InnerXml. The issue here is that most of the time when the calling code is handling exceptions, we don&#8217;t see this field since we are dealing with System.Exception types most of the time.</p>
+
+<p>What I have been doing from the beginning is to rethrow the System.Web.Services.Protocols.SoapException as a System.Exception and include the Xml as the exception message. Consider the following error handler:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">try</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nf">DoCrmCall</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">catch</span> <span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Web</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">Protocols</span><span class="p">.</span><span class="n">SoapException</span> <span class="n">ex</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">throw</span> <span class="k">new</span> <span class="nf">Exception</span><span class="p">(</span><span class="n">ex</span><span class="p">.</span><span class="n">Detail</span><span class="p">.</span><span class="n">InnerXml</span><span class="p">,</span> <span class="n">ex</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When we see the exception in the calling code (the .NET service proxy) we get a System.Exception where the message contains the Xml from the SOAP fault. There may be better ways of handling the SOAP messages, but this method has been working well for me, and I thought I&#8217;d put it up for you guys to comment on, since I know that error messages are a hot button topic in CRM and Web services in general.</p>
+]]></content>
+  </entry>
+  
+</feed>

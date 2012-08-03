@@ -1,0 +1,880 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="I just started writing some new Silverlight controls for a client project and I was struggling with trying to get a tab control to span the full &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/page/6/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/11/silverlight-content-positioning-expanding-to-fill-container/">Silverlight Content Positioning - Expanding to Fill Container</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-11T21:33:24-07:00" pubdate data-updated="true">Oct 11<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I just started writing some new Silverlight controls for a client project and I was struggling with trying to get a tab control to span the full width of its container. I was reading everywhere that setting Width=&#8221;Auto&#8221; was the way to accomplish this in Silverlight4, rather than the old way of doing it, which was setting Width=&#8221;*&#8221;. However no matter what I did, I couldn&#8217;t get my control to span its container.</p>
+
+<p>Here was the code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>  <span class="nt">&lt;Grid</span> <span class="na">x:Name=</span><span class="s">&quot;LayoutRoot&quot;</span> <span class="na">Background=</span><span class="s">&quot;White&quot;</span> <span class="na">Width=</span><span class="s">&quot;Auto&quot;</span> <span class="na">Height=</span><span class="s">&quot;Auto&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;sdk:TabControl</span> <span class="na">Height=</span><span class="s">&quot;Auto&quot;</span> <span class="na">Width=</span><span class="s">&quot;Auto&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Left&quot;</span> <span class="na">Name=</span><span class="s">&quot;tabControl1&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Top&quot;</span> <span class="na">SelectionChanged=</span><span class="s">&quot;tabControl1_SelectionChanged&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;sdk:TabItem</span> <span class="na">Header=</span><span class="s">&quot;Details&quot;</span> <span class="na">Name=</span><span class="s">&quot;tabItem1&quot;</span> <span class="na">Width=</span><span class="s">&quot;Auto&quot;</span> <span class="na">Height=</span><span class="s">&quot;Auto&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;Canvas</span> <span class="na">Width=</span><span class="s">&quot;Auto&quot;</span> <span class="na">Height=</span><span class="s">&quot;Auto&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;Button</span> <span class="na">Height=</span><span class="s">&quot;12&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,82,-6&quot;</span> <span class="na">Width=</span><span class="s">&quot;124&quot;</span> <span class="na">Content=</span><span class="s">&quot;Back&quot;</span><span class="nt">&gt;&lt;/Button&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;Button</span> <span class="na">Height=</span><span class="s">&quot;12&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,82,-6&quot;</span> <span class="na">Width=</span><span class="s">&quot;124&quot;</span> <span class="na">Content=</span><span class="s">&quot;Next&quot;</span><span class="nt">&gt;&lt;/Button&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;/Canvas&gt;</span>
+</span><span class='line'>           <span class="nt">&lt;/sdk:TabItem&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/sdk:TabControl&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/Grid&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The Grid element was filling its container just fine using Width=&#8221;Auto&#8221;, but its child TabControl was still not expanding. Finally I started removing attributes on the TabControl to get to the bare basics of what could work. After I removed the alignment properties I started getting somewhere. Here is the new code for the TabControl:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'> <span class="nt">&lt;sdk:TabControl</span> <span class="err">&lt;strong</span><span class="nt">&gt;</span>Height=&quot;Auto&quot; Width=&quot;Auto&quot; Name=&quot;tabControl1&quot; SelectionChanged=&quot;tabControl1_SelectionChanged&quot;&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This makes sense if you think about the alignment directives as CSS floats. There is no equivalent in CSS for the VerticalAlignment property, but it looks like the HorizontalAlignment is roughly analogous to a float. In HTML/CSS, floating a block level element causes it to contract in size to the dimensions of its contents. This is roughly what I was seeing here. Removing the float let the element expand to its container.</p>
+
+<p>Hopefully the hour I spent messing with this helps somebody else out.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/11/silverlight-unit-testing/">Silverlight Unit Testing</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-11T21:31:55-07:00" pubdate data-updated="true">Oct 11<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;ve been on a tear with Microsoft Silverlight development, and now I&#8217;ve paused for a second and I&#8217;m wondering how can I test this stuff like I would with a <a href="http://seleniumhq.org/">regular website</a>?</p>
+
+<p>Well it turns out that I&#8217;m not the only one to think this. The <a href="http://silverlight.codeplex.com/">Silverlight Toolkit</a> guys have included the <a href="http://code.msdn.microsoft.com/silverlightut">Silverlight Unit Test Framework</a> in their distribution. I just got the bits installed, and I&#8217;ll be trying it out shortly so hold tight for some future posts on getting tests built for Silverlight apps.</p>
+
+<p><a href="http://www.jeff.wilcox.name/2008/03/silverlight2-unit-testing/">This</a> is the first tutorial that I&#8217;m going to look at, since it goes through the details of hooking into the UI. Some of the other tutorials don&#8217;t go into this.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/10/06/building-sharepoint-projects-with-cruisecontrol/">Building SharePoint Projects With CruiseControl</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-06T00:09:50-07:00" pubdate data-updated="true">Oct 6<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>Short version</strong>:</p>
+
+<p>See <a href="http://msdn.microsoft.com/en-us/library/ff622991.aspx">this MSDN article</a>.</p>
+
+<p><strong>Longer version:</strong></p>
+
+<p>I needed to get another developer&#8217;s WebParts building under my <a href="http://confluence.public.thoughtworks.org/display/CCNET/Welcome+to+CruiseControl.NET">CruiseControl</a> server today. After checking the code out on the build box I realized that I would need a few dependencies that were not available since SharePoint was not installed on the build machine. After grabbing the obvious references I needed to build the project and changing the project references around I got to a point where MSBuild was giving me the following error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>C:<span class="se">\W</span>INDOWS<span class="se">\M</span>icrosoft.NET<span class="se">\F</span>ramework<span class="se">\v</span>4.0.30319<span class="se">\M</span>icrosoft.Common.targets<span class="o">(</span>1835,9<span class="o">)</span>:
+</span><span class='line'>error MSB3091: Task failed because <span class="s2">&quot;resgen.exe&quot;</span> was not found, or the correct
+</span><span class='line'>Microsoft Windows SDK is not installed.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ok, so apparently I needed to install the Windows SDK on the build box. More specifically, I needed to grab the .NET SDK, which is now distributed as part of the Windows SDK as of the .NET 4.0 Framework. Thankfully the Web installer allows you to install just the .NET components, so I didn&#8217;t have to download the entire ISO image just to grab the .NET SDK.</p>
+
+<p>I ran msbuild again and got the following error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>C:<span class="se">\P</span>rogram Files<span class="se">\C</span>ruiseControl.NET<span class="se">\.</span>..<span class="se">\S</span>harePoint.WebParts.csproj<span class="o">(</span>153,3<span class="o">)</span>: er
+</span><span class='line'>ror MSB4019: The imported project <span class="s2">&quot;C:\Program Files\MSBuild\Microsoft\VisualStu</span>
+</span><span class='line'><span class="s2">dio\v10.0\SharePointTools\Microsoft.VisualStudio.SharePoint.targets&quot;</span> was not fo
+</span><span class='line'>und. Confirm that the path in the &lt;Import&gt; declaration is correct, and that the
+</span><span class='line'> file exists on disk.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I copied the targets over from another machine that had Visual Studio installed, and now I got another error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>C:<span class="se">\P</span>rogram Files<span class="se">\M</span>SBuild<span class="se">\M</span>icrosoft<span class="se">\V</span>isualStudio<span class="se">\v</span>10.0<span class="se">\S</span>harePointTools<span class="se">\M</span>icroso
+</span><span class='line'>ft.VisualStudio.SharePoint.targets<span class="o">(</span>343,5<span class="o">)</span>: error : Could not load file or assem
+</span><span class='line'>bly <span class="s1">&#39;Microsoft.VisualStudio.SharePoint.Designers.Models, Version=10.0.0.0, Cult</span>
+</span><span class='line'><span class="s1">ure=neutral, PublicKeyToken=b03f5f7f11d50a3a&#39;</span> or one of its dependencies. The s
+</span><span class='line'>ystem cannot find the file specified.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I searched around for Microsoft.VisualStudio.SharePoint.Designers.Models.dll but I didn&#8217;t find it right away. I thought that it was time to start Googling around to see where this tunnel ends and turned up <a href="http://msdn.microsoft.com/en-us/library/ff622991.aspx">this document</a> from Microsoft.</p>
+
+<p>This outlines exactly what I was trying to figure out in the steps above. Unfortunately it looks like a lot of work so I have to bail and just install CruiseControl on one of the SharePoint machines for now. I&#8217;ll be sure to update this if I give it another shot.</p>
+
+<p>UPDATE:
+I did get CruiseControl to build a SharePoint project on a machine without SharePoint installed on it. Every detail that you need to make this work is in the MSDN article for getting TFS builds to work. The only difference is that you will kick off the msbuild process from CruiseControl instead of TFS. One drawback to building on a machine that does not have SharePoint is that you won&#8217;t be able to run automated tests that involve calls to SharePoint functionality. If you are careful about your design though, a lot of functionality can be tested without SharePoint since most Web Part functionality is now actually part of ASP.NET.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/09/21/key-properties-in-crm/">Key Properties in CRM</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-09-21T01:53:01-07:00" pubdate data-updated="true">Sep 21<span>st</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I was debugging a piece of code just now when I realized that my problem was in an assumption that I had made about Key properties in a DynamicEntity.</p>
+
+<p>I thought that a Key field was a unique key for the entity instance, which it is, sort of. There apparently can be more than one Key field in an entity instance, so my code that was supposed to return the ID of an entity instance wasn&#8217;t working because it was finding a second Key field:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>       <span class="k">public</span> <span class="k">static</span> <span class="n">Guid</span> <span class="nf">GetDynamicEntityId</span><span class="p">(</span> <span class="n">DynamicEntity</span> <span class="n">in_entity</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">foreach</span><span class="p">(</span> <span class="kt">object</span> <span class="n">prop</span> <span class="k">in</span> <span class="n">in_entity</span><span class="p">.</span><span class="n">Properties</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>              <span class="k">if</span><span class="p">(</span> <span class="n">prop</span> <span class="k">is</span> <span class="n">KeyProperty</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                  <span class="k">return</span> <span class="p">(</span> <span class="p">(</span> <span class="n">Key</span> <span class="p">)(</span> <span class="p">(</span> <span class="n">KeyProperty</span> <span class="p">)</span><span class="n">prop</span> <span class="p">).</span><span class="n">Value</span> <span class="p">).</span><span class="n">Value</span><span class="p">;</span>
+</span><span class='line'>              <span class="p">}</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>          <span class="k">return</span> <span class="n">Guid</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I&#8217;m at a loss now for a good way to return the ID of an entity instance. You could always assume that it is going to be the entity name + &#8216;id&#8217;, but I don&#8217;t think that is 100% reliable. I could be wrong though. Since the IDs are GUIDs, I have no idea why it makes any sense to have more than one key (or a composite key). I&#8217;m still looking into this one.</p>
+
+<p>Update:
+I ended up with a hack that just looks at the entity name and tacks on &#8216;id&#8217; to the end and searches for this string pattern in the attribute names. This feels pretty dirty, but I don&#8217;t know what else to do.</p>
+
+<p>Here is the code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">public</span> <span class="k">static</span> <span class="n">Guid</span> <span class="nf">GetDynamicEntityId</span><span class="p">(</span> <span class="n">DynamicEntity</span> <span class="n">in_entity</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">foreach</span><span class="p">(</span> <span class="n">Property</span> <span class="n">prop</span> <span class="k">in</span> <span class="n">in_entity</span><span class="p">.</span><span class="n">Properties</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>              <span class="k">if</span><span class="p">(</span> <span class="n">prop</span><span class="p">.</span><span class="n">Name</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span> <span class="n">in_entity</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">&quot;id&quot;</span> <span class="p">)</span> <span class="p">!=</span> <span class="p">-</span><span class="m">1</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                  <span class="k">return</span> <span class="p">(</span> <span class="p">(</span><span class="n">Key</span><span class="p">)</span> <span class="p">(</span> <span class="p">(</span> <span class="n">KeyProperty</span> <span class="p">)</span><span class="n">prop</span> <span class="p">).</span><span class="n">Value</span><span class="p">).</span><span class="n">Value</span><span class="p">;</span>
+</span><span class='line'>              <span class="p">}</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>          <span class="k">return</span> <span class="n">Guid</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/09/09/crm-api-quirks/">CRM API Quirks</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-09-09T23:12:29-07:00" pubdate data-updated="true">Sep 9<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I come across oddities and oversights pretty frequently in the CRM SDK/API. The latest one is that there is no way to write a generic method to pull a property value out of a CRM Property type. Let me show you what I&#8217;d like to write:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">static</span> <span class="n">TResult</span> <span class="n">GetPropertyValue</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">TResult</span><span class="p">&gt;(</span> <span class="n">T</span> <span class="n">in_property</span> <span class="p">)</span> <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="n">Property</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>      <span class="k">try</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">(</span> <span class="p">(</span> <span class="n">T</span> <span class="p">)</span><span class="n">in_property</span> <span class="p">).</span><span class="n">Value</span><span class="p">;</span>
+</span><span class='line'>     <span class="p">}</span>
+</span><span class='line'>     <span class="k">catch</span><span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nf">default</span><span class="p">(</span> <span class="n">TResult</span> <span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This doesn&#8217;t work since Property doesn&#8217;t define a value parameter. It is up to the individual derived classes to define this. I can understand maybe they didn&#8217;t want to constrain all Property types to have a value, but it would be nice to have IDataProperty or some kind of interface that defines the Value parameter. To put this into perspective, the SDK code that handles this simple function is nearly 100 lines of code, and relies on runtime type identification (reflection) in order to determine how to cast the value properly.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>       <span class="k">private</span> <span class="kt">object</span> <span class="nf">GetPropertyValue</span><span class="p">(</span><span class="kt">object</span> <span class="n">prop</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="n">Type</span> <span class="n">propertyType</span> <span class="p">=</span> <span class="n">prop</span><span class="p">.</span><span class="n">GetType</span><span class="p">();</span>
+</span><span class='line'>            <span class="k">if</span><span class="p">(</span> <span class="n">propertyType</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span> <span class="n">StringProperty</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">return</span> <span class="p">(</span> <span class="p">(</span><span class="n">StringProperty</span> <span class="p">)</span><span class="n">prop</span> <span class="p">).</span><span class="n">Value</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">propertyType</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">CrmDateTimeProperty</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>               <span class="p">...</span>
+</span><span class='line'>           <span class="p">}</span>
+</span><span class='line'>       <span class="p">...</span>
+</span><span class='line'>     <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/09/09/creating-a-paypal-payflow-test-account/">Creating a PayPal PayFlow Test Account</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-09-09T22:48:29-07:00" pubdate data-updated="true">Sep 9<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Several of our clients use PayPal as their payment gateway, so we have some general library code that deals with the PayPal payment gateway (PayFlow Pro).</p>
+
+<p>In order to test our our code, of course we needed a sandbox account on the PayPal servers. However, it is not obvious how this works. Fortunately, I came across <a href="http://www.richardcastera.com/2009/10/13/how-to-create-a-sandbox-paypal-payflow-account/">this post</a> that describes how to get a test account set up. It is a bit counterintuitive, but you go through the signup process for a full account and just abort at the last step.</p>
+
+<p>Hopefully this post adds some weight to this guy&#8217;s post (It worked great for me).</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/24/working-with-dynamicentity-properties/">Working With DynamicEntity Properties</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-08-24T18:42:01-07:00" pubdate data-updated="true">Aug 24<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>After working on several client projects involving DynamicEntities, I have a few things to get written up from my notes. Since DynamicEntities, by definition, are not strongly-typed (in terms of CRM entities, of course they are concrete .NET types themselves) they require a bit of casting-and-cajoling in order to work with.</p>
+
+<p>The first thing to note is that if a field is empty in CRM, DynamicEntity objects that are passed back from the CRM service won&#8217;t have this field in the properties collection at all. This means that we have to check for the field before we even start. Accessing the collection via its string indexer will throw an exception if the property doesn&#8217;t exist. In code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">if</span><span class="p">(</span> <span class="n">dynamicEntity</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span> <span class="s">&quot;myprop&quot;</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>     <span class="c1">// throws if &quot;myprop&quot; doesn&#39;t exist in the collection</span>
+</span><span class='line'>     <span class="n">myProp</span> <span class="p">=</span> <span class="n">de</span><span class="p">.</span><span class="n">Properties</span><span class="p">[</span><span class="s">&quot;myprop&quot;</span> <span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The second big thing is that, while we need an actual Property instance when adding properties to a DynamicEntity, they are not returned when read back from the collection. The DynamicEntity doesn&#8217;t even keep a reference to the Property instance under the hood &#8211; it basically throws it away. In code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="c1">// adding</span>
+</span><span class='line'><span class="n">DynamicEntity</span> <span class="n">de</span> <span class="p">=</span> <span class="k">new</span> <span class="n">DynamicEntity</span><span class="p">();</span>
+</span><span class='line'><span class="n">de</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span> <span class="k">new</span> <span class="n">CrmNumberProperty</span><span class="p">(</span> <span class="s">&quot;num&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">CrmNumber</span><span class="p">(</span> <span class="m">42</span> <span class="p">)</span> <span class="p">)</span> <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// retrieving</span>
+</span><span class='line'><span class="n">CrmNumber</span> <span class="n">num</span> <span class="p">=</span> <span class="p">(</span> <span class="n">CrmNumber</span> <span class="p">)</span><span class="n">de</span><span class="p">.</span><span class="n">Properties</span><span class="p">[</span> <span class="s">&quot;num&quot;</span> <span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I&#8217;ll post a few more things later and hopefully some code to keep this kind of complexity in check.</p>
+
+<p>Update:
+I just wanted to add a little tidbit brought up by someone about iterating over a PropertyCollection. When performing an iteration over a collection of properties, there is an implicit conversion to Property that happens in the iteration statement. Take this sample code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">foreach</span><span class="p">(</span> <span class="p">&lt;</span><span class="n">strong</span><span class="p">&gt;</span><span class="n">Property</span> <span class="n">prop</span> <span class="k">in</span> <span class="n">in_entity</span><span class="p">.</span><span class="n">Properties</span><span class="p">&lt;/</span><span class="n">strong</span><span class="p">&gt;</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>              <span class="k">if</span><span class="p">(</span> <span class="n">prop</span><span class="p">.</span><span class="n">Name</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span> <span class="n">in_entity</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">&quot;id&quot;</span> <span class="p">)</span> <span class="p">!=</span> <span class="p">-</span><span class="m">1</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                  <span class="k">return</span> <span class="p">(</span> <span class="p">(</span><span class="n">Key</span><span class="p">)</span> <span class="p">(</span> <span class="p">&lt;</span><span class="n">strong</span><span class="p">&gt;(</span> <span class="n">KeyProperty</span> <span class="p">)&lt;/</span><span class="n">strong</span><span class="p">&gt;</span><span class="n">prop</span> <span class="p">).</span><span class="n">Value</span><span class="p">).</span><span class="n">Value</span><span class="p">;</span>
+</span><span class='line'>              <span class="p">}</span>
+</span><span class='line'>          <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I&#8217;ve bolded the conversion to Property as well as the cast back to KeyProperty. We still start out with a Key object, but it apparently GetEnumerator() wraps things up into a Property object behind the scenes.</p>
+
+<p>Here is the disassembled code for PropertyCollection.InternalGetEnumerator():</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">private</span> <span class="n">IEnumerator</span><span class="p">&lt;</span><span class="n">Property</span><span class="p">&gt;</span> <span class="n">InternalGetEnumerator</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">List</span><span class="p">&lt;</span><span class="n">Property</span><span class="p">&gt;</span> <span class="n">list</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Property</span><span class="p">&gt;();</span>
+</span><span class='line'>    <span class="k">foreach</span> <span class="p">(</span><span class="n">KeyValuePair</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span> <span class="n">pair</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="n">_nameToPropertyValue</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">list</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">PropertyFactory</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">CreateInstance</span><span class="p">(</span><span class="n">pair</span><span class="p">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">pair</span><span class="p">.</span><span class="n">Value</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">list</span><span class="p">.</span><span class="n">GetEnumerator</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here we see that internally there is a PropertyFactory that wraps the raw value up into a Property.</p>
+
+<p>Hopefully this sheds some light on this confusing behavior.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/19/creating-versioned-output-folders-with-visual-studio/">Creating Versioned Output Folders With Visual Studio (Msbuild)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-08-19T14:39:18-07:00" pubdate data-updated="true">Aug 19<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;ve been messing with several ways of doing binary code releases recently with mixed success. Ideally I want to be able to build a solution with msbuild and have the output moved into folders for debug and release, with the assembly version and the target framework having separate folder locations for each. In other words, the bin\ folder would look like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">bin</span>\
+</span><span class='line'>  <span class="m">1.0</span><span class="p">.</span><span class="m">0.0</span>\
+</span><span class='line'>    <span class="n">v3</span><span class="p">.</span><span class="m">5</span>\
+</span><span class='line'>      <span class="n">Debug</span>\
+</span><span class='line'>      <span class="n">Release</span>\
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The main requirement is that the modifications that I need to make must be compatible with Visual Studio. Other developers have to be able to use the project files normally and they have to do something sensible by default.</p>
+
+<p>The other part of the problem is that I want the version number to be read out of the AssemblyInfo.cs file so that the folder name and the actual assembly version are always in sync. Unfortunately my attempts at reading AssemblyInfo.cs haven&#8217;t worked out. Due to the peculiar behavior of msbuild when building Visual Studio project files, I&#8217;m not able to dynamically change the value of a property based on the results of a custom build task that reads the version number out of the file. There is enough there for another post on this, but that will have to come another time.</p>
+
+<p>My new approach is to just feed the version number manually to a batch file that will call msbuild with the appropriate property value set.</p>
+
+<p>Let&#8217;s look at the changes that we need to make to the .csproj file. First we look at the OutputPath property and change it to use the target framework version and a custom property that we will define called PointVersion. The property definition looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'> <span class="nt">&lt;OutputPath&gt;</span>bin\$(PointVersion)\$(TargetFrameworkVersion)\Debug\<span class="nt">&lt;/OutputPath&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I&#8217;m going to do the same change for the release configuration. The next thing is to define PointVersion and give it a default value. The default value is going to be SNAPSHOT, since if we aren&#8217;t doing a release, we want to keep overwriting the same output rather than bumping the version number all the time or mistakenly updating the code of already-released versions. I want to avoid having binaries floating around that have the same version number but potentially different code. Here is the property definition:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;PointVersion&gt;</span>SNAPSHOT<span class="nt">&lt;/PointVersion&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that this is declared under the main section of the .csproj file. Now that this is set up, building the project from Visual Studio will give us a folder structure like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">bin</span>\
+</span><span class='line'>  <span class="n">SNAPSHOT</span>\
+</span><span class='line'>    <span class="n">v3</span><span class="p">.</span><span class="m">5</span>\
+</span><span class='line'>      <span class="n">Debug</span>\
+</span><span class='line'>      <span class="n">Release</span>\
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&#8217;re getting pretty close. Now we want a script called publish.bat that we can use to build all configurations that we want with one action. The very simplest thing we can do is to put several parameterized calls to msbuild into a batch file like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>msbuild /property:Configuration<span class="o">=</span>Debug /property:PointVersion<span class="o">=</span>%1
+</span><span class='line'>msbuild /property:Configuration<span class="o">=</span>Release /property:PointVersion<span class="o">=</span>%1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>which we can call with the version number as the first parameter like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>c:<span class="se">\&gt;</span> publish.cmd 1.0.9.0
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is not completely ideal, as I&#8217;d rather be able to bump the version in the AssemblyInfo.cs file. The next step is to grab the regular expression from the msbuild task that I found and run it in the batch file probably. I wish things would have worked out within msbuild, but it seems that this kind of thing is endemic to build systems in general.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/18/including-multiple-script-files-with-windows-scripting/">Including Multiple Script Files With Windows Scripting</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-08-18T22:03:50-07:00" pubdate data-updated="true">Aug 18<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;m using a Javascript library in order to do some data manipulation, and I wondered if there was a way to include the source JS file in my script. There is nothing like an include directive in WSH but it does support a mechanism for managing script files that is very similar to how it would work in a Web browser. To do this we create a file with the .wsf extension:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;job&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;script</span> <span class="na">language=</span><span class="s">&quot;JScript&quot;</span> <span class="na">src=</span><span class="s">&quot;library.js&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;script</span> <span class="na">language=</span><span class="s">&quot;JScript&quot;</span> <span class="na">src=</span><span class="s">&quot;main.js&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;script</span> <span class="na">language=</span><span class="s">&quot;JScript&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>       WScript.Echo( doFunction() );
+</span><span class='line'>    <span class="nt">&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;/job&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that we can include files as well as inline code. The wsf script can now be invoked on the commandline with cscript as you would any vbs or js script file.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/18/creating-guids-with-windows-scripting-javascript/">Creating GUIDs With Javascript Windows Scripting Host</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-08-18T21:44:17-07:00" pubdate data-updated="true">Aug 18<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I need to do some scripting from time to time, and I usually use Javascript to do everything. I needed to generate GUIDs for some CRM data that I wanted to create programmatically. I found <a href="http://blogs.technet.com/b/heyscriptingguy/archive/2005/02/21/how-can-i-create-a-guid-using-a-script.aspx">this article</a> from the Microsoft Scripting Guy.</p>
+
+<p>He gave the example in VBScript, so here is the equivalent in JScript:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">guidGen</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">typeLib</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ActiveXObject</span><span class="p">(</span> <span class="s2">&quot;Scriptlet.TypeLib&quot;</span> <span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">typeLib</span><span class="p">.</span><span class="nx">Guid</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/7/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/5/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

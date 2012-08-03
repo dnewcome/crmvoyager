@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Embedding Silverlight into a WebPart - My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="A current project required me to drop a Silverlight control into a WebPart for inclusion in a Microsoft SharePoint site. In the past, I think that &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yoursite.com/blog/2010/10/12/embedding-silverlight-into-a-webpart/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoursite.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Embedding Silverlight Into a WebPart</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-12T20:14:15-07:00" pubdate data-updated="true">Oct 12<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>A current project required me to drop a <a href="http://www.silverlight.net/">Silverlight</a> control into a <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.webparts.webpart.aspx">WebPart </a>for inclusion in a Microsoft <a href="http://sharepoint.microsoft.com/en-us/Pages/default.aspx">SharePoint </a>site. In the past, I think that the Silverlight component could be created programmatically like any other ASP.NET control, but if I understand correctly, this support has been dropped from the latest version of Silverlight (4.0 as of this writing).</p>
+
+<p>As you may know, WebParts do not natively support the use of the ASP.NET templating engine in order to assist with rendering its contents. That is, we can&#8217;t create a corresponding markup file as we do with .aspx or .ascx components. We can work around this by using <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.page.loadcontrol.aspx">LoadControl()</a> in order to render a user control (.ascx file) within the body of the WebPart&#8217;s CreateChildControls() method, but I wanted to see if I could avoid having to create a separate user control just for embedding my Silverlight component.</p>
+
+<p>I found two currently supported approaches to adding Silverlight content to a page in version 4: using an object tag or <a href="http://msdn.microsoft.com/en-us/library/cc265155(VS.95">client-side using Javascript</a>.aspx). Since I wasn&#8217;t doing much else with Javascript on the client, I wanted to stick to a server-side solution. My attempts at programmatically creating the Silverlight control as <a href="http://blogs.msdn.com/b/andreww/archive/2009/03/12/silverlight-web-part-in-sharepoint.aspx">outlilned here</a> failed, so what I ended up doing was to embed the object tag into an <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.htmlcontrols.htmlgenericcontrol.aspx">HtmlGenericControl </a>directly in the WebPart. Here is the code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">public</span> <span class="k">class</span> <span class="nc">SilverlightPart</span> <span class="p">:</span> <span class="n">WebPart</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">CreateChildControls</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">this</span><span class="p">.</span><span class="n">Title</span> <span class="p">=</span> <span class="s">&quot;Embedded Silverlight&quot;</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">HtmlGenericControl</span> <span class="n">control</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HtmlGenericControl</span><span class="p">(</span> <span class="s">&quot;div&quot;</span> <span class="p">);</span>
+</span><span class='line'>          <span class="n">control</span><span class="p">.</span><span class="n">InnerHtml</span> <span class="p">=</span> <span class="s">@&quot;&lt;object data=&#39;data:application/x-silverlight-2,&#39; type=&#39;application/x-silverlight-2&#39; width=&#39;100%&#39; height=&#39;300px&#39;&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;source&#39; value=&#39;ClientBin/SilverlightWizard.xap&#39;/&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;onError&#39; value=&#39;onSilverlightError&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;background&#39; value=&#39;white&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;minRuntimeVersion&#39; value=&#39;4.0.50401.0&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;autoUpgrade&#39; value=&#39;true&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;a href=&#39;http://go.microsoft.com/fwlink/?LinkID=149156&amp;v=4.0.50401.0&#39; style=&#39;text-decoration:none&#39;&gt;</span>
+</span><span class='line'><span class="s">                  &lt;img src=&#39;http://go.microsoft.com/fwlink/?LinkId=161376&#39; alt=&#39;Get Microsoft Silverlight&#39; style=&#39;border-style:none&#39;/&gt;</span>
+</span><span class='line'><span class="s">              &lt;/a&gt;</span>
+</span><span class='line'><span class="s">          &lt;/object&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">Controls</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span> <span class="n">control</span> <span class="p">);</span>
+</span><span class='line'>          <span class="n">ChildControlsCreated</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One small thing to note is that we need to specify a height for the Silverlight control when it appears in a WebPart zone. Setting width to 100% is fine, but setting the height must be done using a specific height due to the layout logic used by the zones.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-12T20:14:15-07:00" pubdate data-updated="true">Oct 12<span>th</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoursite.com/blog/2010/10/12/embedding-silverlight-into-a-webpart/" data-via="" data-counturl="http://yoursite.com/blog/2010/10/12/embedding-silverlight-into-a-webpart/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2010/10/11/silverlight-content-positioning-expanding-to-fill-container/" title="Previous Post: Silverlight content positioning - expanding to fill container">&laquo; Silverlight content positioning - expanding to fill container</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2010/10/13/creating-a-silverlight-usercontrol/" title="Next Post: Referencing a Silverlight UserControl">Referencing a Silverlight UserControl &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
