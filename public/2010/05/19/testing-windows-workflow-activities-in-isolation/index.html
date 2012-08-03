@@ -1,0 +1,367 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Testing Windows Workflow activities in isolation - CRM Voyager</title>
+  <meta name="author" content="Dan Newcome">
+
+  
+  <meta name="description" content="There comes a time in every CRM developer&#8217;s career when he&#8217;s tired of doing the rain dance of plugin re-registration for testing custom &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://crmvoyager.com/2010/05/19/testing-windows-workflow-activities-in-isolation/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CRM Voyager" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10833846-5']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CRM Voyager</a></h1>
+  
+    <h2>Navigating the high seas of Microsoft CRM.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:crmvoyager.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+
+<div id="adsense" style="border: 1px solid black">
+	<script type="text/javascript"><!--
+		google_ad_client = "ca-pub-5305300577407644";
+		/* CRM Voyager */
+		google_ad_slot = "1427166023";
+		google_ad_width = 728;
+		google_ad_height = 90;
+		//-->
+		</script>
+		<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+	</script>
+</div>
+
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Testing Windows Workflow Activities in Isolation</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-05-19T19:48:47-07:00" pubdate data-updated="true">May 19<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>There comes a time in every CRM developer&#8217;s career when he&#8217;s tired of doing the rain dance of plugin re-registration for testing custom workflow activities. Of course, moving all of the heavy lifting out of the actual Execute() method is a must, but sometimes we just need to test the thing as-is.</p>
+
+<p>I&#8217;ve seen <a href="http://msdn.microsoft.com/en-us/magazine/dd179724.aspx">some references</a> to testing workflow activities on the web that recommend using the workflow runtime to spin things up for the test, but for smoke testing individual activities, I think that this is probably overkill. What I&#8217;m going to do here is to spin up an instance of the activity outside of the WF runtime environment. For another take on this as well as a sample of spinning up the actual WF runtime for testing, check out <a href="http://odetocode.com/blogs/scott/archive/2006/08/02/unit-testing-workflow-activities.aspx">this reference</a>. Of course, if we have a composite activity or if we reach into the execution context at all, this technique won&#8217;t work. If need be I might look at mocking the execution context, but for now I don&#8217;t need it.</p>
+
+<p>As an example, take the following custom CRM workflow activity that sends a notification to a web service with a contract ID that has been updated in CRM</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ContractUpdateActivity</span> <span class="p">:</span> <span class="n">Activity</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">static</span> <span class="n">DependencyProperty</span> <span class="n">ContractNumberProperty</span> <span class="p">=</span>
+</span><span class='line'>        <span class="n">DependencyProperty</span><span class="p">.</span><span class="n">Register</span><span class="p">(</span>
+</span><span class='line'>            <span class="s">&quot;ContractNumber&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="k">typeof</span><span class="p">(</span> <span class="kt">string</span> <span class="p">),</span>
+</span><span class='line'>            <span class="k">typeof</span><span class="p">(</span><span class="n">ContractUpdateActivity</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="na">    [CrmInput(&quot;ContractNumber&quot;)]</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">ContractNumber</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">get</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="p">(</span> <span class="kt">string</span> <span class="p">)</span><span class="k">base</span><span class="p">.</span><span class="n">GetValue</span><span class="p">(</span> <span class="n">ContractNumberProperty</span> <span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">set</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">base</span><span class="p">.</span><span class="n">SetValue</span><span class="p">(</span> <span class="n">ContractNumberProperty</span><span class="p">,</span> <span class="k">value</span> <span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">protected</span> <span class="k">override</span> <span class="n">ActivityExecutionStatus</span> <span class="nf">Execute</span><span class="p">(</span> <span class="n">ActivityExecutionContext</span> <span class="n">executionContext</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">Service</span> <span class="n">service</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Service</span><span class="p">();</span>
+</span><span class='line'>        <span class="n">service</span><span class="p">.</span><span class="n">ContractUpdated</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="n">ContractNumber</span> <span class="p">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">ActivityExecutionStatus</span><span class="p">.</span><span class="n">Closed</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Even though this is far from being a unit test or free of side effects, we&#8217;d still like to run this activity as a smoke test outside of CRM. There are two potential problems with doing something like</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ContractUpdateActivity</span> <span class="n">updateActivity</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ContractUpdateActivity</span><span class="p">();</span>
+</span><span class='line'><span class="n">updateActivity</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span> <span class="k">null</span> <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The most obvious issue, were one to attempt compilation of the above code, is that the Execute() method is protected and not visible to us in a test. Fortunately, Execute() is defined on System.Workflow.ComponentModel.Activity which intended for use as a base class and is not sealed.</p>
+
+<p>So, instead of using ContractUpdateActivity directly in our test, we can make a small wrapper by subclassing it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ContractUpdateActivityTest</span> <span class="p">:</span> <span class="n">ContractUpdateActivity</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">void</span> <span class="nf">Execute</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">base</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span> <span class="k">null</span> <span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>now we can write a few lines of code to exercise the code (I hesitate to call this a &#8216;test&#8217;) via the subclass:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ContractUpdateActivityTest</span> <span class="n">testUpdateActivity</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ContractUpdateActivityTest</span><span class="p">();</span>
+</span><span class='line'><span class="n">testUpdateActivity</span><span class="p">.</span><span class="n">ContractNumber</span> <span class="p">=</span> <span class="s">&quot;12345&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">testUpdateActivity</span><span class="p">.</span><span class="n">Execute</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The other issue to watch for is that of dependencies. The type initializer of Activity tries to load dependencies behind the scenes and won&#8217;t look in the current path of the executable that is running the test. The required classes must either be compiled into the same assembly as the workflow activity or be found in the GAC. It may be possible to locate the assemblies somewhere else, but I haven&#8217;t looked at the fusion logs to find out where else workflow looks for assemblies.</p>
+
+<p>If an assembly is not found, the .net runtime will issue an error similar to the following:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">System</span><span class="p">.</span><span class="n">TypeLoadException</span><span class="p">:</span> <span class="n">Could</span> <span class="n">not</span> <span class="n">load</span> <span class="n">type</span> <span class="err">&#39;</span><span class="n">Service</span><span class="err">&#39;</span> <span class="k">from</span> <span class="n">assembly</span> <span class="err">&#39;</span><span class="n">ContractServices</span><span class="p">,</span> <span class="n">Version</span><span class="p">=</span><span class="m">4.0</span><span class="p">.</span><span class="m">0.0</span><span class="p">,</span> <span class="n">Culture</span><span class="p">=</span><span class="n">neutral</span><span class="p">,</span> <span class="n">PublicKeyToken</span><span class="p">=</span><span class="k">null</span><span class="err">&#39;</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Dan Newcome</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-05-19T19:48:47-07:00" pubdate data-updated="true">May 19<span>th</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://crmvoyager.com/2010/05/19/testing-windows-workflow-activities-in-isolation/" data-via="" data-counturl="http://crmvoyager.com/2010/05/19/testing-windows-workflow-activities-in-isolation/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2010/05/02/working-with-default-filters-in-ms-crm-report-files/" title="Previous Post: Working with default filters in MS CRM report files">&laquo; Working with default filters in MS CRM report files</a>
+      
+      
+        <a class="basic-alignment right" href="/2010/05/19/dependency-properties-rant/" title="Next Post: Dependency properties rant">Dependency properties rant &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Dan Newcome -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'crmvoyager';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://crmvoyager.com/2010/05/19/testing-windows-workflow-activities-in-isolation/';
+        var disqus_url = 'http://crmvoyager.com/2010/05/19/testing-windows-workflow-activities-in-isolation/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

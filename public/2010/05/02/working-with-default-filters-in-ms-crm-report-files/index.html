@@ -1,0 +1,448 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Working with default filters in MS CRM report files - CRM Voyager</title>
+  <meta name="author" content="Dan Newcome">
+
+  
+  <meta name="description" content="As you are probably aware, Microsoft CRM uses Sql Server Reporting services under the hood to run reports against CRM data. However, to allow more &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://crmvoyager.com/2010/05/02/working-with-default-filters-in-ms-crm-report-files/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CRM Voyager" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10833846-5']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CRM Voyager</a></h1>
+  
+    <h2>Navigating the high seas of Microsoft CRM.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:crmvoyager.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+
+<div id="adsense" style="border: 1px solid black">
+	<script type="text/javascript"><!--
+		google_ad_client = "ca-pub-5305300577407644";
+		/* CRM Voyager */
+		google_ad_slot = "1427166023";
+		google_ad_width = 728;
+		google_ad_height = 90;
+		//-->
+		</script>
+		<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+	</script>
+</div>
+
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Working With Default Filters in MS CRM Report Files</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-05-02T19:32:27-07:00" pubdate data-updated="true">May 2<span>nd</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>As you are probably aware, Microsoft CRM uses Sql Server Reporting services under the hood to run reports against CRM data. However, to allow more flexibility than would ordinarily be provided by SRSS alone Microsoft has several tricks up its sleeve when it comes to running the reports under CRM. To allow reports to run in different CRM contexts, dataset queries can be written in a way that CRM can rewrite the query to report contextually on selected rows or active view filters. That behavior is well covered elsewhere on the web so I probably won&#8217;t cover it here.</p>
+
+<p>What I want to talk about here are default filters, which are added to the report when the .rdl file is uploaded to CRM. This filter persists as extended data added to the report file when downloaded from CRM.</p>
+
+<p>By default, the data is filtered to show only the last 30 days&#8217; worth of records. Downloading a report from CRM and comparing it with the originally uploaded .rdl file, we can see that the following chunk gets added to the .rdl file:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;CustomProperties&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;CustomProperty&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;Name&gt;</span>Custom<span class="nt">&lt;/Name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;Value&gt;</span><span class="ni">&amp;lt;</span>MSCRM xmlns=&quot;mscrm&quot;<span class="ni">&amp;gt;&amp;amp;</span>lt;ReportFilter<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>
+</span><span class='line'>lt;ReportEntity paramname=
+</span><span class='line'>&quot;P1&quot;<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;fetch version=&quot;1.0&quot; output-format=&quot;xml-platform&quot; mapping=&quot;logical&quot; distinct=&quot;false&quot;<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;entity name=&quot;contract&quot;<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;all-attributes /<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;filter type=&quot;and&quot;<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;condition attribute=&quot;modifiedon&quot;
+</span><span class='line'>operator=&quot;last-x-days&quot; value=&quot;30&quot; /<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;/filter<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;/entity
+</span><span class='line'><span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;/
+</span><span class='line'>fetch<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;/
+</span><span class='line'>ReportEntity<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;ReportEntity paramname=&quot;CRM_Filteredcontract&quot;
+</span><span class='line'><span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>
+</span><span class='line'>lt;fetch version=&quot;1.0&quot; output-format=&quot;xml-platform&quot; mapping=&quot;logical&quot; distinct=&quot;false&quot;<span class="ni">&amp;amp;</span>gt;
+</span><span class='line'><span class="ni">&amp;amp;</span>lt;entity name=&quot;contract&quot;<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;all-attributes /<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;filter type=&quot;and&quot;<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;
+</span><span class='line'>condition attribute=&quot;modifiedon&quot; operator=&quot;last-x-days&quot; value=&quot;30&quot; /<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;/filter<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;/entity<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;/
+</span><span class='line'>fetch<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;/
+</span><span class='line'>ReportEntity<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;amp;</span>lt;/ReportFilter<span class="ni">&amp;amp;</span>gt;<span class="ni">&amp;lt;</span>/MSCRM<span class="ni">&amp;gt;</span><span class="nt">&lt;/Value&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/CustomProperty&gt;</span>
+</span><span class='line'><span class="nt">&lt;/CustomProperties&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yuck. Unfortunately, since the report filter is an embedded xml document, it must be escaped in order for CRM to import it correctly. It would be nice if we could format this so that it is easy to edit. At first blush it seems the a simple CDATA section should do the trick. However, the data is actually escaped twice, which requires nested CDATA sections, which are not allowed in the XML standard. What can we do? Fortunately we can embed the CDATA sections so that when the data is unescaped the first time, the second CDATA section remains intact.</p>
+
+<p>The first thing to do is to recover the plain XML markup from the escaped text. I used a tool called <a href="http://xmlstar.sourceforge.net/">XMLStarlet</a>, but anything that can unescape XML entity references will do the trick.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>cat crm.xml | xmlstarlet unesc | xmlstarlet unesc
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Gives us something like the following:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;CustomProperties&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;CustomProperty&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;Name&gt;</span>Custom<span class="nt">&lt;/Name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;Value&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;MSCRM</span> <span class="na">xmlns=</span><span class="s">&quot;mscrm&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;ReportFilter&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;ReportEntity</span> <span class="na">paramname=</span><span class="s">&quot;P1&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;fetch</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span> <span class="na">output-format=</span><span class="s">&quot;xml-platform&quot;</span> <span class="na">mapping=</span><span class="s">&quot;logical&quot;</span> <span class="na">distinct=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;entity</span> <span class="na">name=</span><span class="s">&quot;contract&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;all-attributes/&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;filter</span> <span class="na">type=</span><span class="s">&quot;and&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                  <span class="nt">&lt;condition</span> <span class="na">attribute=</span><span class="s">&quot;modifiedon&quot;</span> <span class="na">operator=</span><span class="s">&quot;last-x-days&quot;</span> <span class="na">value=</span><span class="s">&quot;30&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/filter&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;/entity&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/fetch&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;/ReportEntity&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;ReportEntity</span> <span class="na">paramname=</span><span class="s">&quot;CRM_Filteredcontract&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;fetch</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span> <span class="na">output-format=</span><span class="s">&quot;xml-platform&quot;</span> <span class="na">mapping=</span><span class="s">&quot;logical&quot;</span> <span class="na">distinct=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;entity</span> <span class="na">name=</span><span class="s">&quot;contract&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;all-attributes/&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;filter</span> <span class="na">type=</span><span class="s">&quot;and&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                  <span class="nt">&lt;condition</span> <span class="na">attribute=</span><span class="s">&quot;modifiedon&quot;</span> <span class="na">operator=</span><span class="s">&quot;last-x-days&quot;</span> <span class="na">value=</span><span class="s">&quot;30&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/filter&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;/entity&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/fetch&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;/ReportEntity&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/ReportFilter&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/MSCRM&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/Value&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/CustomProperty&gt;</span>
+</span><span class='line'><span class="nt">&lt;/CustomProperties&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In order to work correctly when uploading the default filter, we escape it with CDATA tags like the following:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;CustomProperties&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;CustomProperty&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;Name&gt;</span>Custom<span class="nt">&lt;/Name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;Value&gt;</span><span class="cp">&lt;![CDATA[</span>
+</span><span class='line'><span class="cp">      &lt;MSCRM xmlns=&quot;mscrm&quot;&gt;&lt;![CDATA[</span>
+</span><span class='line'><span class="cp">        &lt;ReportFilter&gt;</span>
+</span><span class='line'><span class="cp">          &lt;ReportEntity paramname=&quot;P1&quot;&gt;</span>
+</span><span class='line'><span class="cp">            &lt;fetch version=&quot;1.0&quot; output-format=&quot;xml-platform&quot; mapping=&quot;logical&quot; distinct=&quot;false&quot;&gt;</span>
+</span><span class='line'><span class="cp">              &lt;entity name=&quot;contract&quot;&gt;</span>
+</span><span class='line'><span class="cp">                &lt;all-attributes/&gt;</span>
+</span><span class='line'><span class="cp">                &lt;filter type=&quot;and&quot;&gt;</span>
+</span><span class='line'><span class="cp">                  &lt;condition attribute=&quot;modifiedon&quot; operator=&quot;last-x-days&quot; value=&quot;30&quot;/&gt;</span>
+</span><span class='line'><span class="cp">                &lt;/filter&gt;</span>
+</span><span class='line'><span class="cp">              &lt;/entity&gt;</span>
+</span><span class='line'><span class="cp">            &lt;/fetch&gt;</span>
+</span><span class='line'><span class="cp">          &lt;/ReportEntity&gt;</span>
+</span><span class='line'><span class="cp">          &lt;ReportEntity paramname=&quot;CRM_Filteredcontract&quot;&gt;</span>
+</span><span class='line'><span class="cp">            &lt;fetch version=&quot;1.0&quot; output-format=&quot;xml-platform&quot; mapping=&quot;logical&quot; distinct=&quot;false&quot;&gt;</span>
+</span><span class='line'><span class="cp">              &lt;entity name=&quot;contract&quot;&gt;</span>
+</span><span class='line'><span class="cp">                &lt;all-attributes/&gt;</span>
+</span><span class='line'><span class="cp">                &lt;filter type=&quot;and&quot;&gt;</span>
+</span><span class='line'><span class="cp">                  &lt;condition attribute=&quot;modifiedon&quot; operator=&quot;last-x-days&quot; value=&quot;30&quot;/&gt;</span>
+</span><span class='line'><span class="cp">                &lt;/filter&gt;</span>
+</span><span class='line'><span class="cp">              &lt;/entity&gt;</span>
+</span><span class='line'><span class="cp">            &lt;/fetch&gt;</span>
+</span><span class='line'><span class="cp">          &lt;/ReportEntity&gt;</span>
+</span><span class='line'><span class="cp">        &lt;/ReportFilter&gt;]]]]&gt;&lt;![CDATA[&gt;</span>
+</span><span class='line'><span class="cp">      &lt;/MSCRM&gt;]]&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/Value&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/CustomProperty&gt;</span>
+</span><span class='line'><span class="nt">&lt;/CustomProperties&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we are free to edit the filter easily and when the .rdl file is uploaded, the changes to the filter will take effect.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Dan Newcome</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-05-02T19:32:27-07:00" pubdate data-updated="true">May 2<span>nd</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://crmvoyager.com/2010/05/02/working-with-default-filters-in-ms-crm-report-files/" data-via="" data-counturl="http://crmvoyager.com/2010/05/02/working-with-default-filters-in-ms-crm-report-files/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/2010/05/19/testing-windows-workflow-activities-in-isolation/" title="Next Post: Testing Windows Workflow activities in isolation">Testing Windows Workflow activities in isolation &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Dan Newcome -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'crmvoyager';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://crmvoyager.com/2010/05/02/working-with-default-filters-in-ms-crm-report-files/';
+        var disqus_url = 'http://crmvoyager.com/2010/05/02/working-with-default-filters-in-ms-crm-report-files/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

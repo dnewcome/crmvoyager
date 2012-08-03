@@ -1,0 +1,342 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>SharePoint 2010 Web Parts vs. Visual Web Parts  - CRM Voyager</title>
+  <meta name="author" content="Dan Newcome">
+
+  
+  <meta name="description" content="I have read a lot of SharePoint documentation and articles recently, and one confusing point that kept getting glossed over was whether there was a &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://crmvoyager.com/2010/11/25/sharepoint-2010-web-parts-vs-visual-web-parts/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CRM Voyager" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10833846-5']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CRM Voyager</a></h1>
+  
+    <h2>Navigating the high seas of Microsoft CRM.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:crmvoyager.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+
+<div id="adsense" style="border: 1px solid black">
+	<script type="text/javascript"><!--
+		google_ad_client = "ca-pub-5305300577407644";
+		/* CRM Voyager */
+		google_ad_slot = "1427166023";
+		google_ad_width = 728;
+		google_ad_height = 90;
+		//-->
+		</script>
+		<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+	</script>
+</div>
+
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">SharePoint 2010 Web Parts vs. Visual Web Parts</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-25T03:30:23-08:00" pubdate data-updated="true">Nov 25<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I have read a lot of SharePoint documentation and articles recently, and one confusing point that kept getting glossed over was whether there was a difference between what was called a &#8220;Visual&#8221; Web Part and a Web Part by any other name.</p>
+
+<p>The answer is, there is a difference, but not in the .NET type. There is a difference in how the part is implemented and its project type in Visual Studio. The short answer is that a Web Part is &#8220;visual&#8221; if its implementation includes an ASP.NET user control, i.e. an .ascx file. Creating a project of type &#8220;Visual Web Part&#8221; from the Visual Studio project wizard creates a project that looks like this:</p>
+
+<p><a href="http://crmvoyager.files.wordpress.com/2010/11/solution.png"><img src="http://crmvoyager.files.wordpress.com/2010/11/solution.png" alt="" /></a></p>
+
+<p>Notice the automatically-created .ascx user control. Indeed, the code in the Web Part is the same as we would find on a normal part, but in the implementation the user control is instantiated programmatically like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>    <span class="k">public</span> <span class="k">class</span> <span class="nc">VisualWebPart1</span> <span class="p">:</span> <span class="n">WebPart</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">private</span> <span class="k">const</span> <span class="kt">string</span> <span class="n">_ascxPath</span> <span class="p">=</span>
+</span><span class='line'>          <span class="s">@&quot;~/_CONTROLTEMPLATES/VisualWebPartProject2/VisualWebPart1/VisualWebPart1UserControl.ascx&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">CreateChildControls</span><span class="p">()</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="n">Control</span> <span class="n">control</span> <span class="p">=</span> <span class="n">Page</span><span class="p">.</span><span class="n">LoadControl</span><span class="p">(</span><span class="n">_ascxPath</span><span class="p">);</span>
+</span><span class='line'>            <span class="n">Controls</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">control</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Trying to deploy this project as a sandboxed solution will fail, since user controls violate the constraints placed on code that runs in the sandbox. There is nothing intrinsically about the code that would prevent its installation as a sandboxed solution, but it will fail when the solution is activated.</p>
+
+<h3>Changing a Visual Web Part to a regular Web Part</h3>
+
+<p>We can change the Web Part type by manually editing the .spdata file in the project. Visual Studio won&#8217;t allow direct access to this file, so we&#8217;ll have to browse to it on the filesystem and edit it in notepad.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;ProjectItem</span> <span class="na">Type=</span><span class="s">&quot;Microsoft.VisualStudio.SharePoint.VisualWebPart&quot;</span> <span class="na">DefaultFile=</span><span class="s">&quot;VisualWebPart1UserControl.ascx&quot;</span> <span class="na">SupportedTrustLevels=</span><span class="s">&quot;FullTrust&quot;</span> <span class="na">SupportedDeploymentScopes=</span><span class="s">&quot;Site&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/VisualStudio/2010/SharePointTools/SharePointProjectItemModel&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;Files&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;ProjectItemFile</span> <span class="na">Source=</span><span class="s">&quot;Elements.xml&quot;</span> <span class="na">Target=</span><span class="s">&quot;VisualWebPart1\&quot;</span> <span class="na">Type=</span><span class="s">&quot;ElementManifest&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;ProjectItemFile</span> <span class="na">Source=</span><span class="s">&quot;VisualWebPart1.webpart&quot;</span> <span class="na">Target=</span><span class="s">&quot;VisualWebPart1\&quot;</span> <span class="na">Type=</span><span class="s">&quot;ElementFile&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;ProjectItemFile</span> <span class="na">Source=</span><span class="s">&quot;VisualWebPart1UserControl.ascx&quot;</span> <span class="na">Target=</span><span class="s">&quot;CONTROLTEMPLATES\VisualWebPartProject2\VisualWebPart1\&quot;</span> <span class="na">Type=</span><span class="s">&quot;TemplateFile&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/Files&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;SafeControls&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;SafeControl</span> <span class="na">Name=</span><span class="s">&quot;SafeControlEntry1&quot;</span> <span class="na">Assembly=</span><span class="s">&quot;$SharePoint.Project.AssemblyFullName$&quot;</span> <span class="na">Namespace=</span><span class="s">&quot;VisualWebPartProject2.VisualWebPart1&quot;</span> <span class="na">TypeName=</span><span class="s">&quot;*&quot;</span> <span class="na">IsSafe=</span><span class="s">&quot;true&quot;</span> <span class="na">IsSafeAgainstScript=</span><span class="s">&quot;false&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/SafeControls&gt;</span>
+</span><span class='line'><span class="nt">&lt;/ProjectItem&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We are interested only in this line:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;ProjectItem</span> <span class="na">Type=</span><span class="s">&quot;Microsoft.VisualStudio.SharePoint.VisualWebPart&quot;</span> <span class="na">DefaultFile=</span><span class="s">&quot;VisualWebPart1UserControl.ascx&quot;</span> <span class="na">SupportedTrustLevels=</span><span class="s">&quot;FullTrust&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can change the Type from VisualWebPart to WebPart and SupportedTrustLevels from FullTrust to All.</p>
+
+<p>The resulting code looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;ProjectItem</span> <span class="na">Type=</span><span class="s">&quot;Microsoft.VisualStudio.SharePoint.WebPart&quot;</span> <span class="na">DefaultFile=</span><span class="s">&quot;VisualWebPart1UserControl.ascx&quot;</span> <span class="na">SupportedTrustLevels=</span><span class="s">&quot;All&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once the change is made, reload the project in Visual Studio, and its type should be recognized as a normal web part. Be sure to remove the user control before attempting to deploy as a sandboxed solution!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Dan Newcome</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-25T03:30:23-08:00" pubdate data-updated="true">Nov 25<span>th</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://crmvoyager.com/2010/11/25/sharepoint-2010-web-parts-vs-visual-web-parts/" data-via="" data-counturl="http://crmvoyager.com/2010/11/25/sharepoint-2010-web-parts-vs-visual-web-parts/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2010/11/25/enabling-user-sandboxed-code-in-sharepoint-2010/" title="Previous Post: Enabling user (sandboxed) code in SharePoint 2010">&laquo; Enabling user (sandboxed) code in SharePoint 2010</a>
+      
+      
+        <a class="basic-alignment right" href="/2010/11/30/sharepoint-web-part-error-when-switching-deployment-types/" title="Next Post: SharePoint Web Part Error When Switching Deployment Types">SharePoint Web Part Error When Switching Deployment Types &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Dan Newcome -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'crmvoyager';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://crmvoyager.com/2010/11/25/sharepoint-2010-web-parts-vs-visual-web-parts/';
+        var disqus_url = 'http://crmvoyager.com/2010/11/25/sharepoint-2010-web-parts-vs-visual-web-parts/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

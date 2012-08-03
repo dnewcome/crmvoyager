@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Querying CRM with conditions and filters - CRM Voyager</title>
+  <meta name="author" content="Dan Newcome">
+
+  
+  <meta name="description" content="On more than one occasion I&#8217;ve had to assemble a complex query for retrieving CRM entities. Unfortunately, the QueryExpression API can be &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://crmvoyager.com/2010/07/07/querying-crm-with-conditions-and-filters/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CRM Voyager" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10833846-5']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CRM Voyager</a></h1>
+  
+    <h2>Navigating the high seas of Microsoft CRM.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:crmvoyager.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+
+<div id="adsense" style="border: 1px solid black">
+	<script type="text/javascript"><!--
+		google_ad_client = "ca-pub-5305300577407644";
+		/* CRM Voyager */
+		google_ad_slot = "1427166023";
+		google_ad_width = 728;
+		google_ad_height = 90;
+		//-->
+		</script>
+		<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+	</script>
+</div>
+
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Querying CRM With Conditions and Filters</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-07T03:03:13-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>On more than one occasion I&#8217;ve had to assemble a complex query for retrieving CRM entities. Unfortunately, the QueryExpression API can be pretty confusing. I&#8217;ve actually written several query APIs for other projects myself, and this one still trips me up sometimes.</p>
+
+<p>The basis for my confusion, and probably the confusion of many others, is that the naming is slightly confusing and it is not obvious at first blush why there is a need for both FilterExpression and ConditionExpression.</p>
+
+<p>To clear up the naming convention, there are two types that are used in the construction of the selection condition: FilterExpression and ConditionExpression. FilterExpression is used to express boolean conjunctions and disjunctions (and and or), and ConditionExpression is used to represent (in)equality, and set membership. There is an inconsistency in naming of the field that holds the filters at the top level however, there being a QueryExpression.Criteria property rather than QueryExpression.Filters.</p>
+
+<p>One way to look at a complex query is that the criteria consist of a tree of FilterExpressions with ConditionExpressions as the terminals. That is, FilterExpression has a collection of other FilterExpressions, whereas ConditionExpressions do not contain any further expressions.</p>
+
+<p>As an example, if we wanted to express the clause:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>( A = 1 and ( B = 2 or C = 3 ) ) </span></code></pre></td></tr></table></div></figure>
+
+
+<p>we would need two FilterExpressions and three ConditionExpressions. It is easy to see how to construct the ConditionExpressions - we simply create three instances using ConditionOperator.Equal as the operator. For example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ConditionExpression</span> <span class="n">conditionA</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConditionExpression</span><span class="p">();</span>
+</span><span class='line'><span class="n">conditionA</span><span class="p">.</span><span class="n">AttributeName</span> <span class="p">=</span> <span class="s">&quot;A&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">conditionA</span><span class="p">.</span><span class="n">Operator</span> <span class="p">=</span> <span class="n">ConditionOperator</span><span class="p">.</span><span class="n">Equal</span><span class="p">;</span>
+</span><span class='line'><span class="n">conditionA</span><span class="p">.</span><span class="n">Values</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[]</span> <span class="p">{</span> <span class="m">1</span> <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice that the value is placed in an array of integers. ConditionExpression.Values is a collection since we support the possibility of testing for set membership, thus necessitating the use of a collection for the possible values.</p>
+
+<p>Next we create two filters, one each for the &#8216;and&#8217; and &#8216;or&#8217; expressions:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">FilterExpression</span> <span class="n">andFilter</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FilterExpression</span><span class="p">();</span>
+</span><span class='line'><span class="n">andFilter</span><span class="p">.</span><span class="n">FilterOperator</span> <span class="p">=</span> <span class="n">LogicalOperator</span><span class="p">.</span><span class="n">And</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">FilterExpression</span> <span class="n">orFilter</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FilterExpression</span><span class="p">();</span>
+</span><span class='line'><span class="n">childFilter</span><span class="p">.</span><span class="n">FilterOperator</span> <span class="p">=</span> <span class="n">LogicalOperator</span><span class="p">.</span><span class="n">Or</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Now establish the filter hierarchy</span>
+</span><span class='line'><span class="n">andFilter</span><span class="p">.</span><span class="n">Filters</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FilterExpression</span><span class="p">[]</span> <span class="p">{</span> <span class="n">orFilter</span> <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once the filters are set up, we can apply the conditionals:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">andFilter</span><span class="p">.</span><span class="n">Conditions</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConditionExpression</span><span class="p">[]</span> <span class="p">{</span> <span class="n">conditionA</span> <span class="p">};</span>
+</span><span class='line'><span class="n">orFilter</span><span class="p">.</span><span class="n">Conditions</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ConditionExpression</span><span class="p">[]</span> <span class="p">{</span> <span class="n">conditionB</span><span class="p">,</span> <span class="n">conditionC</span> <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I have organized the code slightly differently than most of the code samples available from Microsoft. I think that looking at the filters as a tree structure makes things clearer. Notice that a ConditionExpression is given the same consideration that a FilterExpression is given when evaluating the entire expression &#8211; the boolean operator is applied to conditionA and the result of  the evaluation of orFilter.</p>
+
+<p>Somehow, I think that this API could have been simpler. I might explore wrapping this API in something a little less confusing, perhaps at the expense of supporting less frequently used operations. Hopefully this gives you a slightly different perspective on constructing Criteria expressions in CRM. I&#8217;ll cover (the also confusing) LinkEntity in an upcoming post.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Dan Newcome</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-07T03:03:13-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://crmvoyager.com/2010/07/07/querying-crm-with-conditions-and-filters/" data-via="" data-counturl="http://crmvoyager.com/2010/07/07/querying-crm-with-conditions-and-filters/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2010/07/07/code-spelunking-crm-web-service-internals/" title="Previous Post: Code spelunking - CRM web service internals">&laquo; Code spelunking - CRM web service internals</a>
+      
+      
+        <a class="basic-alignment right" href="/2010/07/07/enabling-design-mode-in-asp-net-webparts/" title="Next Post: Enabling design mode in ASP.NET WebParts">Enabling design mode in ASP.NET WebParts &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Dan Newcome -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'crmvoyager';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://crmvoyager.com/2010/07/07/querying-crm-with-conditions-and-filters/';
+        var disqus_url = 'http://crmvoyager.com/2010/07/07/querying-crm-with-conditions-and-filters/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

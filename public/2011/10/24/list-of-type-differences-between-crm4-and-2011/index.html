@@ -1,0 +1,966 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>List of type differences between CRM4 and 2011 - CRM Voyager</title>
+  <meta name="author" content="Dan Newcome">
+
+  
+  <meta name="description" content="I&#8217;m posting this list since it seems to be difficult for me to find quickly in the SDK documentation. It is an incredibly handy list of type &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://crmvoyager.com/2011/10/24/list-of-type-differences-between-crm4-and-2011/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CRM Voyager" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10833846-5']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CRM Voyager</a></h1>
+  
+    <h2>Navigating the high seas of Microsoft CRM.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:crmvoyager.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+
+<div id="adsense" style="border: 1px solid black">
+	<script type="text/javascript"><!--
+		google_ad_client = "ca-pub-5305300577407644";
+		/* CRM Voyager */
+		google_ad_slot = "1427166023";
+		google_ad_width = 728;
+		google_ad_height = 90;
+		//-->
+		</script>
+		<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+	</script>
+</div>
+
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">List of Type Differences Between CRM4 and 2011</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-10-24T18:19:50-07:00" pubdate data-updated="true">Oct 24<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I&#8217;m posting this list since it seems to be difficult for me to find quickly in the SDK documentation. It is an incredibly handy list of type mappings that are useful for converting CRM4 code to 2011 or for (in my case) writing abstraction libraries that need to convert between the two different CRM versions.</p>
+
+<p>Without further ado, the <a href="http://msdn.microsoft.com/en-us/library/gg328507.aspx">list is here</a>.</p>
+
+<p>I&#8217;m including it inline here for quick reference:</p>
+
+<table style='border:1px solid black'>
+
+      <tr>
+
+        <th>
+
+          <strong>AttributeTypeCode</strong>
+
+        </th>
+
+        <th>
+
+                                
+
+                                    Microsoft Dynamics CRM 2011 type
+
+                            </th>
+
+        <th>
+Microsoft Dynamics CRM 4.0 type </th>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">AttributeTypeCode</a>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">BigInt</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>long</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>N/A</p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeTypeCode</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Boolean</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>bool</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928926.aspx">CrmBoolean</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributemetadata.attributetype.aspx">AttributeType</a>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">CalendarRules</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            
+
+          </p>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.entitycollection.aspx">EntityCollection</a> or <strong>CalendarRules</strong>[]</p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb956153.aspx">DynamicEntity</a>[] or <a href="http://msdn.microsoft.com/en-us/library/bb928506.aspx">calendarrule</a>[]</p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Customer</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.entityreference.aspx">EntityReference</a>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb955969.aspx">Customer</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">DateTime</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>System.DateTime</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928935.aspx">CrmDateTime</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Decimal</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>decimal</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928945.aspx">CrmDecimal</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Double</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>double</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928954.aspx">CrmFloat</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">EntityName</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>string</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>Attributes with <strong>ObjectTypeCode</strong> in <strong>DisplayMask</strong></p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Integer</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>int</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928972.aspx">CrmNumber</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Lookup</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>EntityReference</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb957132.aspx">Lookup</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">ManagedProperty</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.booleanmanagedproperty.aspx">BooleanManagedProperty</a>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>N/A</p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Memo</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>string</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>System.String</strong>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Money</a></p>
+
+        </td>
+
+        <td>
+
+          <p> <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.money.aspx">Money</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb928963.aspx">CrmMoney</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Owner</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>EntityReference</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb670715.aspx">Owner</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">PartyList</a></p>
+
+        </td>
+
+        <td>
+
+          <p> <strong>EntityCollection</strong> or <strong>ActivityParty</strong>[]</p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb955715.aspx">activityparty[]</a> or <a href="http://msdn.microsoft.com/en-us/library/bb956153.aspx">DynamicEntity</a> []</p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Picklist</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.optionsetvalue.aspx">OptionSetValue</a>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb929048.aspx">Picklist</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>. <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Uniqueidentifier</a> (Formerly <strong>PrimaryKey</strong>)</p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>System.Guid</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb956919.aspx">Key</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">String</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>string</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>System.String</strong>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">State</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>OptionSetValue</strong> or enumeration generated for the entity state</p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <em>EntityName</em>StateInfo</p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Status</a></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>OptionSetValue</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb958198.aspx">Status</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<strong>Uniqueidentifier</strong></p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <strong>System.Guid</strong>
+
+          </p>
+
+        </td>
+
+        <td>
+
+          <p>
+
+            <a href="http://msdn.microsoft.com/en-us/library/bb890012.aspx">UniqueIdentifier</a>
+
+          </p>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <p>
+
+            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Virtual</a></p>
+
+        </td>
+
+        <td>
+
+          <p>Not used in records.</p>
+
+        </td>
+
+        <td>
+
+          <p>Not used in records.</p>
+
+        </td>
+
+      </tr>
+
+</table>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Dan Newcome</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-10-24T18:19:50-07:00" pubdate data-updated="true">Oct 24<span>th</span>, 2011</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://crmvoyager.com/2011/10/24/list-of-type-differences-between-crm4-and-2011/" data-via="" data-counturl="http://crmvoyager.com/2011/10/24/list-of-type-differences-between-crm4-and-2011/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2011/10/20/running-microsoft-crm-4-0-apps-when-2011-is-installed/" title="Previous Post: Running Microsoft CRM 4.0 apps when 2011 is installed">&laquo; Running Microsoft CRM 4.0 apps when 2011 is installed</a>
+      
+      
+        <a class="basic-alignment right" href="/2011/10/24/implementing-a-custom-iorganizationservice/" title="Next Post: Implementing a custom IOrganizationService">Implementing a custom IOrganizationService &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM "Generic SQL Error"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Dan Newcome -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'crmvoyager';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://crmvoyager.com/2011/10/24/list-of-type-differences-between-crm4-and-2011/';
+        var disqus_url = 'http://crmvoyager.com/2011/10/24/list-of-type-differences-between-crm4-and-2011/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
