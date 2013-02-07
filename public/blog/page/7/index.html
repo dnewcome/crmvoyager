@@ -9,7 +9,7 @@
   <meta name="author" content="Dan Newcome">
 
   
-  <meta name="description" content="I was deploying an application for a client today when I realized that they didn&#8217;t have the 4.0 framework installed on the target machine. I&# &hellip;">
+  <meta name="description" content="I need to do some scripting from time to time, and I usually use Javascript to do everything. I needed to generate GUIDs for some CRM data that I &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -97,6 +97,57 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/2010/08/18/creating-guids-with-windows-scripting-javascript/">Creating GUIDs With Javascript Windows Scripting Host</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-08-18T14:44:17-07:00" pubdate data-updated="true">Aug 18<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I need to do some scripting from time to time, and I usually use Javascript to do everything. I needed to generate GUIDs for some CRM data that I wanted to create programmatically. I found <a href="http://blogs.technet.com/b/heyscriptingguy/archive/2005/02/21/how-can-i-create-a-guid-using-a-script.aspx">this article</a> from the Microsoft Scripting Guy.</p>
+
+<p>He gave the example in VBScript, so here is the equivalent in JScript:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">guidGen</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">typeLib</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ActiveXObject</span><span class="p">(</span> <span class="s2">&quot;Scriptlet.TypeLib&quot;</span> <span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">typeLib</span><span class="p">.</span><span class="nx">Guid</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2010/08/02/installing-asp-net-4-0-on-server2003iis6/">Installing ASP.NET 4.0 on Server2003/IIS6</a></h1>
     
     
@@ -113,7 +164,7 @@
   
 
 
-<time datetime="2010-08-02T16:35:20-07:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2010</time>
+<time datetime="2010-08-02T09:35:20-07:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2010</time>
         
       </p>
     
@@ -196,7 +247,7 @@
   
 
 
-<time datetime="2010-07-16T19:31:27-07:00" pubdate data-updated="true">Jul 16<span>th</span>, 2010</time>
+<time datetime="2010-07-16T12:31:27-07:00" pubdate data-updated="true">Jul 16<span>th</span>, 2010</time>
         
       </p>
     
@@ -217,7 +268,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/07/13/understanding-crm-linkentities/">Understanding CRM LinkEntities</a></h1>
+      <h1 class="entry-title"><a href="/2010/07/12/understanding-crm-linkentities/">Understanding CRM LinkEntities</a></h1>
     
     
       <p class="meta">
@@ -233,7 +284,7 @@
   
 
 
-<time datetime="2010-07-13T03:37:22-07:00" pubdate data-updated="true">Jul 13<span>th</span>, 2010</time>
+<time datetime="2010-07-12T20:37:22-07:00" pubdate data-updated="true">Jul 12<span>th</span>, 2010</time>
         
       </p>
     
@@ -385,7 +436,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/07/12/getting-a-remote-shell-with-windows/">Getting a Remote Shell With Windows</a></h1>
+      <h1 class="entry-title"><a href="/2010/07/11/getting-a-remote-shell-with-windows/">Getting a Remote Shell With Windows</a></h1>
     
     
       <p class="meta">
@@ -401,7 +452,7 @@
   
 
 
-<time datetime="2010-07-12T06:50:57-07:00" pubdate data-updated="true">Jul 12<span>th</span>, 2010</time>
+<time datetime="2010-07-11T23:50:57-07:00" pubdate data-updated="true">Jul 11<span>th</span>, 2010</time>
         
       </p>
     
@@ -482,7 +533,7 @@
   
 
 
-<time datetime="2010-07-07T20:46:46-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+<time datetime="2010-07-07T13:46:46-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
         
       </p>
     
@@ -709,7 +760,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/07/07/enabling-design-mode-in-asp-net-webparts/">Enabling Design Mode in ASP.NET WebParts</a></h1>
+      <h1 class="entry-title"><a href="/2010/07/06/enabling-design-mode-in-asp-net-webparts/">Enabling Design Mode in ASP.NET WebParts</a></h1>
     
     
       <p class="meta">
@@ -725,7 +776,7 @@
   
 
 
-<time datetime="2010-07-07T03:28:24-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+<time datetime="2010-07-06T20:28:24-07:00" pubdate data-updated="true">Jul 6<span>th</span>, 2010</time>
         
       </p>
     
@@ -770,7 +821,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/07/07/querying-crm-with-conditions-and-filters/">Querying CRM With Conditions and Filters</a></h1>
+      <h1 class="entry-title"><a href="/2010/07/06/querying-crm-with-conditions-and-filters/">Querying CRM With Conditions and Filters</a></h1>
     
     
       <p class="meta">
@@ -786,7 +837,7 @@
   
 
 
-<time datetime="2010-07-07T03:03:13-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+<time datetime="2010-07-06T20:03:13-07:00" pubdate data-updated="true">Jul 6<span>th</span>, 2010</time>
         
       </p>
     
@@ -867,7 +918,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/07/07/code-spelunking-crm-web-service-internals/">Code Spelunking - CRM Web Service Internals</a></h1>
+      <h1 class="entry-title"><a href="/2010/07/06/code-spelunking-crm-web-service-internals/">Code Spelunking - CRM Web Service Internals</a></h1>
     
     
       <p class="meta">
@@ -883,7 +934,7 @@
   
 
 
-<time datetime="2010-07-07T00:03:23-07:00" pubdate data-updated="true">Jul 7<span>th</span>, 2010</time>
+<time datetime="2010-07-06T17:03:23-07:00" pubdate data-updated="true">Jul 6<span>th</span>, 2010</time>
         
       </p>
     
@@ -1014,7 +1065,7 @@
   
 
 
-<time datetime="2010-07-06T18:28:30-07:00" pubdate data-updated="true">Jul 6<span>th</span>, 2010</time>
+<time datetime="2010-07-06T11:28:30-07:00" pubdate data-updated="true">Jul 6<span>th</span>, 2010</time>
         
       </p>
     
@@ -1119,72 +1170,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/06/29/connecting-to-ms-crm-over-ssh/">Connecting to MS CRM Over SSH</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-06-29T15:42:44-07:00" pubdate data-updated="true">Jun 29<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>How many times have you been in the situation where, for whatever reason, you are stuck developing a CRM application against a customer&#8217;s test CRM installation where you don&#8217;t have a proper VPN setup so that you can develop locally? How about having to use 2 or more remote desktop sessions to even reach the box in question? Throw a Citrix connection into the mix and you have a sure recipe for pain. Not to mention that installing Visual Studio with all of its dependencies, along with the sheer size of it, is no walk in the park either.</p>
-
-<p>I had a situation recently where the customer was on CRM 3.0, making it nearly impossible for us to set up a local development server with their schema on it. The customer&#8217;s test environment was on a relatively slow internet link, and the only access that we had to the box was over a Citrix connection to a bastion host and then on to the target machine using RDP.</p>
-
-<p>Fortunately, there is a solution to our dilemma, and we don&#8217;t even have to install anything on the server! <a href="http://en.wikipedia.org/wiki/Secure_Shell">Secure shell</a> (SSH) is the traditional UNIX remote connection utility which has long had the ability to forward network connections from one machine to another along with its traditional command console duties. Unfortunately, since the server was a Windows machine, no SSH server was installed by default, and installation of a third-party SSH implementation would have been too intrusive.</p>
-
-<p>However, SSH has the ability to do both local and remote tunneling, so we can effectively reverse the roles of the client and server in order to create a backhaul link over which we can access CRM. This lets us install the SSH server on our client machine where we want to do the development work (eg, run Visual Studio) and use a simple client (<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">Putty</a>) on the server to initiate the tunnel.</p>
-
-<p>I installed the <a href="http://www.itefix.no/i2/copssh">CopSSH</a> SSH server on my laptop and opened port 22 on my firewall to let the remote connection through from the outside. I won&#8217;t cover installation of CopSSH here, but it is well documented and installation went smoothly for me on Windows Vista. Once CopSSH is set up, the only tricky part left is to configure Putty correctly to create a forwarded port over which we can access CRM services.</p>
-
-<p>Putty doesn&#8217;t need to be installed, just run putty.exe on the server and give it the IP address of your local development machine. My configuration looks like the following:
-<a href="http://crmvoyager.files.wordpress.com/2010/06/putty-crm.png"><img src="http://crmvoyager.files.wordpress.com/2010/06/putty-crm.png" alt="" /></a></p>
-
-<p>I chose port 9982 as the port I want to use on my laptop to access CRM. On the CRM server end, I used &#8216;localhost:80&#8217; as the destination, because the CRM server is running on the actual box that I&#8217;m connecting from (localhost) on the standard HTTP port (80).</p>
-
-<p>Now I just have to change my CRM URLs in development to something like:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost:9982/mscrmservices/2006/CrmService.asmx</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Why do we use &#8216;localhost&#8217; here if we are connecting to the server? Remember that the SSH tunnel is now listening on the laptop, so when we connect to this port that SSH is listening on, it takes the connection and forwards it on to the server. So, to our .NET code it looks like CRM is actually running locally on the laptop.</p>
-
-<p>As an added bonus, URLs like the following will also be available locally:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost:9982/sdk/list.aspx
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This can dramatically reduce your development cycle time when the environment is not ideal. Hope this saves you some time.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/8/">&larr; Older</a>
@@ -1202,23 +1187,23 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/02/06/dropping-a-sql-database-with-nant/">Dropping a SQL database with NAnt</a>
+      </li>
+    
+      <li class="post">
         <a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+        <a href="/2011/11/16/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+        <a href="/2011/11/16/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+        <a href="/2011/11/16/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
       </li>
     
   </ul>
@@ -1235,7 +1220,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - Dan Newcome -
+  Copyright &copy; 2013 - Dan Newcome -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

@@ -4,7 +4,7 @@
   <title><![CDATA[CRM Voyager]]></title>
   <link href="http://crmvoyager.net/atom.xml" rel="self"/>
   <link href="http://crmvoyager.net/"/>
-  <updated>2012-08-04T04:01:18-07:00</updated>
+  <updated>2013-02-06T20:39:45-08:00</updated>
   <id>http://crmvoyager.net/</id>
   <author>
     <name><![CDATA[Dan Newcome]]></name>
@@ -14,9 +14,68 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Dropping a SQL database with NAnt]]></title>
+    <link href="http://crmvoyager.net/2013/02/06/dropping-a-sql-database-with-nant/"/>
+    <updated>2013-02-06T19:01:00-08:00</updated>
+    <id>http://crmvoyager.net/2013/02/06/dropping-a-sql-database-with-nant</id>
+    <content type="html"><![CDATA[<p>I always like to automate my build processes, and one often-overlooked piece is automating database creation.</p>
+
+<p>These days I use MSBuild a lot more, but I have plenty of legacy stuff that is still using NAnt exclusively. Database scripting is always
+one of the big chores to take care of in any app, so there are likely lots of little scripts to run to get the database migrated
+to the desired state. Most DML (data manipulation language) statements (insert/select/update) can be parameterized easily but
+DML statements like dropping a database are often tough to work with in the general sense.</p>
+
+<p>The NAnt snippet below uses the sqlcmd commandline tool to run an inline script that drops the database given in the database.name
+property. The property is expanded by NAnt as text and becomes part of the script. In order to make this work correctly we have to get
+creative with quoting. Notice the use of entity reference &apos; to insert the single quote characters needed for the database
+name in the inline script.</p>
+
+<p>Another thing to notice is that we put the database into single-user mode right before we drop the database. I used to take
+the database offline to do this, but if we do it that way, the data files on disk won&#8217;t get deleted during the drop
+operation. Then when we go to create the new database it will fail since the files already exist.</p>
+
+<p>I&#8217;m not sure if we could specify &#8220;replace&#8221; when creating the new database, perhaps that would be another solution.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;exec 
+</span><span class='line'>  program="sqlcmd.exe"
+</span><span class='line'>  commandline='-S ${database.instance} -b -d master -Q 
+</span><span class='line'>      "if exists( select name from sys.databases where name = &apos;${database.name}&apos; )
+</span><span class='line'>      begin
+</span><span class='line'>          print N&apos;${database.name} already exists on target instance, entering single-user mode&apos;
+</span><span class='line'>          
+</span><span class='line'>          alter database ${database.name}
+</span><span class='line'>          set single_user
+</span><span class='line'>          with rollback immediate;
+</span><span class='line'>          
+</span><span class='line'>          print N&apos;${database.name} already exists on target instance, dropping database&apos;
+</span><span class='line'>          drop database ${database.name};
+</span><span class='line'>      end"'
+</span><span class='line'>/&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will allow a database to be dropped for later recreation. Enjoy!</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Debugging Microsoft CRM "Generic SQL Error"]]></title>
     <link href="http://crmvoyager.net/2011/11/21/debugging-microsoft-crm-generic-sql-error/"/>
-    <updated>2011-11-21T20:16:38-08:00</updated>
+    <updated>2011-11-21T12:16:38-08:00</updated>
     <id>http://crmvoyager.net/2011/11/21/debugging-microsoft-crm-generic-sql-error</id>
     <content type="html"><![CDATA[<p>Most of the time, when programming against the Microsoft CRM Web service, we get reasonable error messages. However, on occasion we get the inscrutable &#8220;Generic SQL Error&#8221;. I used to solve these by trial and error or intuition, but it turns out that there is better way.</p>
 
@@ -26,9 +85,9 @@
   
   <entry>
     <title type="html"><![CDATA[Loading configuration from an alternative location in Microsoft .NET]]></title>
-    <link href="http://crmvoyager.net/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/"/>
-    <updated>2011-11-17T01:49:41-08:00</updated>
-    <id>http://crmvoyager.net/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net</id>
+    <link href="http://crmvoyager.net/2011/11/16/loading-configuration-from-an-alternative-location-in-microsoft-net/"/>
+    <updated>2011-11-16T17:49:41-08:00</updated>
+    <id>http://crmvoyager.net/2011/11/16/loading-configuration-from-an-alternative-location-in-microsoft-net</id>
     <content type="html"><![CDATA[<p>I&#8217;m continuing my series of posts on configuration patterns in .NET. One of the things I had to do recently was to retrofit some code that I was writing to use an alternate configuration file. That is, I needed the ability to specify file from the commandline to grab a config section rather than having the .NET framework use the default app.config file that resides in the application directory.</p>
 
 <p>It turns out that this is easy to do. There is a method on the ConfigurationManager called <a href="http://msdn.microsoft.com/en-us/library/system.configuration.configurationmanager.openmappedmachineconfiguration.aspx">OpenMappedMachineConfiguration</a> that will let you define another config file to use.</p>
@@ -58,9 +117,9 @@
   
   <entry>
     <title type="html"><![CDATA[Configuration types in Microsoft .NET]]></title>
-    <link href="http://crmvoyager.net/2011/11/17/configuration-types-in-microsoft-net/"/>
-    <updated>2011-11-17T01:40:58-08:00</updated>
-    <id>http://crmvoyager.net/2011/11/17/configuration-types-in-microsoft-net</id>
+    <link href="http://crmvoyager.net/2011/11/16/configuration-types-in-microsoft-net/"/>
+    <updated>2011-11-16T17:40:58-08:00</updated>
+    <id>http://crmvoyager.net/2011/11/16/configuration-types-in-microsoft-net</id>
     <content type="html"><![CDATA[<p>Here is a quick post to outline the different ways that .NET custom config files can be written. The MSDN documentation does a bad job generally at giving examples of what the actual XML markup looks like in their examples. They go through all of the different types involved without showing what the desired markup looks like.</p>
 
 <p>Briefly, by default, custom configuration uses XML attributes, unlike the AppSettings section, which uses a special configuration case of a key/value dictionary. I think that this is confusing and is not well treated in MSDN.</p>
@@ -109,9 +168,9 @@
   
   <entry>
     <title type="html"><![CDATA[Programmatically creating CRM 4 entity metadata]]></title>
-    <link href="http://crmvoyager.net/2011/11/17/programmatically-creating-crm-4-entity-metadata/"/>
-    <updated>2011-11-17T01:27:28-08:00</updated>
-    <id>http://crmvoyager.net/2011/11/17/programmatically-creating-crm-4-entity-metadata</id>
+    <link href="http://crmvoyager.net/2011/11/16/programmatically-creating-crm-4-entity-metadata/"/>
+    <updated>2011-11-16T17:27:28-08:00</updated>
+    <id>http://crmvoyager.net/2011/11/16/programmatically-creating-crm-4-entity-metadata</id>
     <content type="html"><![CDATA[<p>I have built a few tools to make life easier for myself. One of the tools that has proven itself invaluable is a metadata generator that I use to create a list of entities in a newly-created CRM bizorg.</p>
 
 <p>Although the API supports most things that we&#8217;d want to do, there are a few tricky things that aren&#8217;t that obvious from the documentation. I&#8217;m going to go into this in more detail in a future post, but there are a few key takeaways that I want to make sure I remember, so I&#8217;m posting them here now.</p>
@@ -145,7 +204,7 @@ If this is not done, the field will silently fail to be created.</p>
   <entry>
     <title type="html"><![CDATA[Configuration patterns in .NET]]></title>
     <link href="http://crmvoyager.net/2011/11/16/configuration-patterns-in-net/"/>
-    <updated>2011-11-16T18:55:47-08:00</updated>
+    <updated>2011-11-16T10:55:47-08:00</updated>
     <id>http://crmvoyager.net/2011/11/16/configuration-patterns-in-net</id>
     <content type="html"><![CDATA[<p>I have been meaning to write a post on configuration patterns in the .NET framework. Just about any app we write has some configuration data associated with it, and it sometimes gets ignored until the app is in production or at the very least until very late in the development cycle.</p>
 
@@ -170,7 +229,7 @@ If this is not done, the field will silently fail to be created.</p>
   <entry>
     <title type="html"><![CDATA[Using Active Directory domain accounts with CopSSH ]]></title>
     <link href="http://crmvoyager.net/2011/10/27/using-active-directory-domain-accounts-with-copssh/"/>
-    <updated>2011-10-27T21:04:58-07:00</updated>
+    <updated>2011-10-27T14:04:58-07:00</updated>
     <id>http://crmvoyager.net/2011/10/27/using-active-directory-domain-accounts-with-copssh</id>
     <content type="html"><![CDATA[<p>If you&#8217;re like me, you have clients behind firewalls and special development environments configured to mirror the client&#8217;s environment for local testing. In my case a lot of my development environments have Microsoft CRM installed on them as a <a href="http://crmvoyager.wordpress.com/2011/02/12/create-a-fully-standalone-crm-2011-environment-on-amazon-ec2/">self-contained development environment</a> replete with Active Directory. This means that the virtual machine does not have any local accounts, only domain accounts. When I log in, I&#8217;m logging into a domain.</p>
 
@@ -207,7 +266,7 @@ I&#8217;m mapping the SSH port 22 to port 2222 to avoid conflicts with the nativ
   <entry>
     <title type="html"><![CDATA[Building multiple Visual Studio project configurations with msbuild]]></title>
     <link href="http://crmvoyager.net/2011/10/25/building-multiple-visual-studio-project-configurations-with-msbuild/"/>
-    <updated>2011-10-25T12:35:00-07:00</updated>
+    <updated>2011-10-25T05:35:00-07:00</updated>
     <id>http://crmvoyager.net/2011/10/25/building-multiple-visual-studio-project-configurations-with-msbuild</id>
     <content type="html"><![CDATA[<p>I&#8217;ve been cleaning up a lot of projects lately, and one of the things that I really needed to get sorted out was build scripts for everything so that I had a repeatable way of obtaining correct binary builds of all of my dependencies. Typically I would use msbuild or NAnt to define how the code should be built, but I already had Visual Studio project files for the projects in question and I wanted them to be resilient to having the project files messed with in Visual studio.</p>
 
@@ -263,9 +322,9 @@ I&#8217;m mapping the SSH port 22 to port 2222 to avoid conflicts with the nativ
   
   <entry>
     <title type="html"><![CDATA[Digging into Microsoft CRM 4 DynamicEntity properties]]></title>
-    <link href="http://crmvoyager.net/2011/10/25/digging-into-microsoft-crm-4-dynamicentity-properties/"/>
-    <updated>2011-10-25T00:02:40-07:00</updated>
-    <id>http://crmvoyager.net/2011/10/25/digging-into-microsoft-crm-4-dynamicentity-properties</id>
+    <link href="http://crmvoyager.net/2011/10/24/digging-into-microsoft-crm-4-dynamicentity-properties/"/>
+    <updated>2011-10-24T17:02:40-07:00</updated>
+    <id>http://crmvoyager.net/2011/10/24/digging-into-microsoft-crm-4-dynamicentity-properties</id>
     <content type="html"><![CDATA[<p>I&#8217;ve been meaning to write this post for a while. Even though CRM 4 is on the way out now, I still find myself working with clients that have legacy CRM 4 systems in production. Whether it is porting code or fixing bugs, CRM 4 is far from gone.</p>
 
 <p>For those of you that don&#8217;t know, the DynamicEntity type gives us a way to write code against an arbitrary CRM4 installation without having to generate a custom service proxy. We don&#8217;t get the advantages of having all of the field names specified (early binding) but we don&#8217;t have to recompile for different client installations in order to get access to new fields.</p>
@@ -357,7 +416,7 @@ I&#8217;m mapping the SSH port 22 to port 2222 to avoid conflicts with the nativ
   <entry>
     <title type="html"><![CDATA[Implementing a custom IOrganizationService]]></title>
     <link href="http://crmvoyager.net/2011/10/24/implementing-a-custom-iorganizationservice/"/>
-    <updated>2011-10-24T21:21:42-07:00</updated>
+    <updated>2011-10-24T14:21:42-07:00</updated>
     <id>http://crmvoyager.net/2011/10/24/implementing-a-custom-iorganizationservice</id>
     <content type="html"><![CDATA[<p>This is a topic that I&#8217;ve wanted to talk about for a while. Some time ago I implemented a quick dummy CRM service for testing out code without having to run a full CRM server. The initial version I wrote was for CRM4, and unfortunately by some oversight, MS did not actually implement ICrmService in their actual server API. This created an awkward situation where I had to wrap the &#8220;real&#8221; CrmService in my own shim that implemented the actual interface.</p>
 
@@ -372,7 +431,7 @@ I&#8217;m mapping the SSH port 22 to port 2222 to avoid conflicts with the nativ
   <entry>
     <title type="html"><![CDATA[List of type differences between CRM4 and 2011]]></title>
     <link href="http://crmvoyager.net/2011/10/24/list-of-type-differences-between-crm4-and-2011/"/>
-    <updated>2011-10-24T18:19:50-07:00</updated>
+    <updated>2011-10-24T11:19:50-07:00</updated>
     <id>http://crmvoyager.net/2011/10/24/list-of-type-differences-between-crm4-and-2011</id>
     <content type="html"><![CDATA[<p>I&#8217;m posting this list since it seems to be difficult for me to find quickly in the SDK documentation. It is an incredibly handy list of type mappings that are useful for converting CRM4 code to 2011 or for (in my case) writing abstraction libraries that need to convert between the two different CRM versions.</p>
 
@@ -1085,7 +1144,7 @@ Microsoft Dynamics CRM 4.0 type </th>
   <entry>
     <title type="html"><![CDATA[Running Microsoft CRM 4.0 apps when 2011 is installed]]></title>
     <link href="http://crmvoyager.net/2011/10/20/running-microsoft-crm-4-0-apps-when-2011-is-installed/"/>
-    <updated>2011-10-20T16:27:49-07:00</updated>
+    <updated>2011-10-20T09:27:49-07:00</updated>
     <id>http://crmvoyager.net/2011/10/20/running-microsoft-crm-4-0-apps-when-2011-is-installed</id>
     <content type="html"><![CDATA[<p>Hey guys, back after a bit of a break in blogging. I&#8217;ve been super busy on a lot of projects.</p>
 
@@ -1136,7 +1195,7 @@ Microsoft Dynamics CRM 4.0 type </th>
   <entry>
     <title type="html"><![CDATA[Updating expired license key in CRM 2011]]></title>
     <link href="http://crmvoyager.net/2011/10/12/updating-expired-license-key-in-crm-2011/"/>
-    <updated>2011-10-12T13:04:07-07:00</updated>
+    <updated>2011-10-12T06:04:07-07:00</updated>
     <id>http://crmvoyager.net/2011/10/12/updating-expired-license-key-in-crm-2011</id>
     <content type="html"><![CDATA[<p>Like me, I&#8217;m sure that many of you are consultants who have clients running on a trial version of the CRM software. Also, like me, you probably have a lot of CRM installations for testing.</p>
 
@@ -1151,7 +1210,7 @@ Microsoft Dynamics CRM 4.0 type </th>
   <entry>
     <title type="html"><![CDATA[Using ActivityParty in CRM 2011]]></title>
     <link href="http://crmvoyager.net/2011/06/05/using-activityparty-in-crm-2011/"/>
-    <updated>2011-06-05T11:53:09-07:00</updated>
+    <updated>2011-06-05T04:53:09-07:00</updated>
     <id>http://crmvoyager.net/2011/06/05/using-activityparty-in-crm-2011</id>
     <content type="html"><![CDATA[<p>I was writing some client code recently when I wanted to add a customer reference to a CRM campaignresponse entity instance. Using a simple EntityReference was giving me errors, so I looked to see what the data type was in CRM. Looking in the customisations screen, the type was &#8216;Party List&#8217;. The CRM SDK docs say that we should be able to use ActivityParty[] or EntityCollection for the field value.</p>
 
@@ -1172,9 +1231,9 @@ Microsoft Dynamics CRM 4.0 type </th>
   
   <entry>
     <title type="html"><![CDATA[Managing CRM 2011 from PowerShell]]></title>
-    <link href="http://crmvoyager.net/2011/05/17/managing-crm-2011-from-powershell/"/>
-    <updated>2011-05-17T00:24:55-07:00</updated>
-    <id>http://crmvoyager.net/2011/05/17/managing-crm-2011-from-powershell</id>
+    <link href="http://crmvoyager.net/2011/05/16/managing-crm-2011-from-powershell/"/>
+    <updated>2011-05-16T17:24:55-07:00</updated>
+    <id>http://crmvoyager.net/2011/05/16/managing-crm-2011-from-powershell</id>
     <content type="html"><![CDATA[<p>Starting with Windows Server 2008, Microsoft has stepped up its commitment to scriptable server management with the inclusion of PowerShell by default in the operating system. PowerShell enables the ease of scripting like batch files with the power of a scripting language like perl. Anyone that has done any extensive batch scripting will know what a pain it can be to do simple things like string handling.</p>
 
 <p>Microsoft has doubled down on PowerShell in both CRM and SharePoint. Both are able to be managed using PowerShell snapins. What is a snapin? Snapins are what Microsoft calls script modules that can be loaded into PowerShell. The management features of CRM 2011 are supplied via a snapin.</p>
@@ -1252,7 +1311,7 @@ Microsoft Dynamics CRM 4.0 type </th>
   <entry>
     <title type="html"><![CDATA[Crm 2011 Entity Metadata Browser]]></title>
     <link href="http://crmvoyager.net/2011/05/04/crm-2011-entity-metadata-browser/"/>
-    <updated>2011-05-04T19:49:34-07:00</updated>
+    <updated>2011-05-04T12:49:34-07:00</updated>
     <id>http://crmvoyager.net/2011/05/04/crm-2011-entity-metadata-browser</id>
     <content type="html"><![CDATA[<p>Any of you out there that have been working with Microsoft CRM for a while will remember that since CRM3.0 there has been a handy metadata browser built into the CRM server for quickly looking up things like field names and entity relationships. In CRM3.0 you just browsed to http://yourcrmserver/sdk/list.aspx and in 4.0 it was the same only we had to specify the organization name like http://yourcrmserver/orgname/sdk/list.aspx since 4.0 was a fully multi-tenant CRM solution.</p>
 
@@ -1285,9 +1344,9 @@ Microsoft Dynamics CRM 4.0 type </th>
   
   <entry>
     <title type="html"><![CDATA[Starting SQL Server 2008 in single-user mode]]></title>
-    <link href="http://crmvoyager.net/2011/04/26/starting-sql-server-2008-in-single-user-mode/"/>
-    <updated>2011-04-26T00:01:45-07:00</updated>
-    <id>http://crmvoyager.net/2011/04/26/starting-sql-server-2008-in-single-user-mode</id>
+    <link href="http://crmvoyager.net/2011/04/25/starting-sql-server-2008-in-single-user-mode/"/>
+    <updated>2011-04-25T17:01:45-07:00</updated>
+    <id>http://crmvoyager.net/2011/04/25/starting-sql-server-2008-in-single-user-mode</id>
     <content type="html"><![CDATA[<p>I had to go through the rain dance of <a href="http://msdn.microsoft.com/en-us/library/dd207004.aspx">adding the Administrator account back</a> to SQL Server after there were no admin accounts that could log in. This can happen if the SQL server box has been removed from a domain and SQL Server was installed using domain accounts. If mixed mode authentication is disabled and you can&#8217;t log in as the sa account, you&#8217;ll have to start SQL up in single-user mode in order to connect to it.</p>
 
 <p>Ordinarily you would give the -m flag to the sqlserver.exe executable and be on your merry way. However, this time around I ran into a perplexing issue. Take a look at the following screenshot to see the welcome that I received after running:</p>
@@ -1344,7 +1403,7 @@ Microsoft Dynamics CRM 4.0 type </th>
   <entry>
     <title type="html"><![CDATA[Storing a Guid in an ASP.NET CheckBox control]]></title>
     <link href="http://crmvoyager.net/2011/04/22/storing-a-guid-in-an-asp-net-checkbox-control/"/>
-    <updated>2011-04-22T16:13:33-07:00</updated>
+    <updated>2011-04-22T09:13:33-07:00</updated>
     <id>http://crmvoyager.net/2011/04/22/storing-a-guid-in-an-asp-net-checkbox-control</id>
     <content type="html"><![CDATA[<p>I recently had to build a simple UI for listing out a set of Microsoft CRM entities to choose from. The natural way of presenting this to the user was to give them a list of items with some associated checkboxes for selection. I wanted to associate a CRM entity ID with each checkbox so that I could update the entity in CRM when the user submitted the form.</p>
 
@@ -1420,7 +1479,7 @@ Microsoft Dynamics CRM 4.0 type </th>
   <entry>
     <title type="html"><![CDATA[Creating custom error pages in ASP.NET]]></title>
     <link href="http://crmvoyager.net/2011/04/20/creating-custom-error-pages-in-asp-net/"/>
-    <updated>2011-04-20T14:23:02-07:00</updated>
+    <updated>2011-04-20T07:23:02-07:00</updated>
     <id>http://crmvoyager.net/2011/04/20/creating-custom-error-pages-in-asp-net</id>
     <content type="html"><![CDATA[<p>How many times have you been in a client demo when your application throws an ugly stack trace up on the screen? Double points if it is up on the projector at about eight feet wide.</p>
 
@@ -1451,7 +1510,7 @@ Microsoft Dynamics CRM 4.0 type </th>
   <entry>
     <title type="html"><![CDATA[Programmatically executing workflows in CRM 2011]]></title>
     <link href="http://crmvoyager.net/2011/04/20/programmatically-executing-workflows-in-crm-2011/"/>
-    <updated>2011-04-20T08:52:47-07:00</updated>
+    <updated>2011-04-20T01:52:47-07:00</updated>
     <id>http://crmvoyager.net/2011/04/20/programmatically-executing-workflows-in-crm-2011</id>
     <content type="html"><![CDATA[<p>I came across some code recently that gave me pause, so I thought I&#8217;d explore it a little bit here.</p>
 
@@ -1506,38 +1565,6 @@ Microsoft Dynamics CRM 4.0 type </th>
 <p>So even though most of the other types are in the Microsoft.Xrm namespace, for some reason these types were left behind in Microsoft.Crm.</p>
 
 <p>Hopefully this saves you some time.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Handling errors with the CRM 2011 Web services API]]></title>
-    <link href="http://crmvoyager.net/2011/04/13/handling-errors-with-the-crm-2011-web-services-api/"/>
-    <updated>2011-04-13T11:59:42-07:00</updated>
-    <id>http://crmvoyager.net/2011/04/13/handling-errors-with-the-crm-2011-web-services-api</id>
-    <content type="html"><![CDATA[<p>Early on in my experiences with CRM programming I learned to do whatever I can to get meaningful error responses from the server. Nothing is more difficult than having a Web service call fail and not being able to tell what happened by looking at the stack trace.</p>
-
-<p>Since the CRM API is delivered using .NET Web services, we are crossing some process and protocol boundaries. In particular, CRM adheres to the SOAP standard of returning errors as <a href="http://www.w3.org/TR/2000/NOTE-SOAP-20000508/#_Toc478383507">SOAP faults</a>.</p>
-
-<p>In order to implement this feature with .NET exceptions, Microsoft has created a custom exception type - the SoapException. The meaningful data of the SOAP fault is contained in a field called SoapException.Detail.InnerXml. The issue here is that most of the time when the calling code is handling exceptions, we don&#8217;t see this field since we are dealing with System.Exception types most of the time.</p>
-
-<p>What I have been doing from the beginning is to rethrow the System.Web.Services.Protocols.SoapException as a System.Exception and include the Xml as the exception message. Consider the following error handler:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">try</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">return</span> <span class="nf">DoCrmCall</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="k">catch</span> <span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Web</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">Protocols</span><span class="p">.</span><span class="n">SoapException</span> <span class="n">ex</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">throw</span> <span class="k">new</span> <span class="nf">Exception</span><span class="p">(</span><span class="n">ex</span><span class="p">.</span><span class="n">Detail</span><span class="p">.</span><span class="n">InnerXml</span><span class="p">,</span> <span class="n">ex</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>When we see the exception in the calling code (the .NET service proxy) we get a System.Exception where the message contains the Xml from the SOAP fault. There may be better ways of handling the SOAP messages, but this method has been working well for me, and I thought I&#8217;d put it up for you guys to comment on, since I know that error messages are a hot button topic in CRM and Web services in general.</p>
 ]]></content>
   </entry>
   

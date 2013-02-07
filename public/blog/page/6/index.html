@@ -9,7 +9,7 @@
   <meta name="author" content="Dan Newcome">
 
   
-  <meta name="description" content="I just started writing some new Silverlight controls for a client project and I was struggling with trying to get a tab control to span the full &hellip;">
+  <meta name="description" content="A current project required me to drop a Silverlight control into a WebPart for inclusion in a Microsoft SharePoint site. In the past, I think that &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -97,6 +97,89 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/2010/10/12/embedding-silverlight-into-a-webpart/">Embedding Silverlight Into a WebPart</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-12T13:14:15-07:00" pubdate data-updated="true">Oct 12<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A current project required me to drop a <a href="http://www.silverlight.net/">Silverlight</a> control into a <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.webparts.webpart.aspx">WebPart </a>for inclusion in a Microsoft <a href="http://sharepoint.microsoft.com/en-us/Pages/default.aspx">SharePoint </a>site. In the past, I think that the Silverlight component could be created programmatically like any other ASP.NET control, but if I understand correctly, this support has been dropped from the latest version of Silverlight (4.0 as of this writing).</p>
+
+<p>As you may know, WebParts do not natively support the use of the ASP.NET templating engine in order to assist with rendering its contents. That is, we can&#8217;t create a corresponding markup file as we do with .aspx or .ascx components. We can work around this by using <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.page.loadcontrol.aspx">LoadControl()</a> in order to render a user control (.ascx file) within the body of the WebPart&#8217;s CreateChildControls() method, but I wanted to see if I could avoid having to create a separate user control just for embedding my Silverlight component.</p>
+
+<p>I found two currently supported approaches to adding Silverlight content to a page in version 4: using an object tag or <a href="http://msdn.microsoft.com/en-us/library/cc265155(VS.95">client-side using Javascript</a>.aspx). Since I wasn&#8217;t doing much else with Javascript on the client, I wanted to stick to a server-side solution. My attempts at programmatically creating the Silverlight control as <a href="http://blogs.msdn.com/b/andreww/archive/2009/03/12/silverlight-web-part-in-sharepoint.aspx">outlilned here</a> failed, so what I ended up doing was to embed the object tag into an <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.htmlcontrols.htmlgenericcontrol.aspx">HtmlGenericControl </a>directly in the WebPart. Here is the code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">public</span> <span class="k">class</span> <span class="nc">SilverlightPart</span> <span class="p">:</span> <span class="n">WebPart</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">CreateChildControls</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">this</span><span class="p">.</span><span class="n">Title</span> <span class="p">=</span> <span class="s">&quot;Embedded Silverlight&quot;</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">HtmlGenericControl</span> <span class="n">control</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HtmlGenericControl</span><span class="p">(</span> <span class="s">&quot;div&quot;</span> <span class="p">);</span>
+</span><span class='line'>          <span class="n">control</span><span class="p">.</span><span class="n">InnerHtml</span> <span class="p">=</span> <span class="s">@&quot;&lt;object data=&#39;data:application/x-silverlight-2,&#39; type=&#39;application/x-silverlight-2&#39; width=&#39;100%&#39; height=&#39;300px&#39;&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;source&#39; value=&#39;ClientBin/SilverlightWizard.xap&#39;/&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;onError&#39; value=&#39;onSilverlightError&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;background&#39; value=&#39;white&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;minRuntimeVersion&#39; value=&#39;4.0.50401.0&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;param name=&#39;autoUpgrade&#39; value=&#39;true&#39; /&gt;</span>
+</span><span class='line'><span class="s">              &lt;a href=&#39;http://go.microsoft.com/fwlink/?LinkID=149156&amp;v=4.0.50401.0&#39; style=&#39;text-decoration:none&#39;&gt;</span>
+</span><span class='line'><span class="s">                  &lt;img src=&#39;http://go.microsoft.com/fwlink/?LinkId=161376&#39; alt=&#39;Get Microsoft Silverlight&#39; style=&#39;border-style:none&#39;/&gt;</span>
+</span><span class='line'><span class="s">              &lt;/a&gt;</span>
+</span><span class='line'><span class="s">          &lt;/object&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">Controls</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span> <span class="n">control</span> <span class="p">);</span>
+</span><span class='line'>          <span class="n">ChildControlsCreated</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One small thing to note is that we need to specify a height for the Silverlight control when it appears in a WebPart zone. Setting width to 100% is fine, but setting the height must be done using a specific height due to the layout logic used by the zones.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2010/10/11/silverlight-content-positioning-expanding-to-fill-container/">Silverlight Content Positioning - Expanding to Fill Container</a></h1>
     
     
@@ -113,7 +196,7 @@
   
 
 
-<time datetime="2010-10-11T21:33:24-07:00" pubdate data-updated="true">Oct 11<span>th</span>, 2010</time>
+<time datetime="2010-10-11T14:33:24-07:00" pubdate data-updated="true">Oct 11<span>th</span>, 2010</time>
         
       </p>
     
@@ -185,7 +268,7 @@
   
 
 
-<time datetime="2010-10-11T21:31:55-07:00" pubdate data-updated="true">Oct 11<span>th</span>, 2010</time>
+<time datetime="2010-10-11T14:31:55-07:00" pubdate data-updated="true">Oct 11<span>th</span>, 2010</time>
         
       </p>
     
@@ -209,7 +292,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/10/06/building-sharepoint-projects-with-cruisecontrol/">Building SharePoint Projects With CruiseControl</a></h1>
+      <h1 class="entry-title"><a href="/2010/10/05/building-sharepoint-projects-with-cruisecontrol/">Building SharePoint Projects With CruiseControl</a></h1>
     
     
       <p class="meta">
@@ -225,7 +308,7 @@
   
 
 
-<time datetime="2010-10-06T00:09:50-07:00" pubdate data-updated="true">Oct 6<span>th</span>, 2010</time>
+<time datetime="2010-10-05T17:09:50-07:00" pubdate data-updated="true">Oct 5<span>th</span>, 2010</time>
         
       </p>
     
@@ -299,7 +382,7 @@ I did get CruiseControl to build a SharePoint project on a machine without Share
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/09/21/key-properties-in-crm/">Key Properties in CRM</a></h1>
+      <h1 class="entry-title"><a href="/2010/09/20/key-properties-in-crm/">Key Properties in CRM</a></h1>
     
     
       <p class="meta">
@@ -315,7 +398,7 @@ I did get CruiseControl to build a SharePoint project on a machine without Share
   
 
 
-<time datetime="2010-09-21T01:53:01-07:00" pubdate data-updated="true">Sep 21<span>st</span>, 2010</time>
+<time datetime="2010-09-20T18:53:01-07:00" pubdate data-updated="true">Sep 20<span>th</span>, 2010</time>
         
       </p>
     
@@ -400,7 +483,7 @@ I ended up with a hack that just looks at the entity name and tacks on &#8216;id
   
 
 
-<time datetime="2010-09-09T23:12:29-07:00" pubdate data-updated="true">Sep 9<span>th</span>, 2010</time>
+<time datetime="2010-09-09T16:12:29-07:00" pubdate data-updated="true">Sep 9<span>th</span>, 2010</time>
         
       </p>
     
@@ -486,7 +569,7 @@ I ended up with a hack that just looks at the entity name and tacks on &#8216;id
   
 
 
-<time datetime="2010-09-09T22:48:29-07:00" pubdate data-updated="true">Sep 9<span>th</span>, 2010</time>
+<time datetime="2010-09-09T15:48:29-07:00" pubdate data-updated="true">Sep 9<span>th</span>, 2010</time>
         
       </p>
     
@@ -526,7 +609,7 @@ I ended up with a hack that just looks at the entity name and tacks on &#8216;id
   
 
 
-<time datetime="2010-08-24T18:42:01-07:00" pubdate data-updated="true">Aug 24<span>th</span>, 2010</time>
+<time datetime="2010-08-24T11:42:01-07:00" pubdate data-updated="true">Aug 24<span>th</span>, 2010</time>
         
       </p>
     
@@ -639,7 +722,7 @@ I just wanted to add a little tidbit brought up by someone about iterating over 
   
 
 
-<time datetime="2010-08-19T14:39:18-07:00" pubdate data-updated="true">Aug 19<span>th</span>, 2010</time>
+<time datetime="2010-08-19T07:39:18-07:00" pubdate data-updated="true">Aug 19<span>th</span>, 2010</time>
         
       </p>
     
@@ -741,7 +824,7 @@ I just wanted to add a little tidbit brought up by someone about iterating over 
   
 
 
-<time datetime="2010-08-18T22:03:50-07:00" pubdate data-updated="true">Aug 18<span>th</span>, 2010</time>
+<time datetime="2010-08-18T15:03:50-07:00" pubdate data-updated="true">Aug 18<span>th</span>, 2010</time>
         
       </p>
     
@@ -775,57 +858,6 @@ I just wanted to add a little tidbit brought up by someone about iterating over 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/08/18/creating-guids-with-windows-scripting-javascript/">Creating GUIDs With Javascript Windows Scripting Host</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-08-18T21:44:17-07:00" pubdate data-updated="true">Aug 18<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I need to do some scripting from time to time, and I usually use Javascript to do everything. I needed to generate GUIDs for some CRM data that I wanted to create programmatically. I found <a href="http://blogs.technet.com/b/heyscriptingguy/archive/2005/02/21/how-can-i-create-a-guid-using-a-script.aspx">this article</a> from the Microsoft Scripting Guy.</p>
-
-<p>He gave the example in VBScript, so here is the equivalent in JScript:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">guidGen</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">typeLib</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ActiveXObject</span><span class="p">(</span> <span class="s2">&quot;Scriptlet.TypeLib&quot;</span> <span class="p">);</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">typeLib</span><span class="p">.</span><span class="nx">Guid</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/7/">&larr; Older</a>
@@ -843,23 +875,23 @@ I just wanted to add a little tidbit brought up by someone about iterating over 
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/02/06/dropping-a-sql-database-with-nant/">Dropping a SQL database with NAnt</a>
+      </li>
+    
+      <li class="post">
         <a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+        <a href="/2011/11/16/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+        <a href="/2011/11/16/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+        <a href="/2011/11/16/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
       </li>
     
   </ul>
@@ -876,7 +908,7 @@ I just wanted to add a little tidbit brought up by someone about iterating over 
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - Dan Newcome -
+  Copyright &copy; 2013 - Dan Newcome -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

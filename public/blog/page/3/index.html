@@ -9,7 +9,7 @@
   <meta name="author" content="Dan Newcome">
 
   
-  <meta name="description" content="I was improving the design of some Silverlight code recently where the application was designed to be controlled externally from another Silverlight &hellip;">
+  <meta name="description" content="Early on in my experiences with CRM programming I learned to do whatever I can to get meaningful error responses from the server. Nothing is more &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -97,6 +97,65 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/2011/04/13/handling-errors-with-the-crm-2011-web-services-api/">Handling Errors With the CRM 2011 Web Services API</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-13T04:59:42-07:00" pubdate data-updated="true">Apr 13<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Early on in my experiences with CRM programming I learned to do whatever I can to get meaningful error responses from the server. Nothing is more difficult than having a Web service call fail and not being able to tell what happened by looking at the stack trace.</p>
+
+<p>Since the CRM API is delivered using .NET Web services, we are crossing some process and protocol boundaries. In particular, CRM adheres to the SOAP standard of returning errors as <a href="http://www.w3.org/TR/2000/NOTE-SOAP-20000508/#_Toc478383507">SOAP faults</a>.</p>
+
+<p>In order to implement this feature with .NET exceptions, Microsoft has created a custom exception type - the SoapException. The meaningful data of the SOAP fault is contained in a field called SoapException.Detail.InnerXml. The issue here is that most of the time when the calling code is handling exceptions, we don&#8217;t see this field since we are dealing with System.Exception types most of the time.</p>
+
+<p>What I have been doing from the beginning is to rethrow the System.Web.Services.Protocols.SoapException as a System.Exception and include the Xml as the exception message. Consider the following error handler:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">try</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nf">DoCrmCall</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">catch</span> <span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Web</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">Protocols</span><span class="p">.</span><span class="n">SoapException</span> <span class="n">ex</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">throw</span> <span class="k">new</span> <span class="nf">Exception</span><span class="p">(</span><span class="n">ex</span><span class="p">.</span><span class="n">Detail</span><span class="p">.</span><span class="n">InnerXml</span><span class="p">,</span> <span class="n">ex</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When we see the exception in the calling code (the .NET service proxy) we get a System.Exception where the message contains the Xml from the SOAP fault. There may be better ways of handling the SOAP messages, but this method has been working well for me, and I thought I&#8217;d put it up for you guys to comment on, since I know that error messages are a hot button topic in CRM and Web services in general.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2011/04/12/scripting-silverlight-4-applications-with-javascript/">Scripting Silverlight 4 Applications With Javascript</a></h1>
     
     
@@ -113,7 +172,7 @@
   
 
 
-<time datetime="2011-04-12T13:31:36-07:00" pubdate data-updated="true">Apr 12<span>th</span>, 2011</time>
+<time datetime="2011-04-12T06:31:36-07:00" pubdate data-updated="true">Apr 12<span>th</span>, 2011</time>
         
       </p>
     
@@ -200,7 +259,7 @@
   
 
 
-<time datetime="2011-04-01T17:22:21-07:00" pubdate data-updated="true">Apr 1<span>st</span>, 2011</time>
+<time datetime="2011-04-01T10:22:21-07:00" pubdate data-updated="true">Apr 1<span>st</span>, 2011</time>
         
       </p>
     
@@ -400,7 +459,7 @@
   
 
 
-<time datetime="2011-02-25T12:07:05-08:00" pubdate data-updated="true">Feb 25<span>th</span>, 2011</time>
+<time datetime="2011-02-25T04:07:05-08:00" pubdate data-updated="true">Feb 25<span>th</span>, 2011</time>
         
       </p>
     
@@ -485,7 +544,7 @@
   
 
 
-<time datetime="2011-02-25T11:30:06-08:00" pubdate data-updated="true">Feb 25<span>th</span>, 2011</time>
+<time datetime="2011-02-25T03:30:06-08:00" pubdate data-updated="true">Feb 25<span>th</span>, 2011</time>
         
       </p>
     
@@ -562,7 +621,7 @@
   
 
 
-<time datetime="2011-02-18T14:32:54-08:00" pubdate data-updated="true">Feb 18<span>th</span>, 2011</time>
+<time datetime="2011-02-18T06:32:54-08:00" pubdate data-updated="true">Feb 18<span>th</span>, 2011</time>
         
       </p>
     
@@ -664,7 +723,7 @@
   
 
 
-<time datetime="2011-02-12T23:57:22-08:00" pubdate data-updated="true">Feb 12<span>th</span>, 2011</time>
+<time datetime="2011-02-12T15:57:22-08:00" pubdate data-updated="true">Feb 12<span>th</span>, 2011</time>
         
       </p>
     
@@ -796,7 +855,7 @@ It is important not to use a SQL server image, as you will pay more per hour and
   
 
 
-<time datetime="2011-01-16T19:51:31-08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2011</time>
+<time datetime="2011-01-16T11:51:31-08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2011</time>
         
       </p>
     
@@ -863,7 +922,7 @@ Although the developer runtime is listed among the components that this package 
   
 
 
-<time datetime="2011-01-14T22:59:16-08:00" pubdate data-updated="true">Jan 14<span>th</span>, 2011</time>
+<time datetime="2011-01-14T14:59:16-08:00" pubdate data-updated="true">Jan 14<span>th</span>, 2011</time>
         
       </p>
     
@@ -917,7 +976,7 @@ Although the developer runtime is listed among the components that this package 
   
 
 
-<time datetime="2011-01-14T21:31:04-08:00" pubdate data-updated="true">Jan 14<span>th</span>, 2011</time>
+<time datetime="2011-01-14T13:31:04-08:00" pubdate data-updated="true">Jan 14<span>th</span>, 2011</time>
         
       </p>
     
@@ -948,111 +1007,6 @@ Although the developer runtime is listed among the components that this package 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/12/08/migrating-sdk-code-from-crm4-to-crm5-2011/">Migrating SDK Code From CRM4 to CRM5 (2011)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-12-08T20:58:30-08:00" pubdate data-updated="true">Dec 8<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Now that the CRM5 beta is <a href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=0c7dcc45-9d41-4e2e-8126-895517b4274c">generally available</a> (and many of us were privy to the preview code) it&#8217;s time to start dusting off those data access libraries and shaking them up to 2011 spec. If you&#8217;ve written any custom application code using the Microsoft.Crm.Sdk library, you&#8217;ll want to tune in here. Fortunately, I didn&#8217;t run into too many issues but there were a few gotchas that I&#8217;ll go into here in this post.</p>
-
-<p>I was upgrading my open-source CRM query library, <a href="https://github.com/dnewcome/crmQuery">CrmQuery</a> (which has saved us a ton of time over in our shop - I highly recommend that you check it out), so what I cover here is going to be limited to what I ran into during that migration. I&#8217;ll follow up with more posts when I start finding out more.</p>
-
-<h2>Namespace and Library Differences</h2>
-
-<p>First off, you&#8217;ll need to reference the Microsoft.Xrm.Sdk.dll library in your project. This replaces the CRM4 library Microsoft.Crm.Sdk.dll. Most of the types are the same name. Anywhere you&#8217;d use the namespaces:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Crm.Sdk</span><span class="p">;</span>
-</span><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Crm.Sdk.Query</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Becomes:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Xrm.Sdk</span><span class="p">;</span>
-</span><span class='line'><span class="k">using</span> <span class="nn">Microsoft.Xrm.Sdk.Query</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This was a bit confusing to me since I was familiar with the interim 4.0 SDK release that introduced what Microsoft referred to as &#8220;Xrm&#8221; which was basically a set of extensions and a new code generator to allow building proxies for the CRM services that could be queried using Linq. However in the 5.0 SDK, Microsoft has used the Xrm naming convention throughout the entire SDK, replacing most of the old Crm namespaces.</p>
-
-<h2>Type Differences</h2>
-
-<p>Certain base types have been removed, one of which being the column set base type which was used for anything that specified a list of columns to return or deal with in CRM. The use of the following type:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ColumnSetBase</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Becomes simply:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ColumnSet</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>As a consequence, there is no Allcolumns type to represent all of the fields of an entity. Instead we create an instance of ColumnSet using a specialized constructor to indicate that we intend to specify all columns:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ColumnSet</span> <span class="n">cols</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ColumnSet</span><span class="p">(</span> <span class="k">true</span> <span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Collection Types</h2>
-
-<p>Members that formerly used the ArrayList type are now implemented using generic lists in the form of DataCollection For example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">LinkEntity</span><span class="p">.</span><span class="n">LinkEntities</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Is no longer an ArrayList. Likewise, ConditionExpression.Values is now of the type:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[DataMemberAttribute]</span>
-</span><span class='line'><span class="k">public</span> <span class="n">DataCollection</span><span class="p">&lt;</span><span class="n">Object</span><span class="p">&gt;</span> <span class="n">Values</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Notice also that there is no setter, so code that creates a collection and set this property will no longer work.</p>
-
-<p>That&#8217;s it for now. If you liked this articled be sure to follow me on <a href="http://twitter.com/dnewcome">Twitter</a> and if you&#8217;re interested in what we&#8217;re doing with CRM and other Microsoft technologies, be sure to follow us on Twitter <a href="http://twitter.com/AltaiSystems">here</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -1070,23 +1024,23 @@ Although the developer runtime is listed among the components that this package 
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/02/06/dropping-a-sql-database-with-nant/">Dropping a SQL database with NAnt</a>
+      </li>
+    
+      <li class="post">
         <a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+        <a href="/2011/11/16/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+        <a href="/2011/11/16/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+        <a href="/2011/11/16/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
       </li>
     
   </ul>
@@ -1103,7 +1057,7 @@ Although the developer runtime is listed among the components that this package 
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - Dan Newcome -
+  Copyright &copy; 2013 - Dan Newcome -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

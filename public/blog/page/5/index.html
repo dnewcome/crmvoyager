@@ -9,7 +9,7 @@
   <meta name="author" content="Dan Newcome">
 
   
-  <meta name="description" content="When you first get into Silverlight development using Visual Studio, you probably created a new project using the Visual Studio project wizard for &hellip;">
+  <meta name="description" content="The title for this post is a mouthful so let me describe the back story a little bit. In Microsoft Silverlight applications we often use DataGrid &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -97,6 +97,81 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/2010/11/01/silverlight-single-click-checkbox-datagrid-columns/">Silverlight Single-click Checkbox DataGrid Columns</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-01T10:22:43-07:00" pubdate data-updated="true">Nov 1<span>st</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The title for this post is a mouthful so let me describe the back story a little bit. In Microsoft Silverlight applications we often use DataGrid controls that are databound with a boolean data field that is represented by a check box. Silverlight provides a built-in column type of DataGridCheckBoxColumn, which will display the underlying boolean data field as a standard CheckBox control inline in the DataGrid cell.</p>
+
+<p>Setting up a DataGrid column using a DataGridCheckBoxColumn looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;sdk:DataGrid.Columns&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;sdk:DataGridTextColumn</span> <span class="na">Header=</span><span class="s">&quot;Name&quot;</span> <span class="na">Binding=</span><span class="s">&quot;{Binding Name}&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>             <span class="nt">&lt;sdk:DataGridCheckBoxColumn</span> <span class="na">Header=</span><span class="s">&quot;Select&quot;</span> <span class="na">Binding=</span><span class="s">&quot;{Binding Selected}&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/sdk:DataGrid.Columns&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However the default behavior of a databound cell in a DataGrid is to require a click on the cell itself before we can edit its contents. In the case of text fields this makes a lot of sense. You don&#8217;t want to enter edit mode immediately upon selecting a row in the grid. However, in the case of a check box, it is often the case that we&#8217;ll want to quickly check off several items in the list. Having to select the cell first means that each selection action requires two clicks in order to change the state of the check box.</p>
+
+<p>The first click on the check box leaves the DataGrid looking like this:
+<a href="http://newcome.files.wordpress.com/2010/11/checkbox1.png"><img src="http://newcome.files.wordpress.com/2010/11/checkbox1.png" alt="" /></a></p>
+
+<p>There doesn&#8217;t seem to be much out there on forums or blogs about this issue save for <a href="http://forums.silverlight.net/forums/p/35476/106883.aspx">this forum posting</a>. One of the commenters has it almost right and a second commenter corrects him, but the resulting code is never provided. I had to fix this in my own application, so here is what I came up with:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>           <span class="nt">&lt;sdk:DataGridTemplateColumn&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;sdk:DataGridTemplateColumn.CellEditingTemplate&gt;</span>
+</span><span class='line'>                            <span class="nt">&lt;DataTemplate&gt;</span>
+</span><span class='line'>                                <span class="nt">&lt;CheckBox</span> <span class="na">IsThreeState=</span><span class="s">&quot;False&quot;</span> <span class="na">IsChecked=</span><span class="s">&quot;{Binding Path=Selected, Mode=TwoWay}&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>                            <span class="nt">&lt;/DataTemplate&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;/sdk:DataGridTemplateColumn.CellEditingTemplate&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;/sdk:DataGridTemplateColumn&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The solution to this problem was out there, but none of the sources described the actual problem well enough to be found easily by searching. Hopefully this post rectifies that situation.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2010/10/19/silverlight-host-page-for-development-and-debugging/">Silverlight Host Page for Development and Debugging</a></h1>
     
     
@@ -113,7 +188,7 @@
   
 
 
-<time datetime="2010-10-19T18:50:37-07:00" pubdate data-updated="true">Oct 19<span>th</span>, 2010</time>
+<time datetime="2010-10-19T11:50:37-07:00" pubdate data-updated="true">Oct 19<span>th</span>, 2010</time>
         
       </p>
     
@@ -159,7 +234,7 @@
   
 
 
-<time datetime="2010-10-19T18:33:21-07:00" pubdate data-updated="true">Oct 19<span>th</span>, 2010</time>
+<time datetime="2010-10-19T11:33:21-07:00" pubdate data-updated="true">Oct 19<span>th</span>, 2010</time>
         
       </p>
     
@@ -230,7 +305,7 @@
   
 
 
-<time datetime="2010-10-19T17:15:44-07:00" pubdate data-updated="true">Oct 19<span>th</span>, 2010</time>
+<time datetime="2010-10-19T10:15:44-07:00" pubdate data-updated="true">Oct 19<span>th</span>, 2010</time>
         
       </p>
     
@@ -279,7 +354,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/10/15/whats-in-a-silverlight-xap/">What&#8217;s in a Silverlight .XAP</a></h1>
+      <h1 class="entry-title"><a href="/2010/10/14/whats-in-a-silverlight-xap/">What&#8217;s in a Silverlight .XAP</a></h1>
     
     
       <p class="meta">
@@ -295,7 +370,7 @@
   
 
 
-<time datetime="2010-10-15T06:07:00-07:00" pubdate data-updated="true">Oct 15<span>th</span>, 2010</time>
+<time datetime="2010-10-14T23:07:00-07:00" pubdate data-updated="true">Oct 14<span>th</span>, 2010</time>
         
       </p>
     
@@ -395,7 +470,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/10/15/wspbuilder-and-sharepoint-deployment-layout-where-does-this-stuff-end-up/">WSPBuilder and SharePoint Deployment Layout - Where Does This Stuff End Up?</a></h1>
+      <h1 class="entry-title"><a href="/2010/10/14/wspbuilder-and-sharepoint-deployment-layout-where-does-this-stuff-end-up/">WSPBuilder and SharePoint Deployment Layout - Where Does This Stuff End Up?</a></h1>
     
     
       <p class="meta">
@@ -411,7 +486,7 @@
   
 
 
-<time datetime="2010-10-15T01:29:50-07:00" pubdate data-updated="true">Oct 15<span>th</span>, 2010</time>
+<time datetime="2010-10-14T18:29:50-07:00" pubdate data-updated="true">Oct 14<span>th</span>, 2010</time>
         
       </p>
     
@@ -479,7 +554,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/10/15/observations-on-observablecollection/">Observations on ObservableCollection</a></h1>
+      <h1 class="entry-title"><a href="/2010/10/14/observations-on-observablecollection/">Observations on ObservableCollection</a></h1>
     
     
       <p class="meta">
@@ -495,7 +570,7 @@
   
 
 
-<time datetime="2010-10-15T01:01:48-07:00" pubdate data-updated="true">Oct 15<span>th</span>, 2010</time>
+<time datetime="2010-10-14T18:01:48-07:00" pubdate data-updated="true">Oct 14<span>th</span>, 2010</time>
         
       </p>
     
@@ -533,7 +608,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/10/14/applying-styles-in-silverlight/">Applying Styles in Silverlight</a></h1>
+      <h1 class="entry-title"><a href="/2010/10/13/applying-styles-in-silverlight/">Applying Styles in Silverlight</a></h1>
     
     
       <p class="meta">
@@ -549,7 +624,7 @@
   
 
 
-<time datetime="2010-10-14T05:10:11-07:00" pubdate data-updated="true">Oct 14<span>th</span>, 2010</time>
+<time datetime="2010-10-13T22:10:11-07:00" pubdate data-updated="true">Oct 13<span>th</span>, 2010</time>
         
       </p>
     
@@ -660,7 +735,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/10/13/data-binding-in-silverlight/">Data Binding in Silverlight</a></h1>
+      <h1 class="entry-title"><a href="/2010/10/12/data-binding-in-silverlight/">Data Binding in Silverlight</a></h1>
     
     
       <p class="meta">
@@ -676,7 +751,7 @@
   
 
 
-<time datetime="2010-10-13T03:22:59-07:00" pubdate data-updated="true">Oct 13<span>th</span>, 2010</time>
+<time datetime="2010-10-12T20:22:59-07:00" pubdate data-updated="true">Oct 12<span>th</span>, 2010</time>
         
       </p>
     
@@ -742,7 +817,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/10/13/creating-a-silverlight-usercontrol/">Referencing a Silverlight UserControl</a></h1>
+      <h1 class="entry-title"><a href="/2010/10/12/creating-a-silverlight-usercontrol/">Referencing a Silverlight UserControl</a></h1>
     
     
       <p class="meta">
@@ -758,7 +833,7 @@
   
 
 
-<time datetime="2010-10-13T01:52:10-07:00" pubdate data-updated="true">Oct 13<span>th</span>, 2010</time>
+<time datetime="2010-10-12T18:52:10-07:00" pubdate data-updated="true">Oct 12<span>th</span>, 2010</time>
         
       </p>
     
@@ -815,89 +890,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/10/12/embedding-silverlight-into-a-webpart/">Embedding Silverlight Into a WebPart</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-10-12T20:14:15-07:00" pubdate data-updated="true">Oct 12<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>A current project required me to drop a <a href="http://www.silverlight.net/">Silverlight</a> control into a <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.webcontrols.webparts.webpart.aspx">WebPart </a>for inclusion in a Microsoft <a href="http://sharepoint.microsoft.com/en-us/Pages/default.aspx">SharePoint </a>site. In the past, I think that the Silverlight component could be created programmatically like any other ASP.NET control, but if I understand correctly, this support has been dropped from the latest version of Silverlight (4.0 as of this writing).</p>
-
-<p>As you may know, WebParts do not natively support the use of the ASP.NET templating engine in order to assist with rendering its contents. That is, we can&#8217;t create a corresponding markup file as we do with .aspx or .ascx components. We can work around this by using <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.page.loadcontrol.aspx">LoadControl()</a> in order to render a user control (.ascx file) within the body of the WebPart&#8217;s CreateChildControls() method, but I wanted to see if I could avoid having to create a separate user control just for embedding my Silverlight component.</p>
-
-<p>I found two currently supported approaches to adding Silverlight content to a page in version 4: using an object tag or <a href="http://msdn.microsoft.com/en-us/library/cc265155(VS.95">client-side using Javascript</a>.aspx). Since I wasn&#8217;t doing much else with Javascript on the client, I wanted to stick to a server-side solution. My attempts at programmatically creating the Silverlight control as <a href="http://blogs.msdn.com/b/andreww/archive/2009/03/12/silverlight-web-part-in-sharepoint.aspx">outlilned here</a> failed, so what I ended up doing was to embed the object tag into an <a href="http://msdn.microsoft.com/en-us/library/system.web.ui.htmlcontrols.htmlgenericcontrol.aspx">HtmlGenericControl </a>directly in the WebPart. Here is the code:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'>   <span class="k">public</span> <span class="k">class</span> <span class="nc">SilverlightPart</span> <span class="p">:</span> <span class="n">WebPart</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">CreateChildControls</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>          <span class="k">this</span><span class="p">.</span><span class="n">Title</span> <span class="p">=</span> <span class="s">&quot;Embedded Silverlight&quot;</span><span class="p">;</span>
-</span><span class='line'>          <span class="n">HtmlGenericControl</span> <span class="n">control</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HtmlGenericControl</span><span class="p">(</span> <span class="s">&quot;div&quot;</span> <span class="p">);</span>
-</span><span class='line'>          <span class="n">control</span><span class="p">.</span><span class="n">InnerHtml</span> <span class="p">=</span> <span class="s">@&quot;&lt;object data=&#39;data:application/x-silverlight-2,&#39; type=&#39;application/x-silverlight-2&#39; width=&#39;100%&#39; height=&#39;300px&#39;&gt;</span>
-</span><span class='line'><span class="s">              &lt;param name=&#39;source&#39; value=&#39;ClientBin/SilverlightWizard.xap&#39;/&gt;</span>
-</span><span class='line'><span class="s">              &lt;param name=&#39;onError&#39; value=&#39;onSilverlightError&#39; /&gt;</span>
-</span><span class='line'><span class="s">              &lt;param name=&#39;background&#39; value=&#39;white&#39; /&gt;</span>
-</span><span class='line'><span class="s">              &lt;param name=&#39;minRuntimeVersion&#39; value=&#39;4.0.50401.0&#39; /&gt;</span>
-</span><span class='line'><span class="s">              &lt;param name=&#39;autoUpgrade&#39; value=&#39;true&#39; /&gt;</span>
-</span><span class='line'><span class="s">              &lt;a href=&#39;http://go.microsoft.com/fwlink/?LinkID=149156&amp;v=4.0.50401.0&#39; style=&#39;text-decoration:none&#39;&gt;</span>
-</span><span class='line'><span class="s">                  &lt;img src=&#39;http://go.microsoft.com/fwlink/?LinkId=161376&#39; alt=&#39;Get Microsoft Silverlight&#39; style=&#39;border-style:none&#39;/&gt;</span>
-</span><span class='line'><span class="s">              &lt;/a&gt;</span>
-</span><span class='line'><span class="s">          &lt;/object&gt;&quot;</span><span class="p">;</span>
-</span><span class='line'>          <span class="n">Controls</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span> <span class="n">control</span> <span class="p">);</span>
-</span><span class='line'>          <span class="n">ChildControlsCreated</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>One small thing to note is that we need to specify a height for the Silverlight control when it appears in a WebPart zone. Setting width to 100% is fine, but setting the height must be done using a specific height due to the layout logic used by the zones.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/6/">&larr; Older</a>
@@ -915,23 +907,23 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/02/06/dropping-a-sql-database-with-nant/">Dropping a SQL database with NAnt</a>
+      </li>
+    
+      <li class="post">
         <a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+        <a href="/2011/11/16/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+        <a href="/2011/11/16/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+        <a href="/2011/11/16/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
       </li>
     
   </ul>
@@ -948,7 +940,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - Dan Newcome -
+  Copyright &copy; 2013 - Dan Newcome -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

@@ -9,7 +9,7 @@
   <meta name="author" content="Dan Newcome">
 
   
-  <meta name="description" content="I ran across a Javascript library today called MSCRM 4.0 Web Service Toolkit for making calls to CRM from Javascript. Apparently it was inpired by &hellip;">
+  <meta name="description" content="How many times have you been in the situation where, for whatever reason, you are stuck developing a CRM application against a customer&#8217;s test &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -97,6 +97,72 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/2010/06/29/connecting-to-ms-crm-over-ssh/">Connecting to MS CRM Over SSH</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-06-29T08:42:44-07:00" pubdate data-updated="true">Jun 29<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>How many times have you been in the situation where, for whatever reason, you are stuck developing a CRM application against a customer&#8217;s test CRM installation where you don&#8217;t have a proper VPN setup so that you can develop locally? How about having to use 2 or more remote desktop sessions to even reach the box in question? Throw a Citrix connection into the mix and you have a sure recipe for pain. Not to mention that installing Visual Studio with all of its dependencies, along with the sheer size of it, is no walk in the park either.</p>
+
+<p>I had a situation recently where the customer was on CRM 3.0, making it nearly impossible for us to set up a local development server with their schema on it. The customer&#8217;s test environment was on a relatively slow internet link, and the only access that we had to the box was over a Citrix connection to a bastion host and then on to the target machine using RDP.</p>
+
+<p>Fortunately, there is a solution to our dilemma, and we don&#8217;t even have to install anything on the server! <a href="http://en.wikipedia.org/wiki/Secure_Shell">Secure shell</a> (SSH) is the traditional UNIX remote connection utility which has long had the ability to forward network connections from one machine to another along with its traditional command console duties. Unfortunately, since the server was a Windows machine, no SSH server was installed by default, and installation of a third-party SSH implementation would have been too intrusive.</p>
+
+<p>However, SSH has the ability to do both local and remote tunneling, so we can effectively reverse the roles of the client and server in order to create a backhaul link over which we can access CRM. This lets us install the SSH server on our client machine where we want to do the development work (eg, run Visual Studio) and use a simple client (<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">Putty</a>) on the server to initiate the tunnel.</p>
+
+<p>I installed the <a href="http://www.itefix.no/i2/copssh">CopSSH</a> SSH server on my laptop and opened port 22 on my firewall to let the remote connection through from the outside. I won&#8217;t cover installation of CopSSH here, but it is well documented and installation went smoothly for me on Windows Vista. Once CopSSH is set up, the only tricky part left is to configure Putty correctly to create a forwarded port over which we can access CRM services.</p>
+
+<p>Putty doesn&#8217;t need to be installed, just run putty.exe on the server and give it the IP address of your local development machine. My configuration looks like the following:
+<a href="http://crmvoyager.files.wordpress.com/2010/06/putty-crm.png"><img src="http://crmvoyager.files.wordpress.com/2010/06/putty-crm.png" alt="" /></a></p>
+
+<p>I chose port 9982 as the port I want to use on my laptop to access CRM. On the CRM server end, I used &#8216;localhost:80&#8217; as the destination, because the CRM server is running on the actual box that I&#8217;m connecting from (localhost) on the standard HTTP port (80).</p>
+
+<p>Now I just have to change my CRM URLs in development to something like:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost:9982/mscrmservices/2006/CrmService.asmx</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Why do we use &#8216;localhost&#8217; here if we are connecting to the server? Remember that the SSH tunnel is now listening on the laptop, so when we connect to this port that SSH is listening on, it takes the connection and forwards it on to the server. So, to our .NET code it looks like CRM is actually running locally on the laptop.</p>
+
+<p>As an added bonus, URLs like the following will also be available locally:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost:9982/sdk/list.aspx
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This can dramatically reduce your development cycle time when the environment is not ideal. Hope this saves you some time.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2010/06/07/consuming-crm-web-services-from-javascript/">Consuming CRM Web Services From Javascript</a></h1>
     
     
@@ -113,7 +179,7 @@
   
 
 
-<time datetime="2010-06-07T21:46:17-07:00" pubdate data-updated="true">Jun 7<span>th</span>, 2010</time>
+<time datetime="2010-06-07T14:46:17-07:00" pubdate data-updated="true">Jun 7<span>th</span>, 2010</time>
         
       </p>
     
@@ -149,7 +215,7 @@
   
 
 
-<time datetime="2010-06-02T16:06:45-07:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2010</time>
+<time datetime="2010-06-02T09:06:45-07:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2010</time>
         
       </p>
     
@@ -202,7 +268,7 @@
   
 
 
-<time datetime="2010-05-21T15:01:18-07:00" pubdate data-updated="true">May 21<span>st</span>, 2010</time>
+<time datetime="2010-05-21T08:01:18-07:00" pubdate data-updated="true">May 21<span>st</span>, 2010</time>
         
       </p>
     
@@ -252,7 +318,7 @@
   
 
 
-<time datetime="2010-05-19T21:26:48-07:00" pubdate data-updated="true">May 19<span>th</span>, 2010</time>
+<time datetime="2010-05-19T14:26:48-07:00" pubdate data-updated="true">May 19<span>th</span>, 2010</time>
         
       </p>
     
@@ -314,7 +380,7 @@ I ran into these issues when testing the activity classes outside of a workflow 
   
 
 
-<time datetime="2010-05-19T19:48:47-07:00" pubdate data-updated="true">May 19<span>th</span>, 2010</time>
+<time datetime="2010-05-19T12:48:47-07:00" pubdate data-updated="true">May 19<span>th</span>, 2010</time>
         
       </p>
     
@@ -455,7 +521,7 @@ I ran into these issues when testing the activity classes outside of a workflow 
   
 
 
-<time datetime="2010-05-02T19:32:27-07:00" pubdate data-updated="true">May 2<span>nd</span>, 2010</time>
+<time datetime="2010-05-02T12:32:27-07:00" pubdate data-updated="true">May 2<span>nd</span>, 2010</time>
         
       </p>
     
@@ -673,23 +739,23 @@ I ran into these issues when testing the activity classes outside of a workflow 
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/02/06/dropping-a-sql-database-with-nant/">Dropping a SQL database with NAnt</a>
+      </li>
+    
+      <li class="post">
         <a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+        <a href="/2011/11/16/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+        <a href="/2011/11/16/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+        <a href="/2011/11/16/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
       </li>
     
   </ul>
@@ -706,7 +772,7 @@ I ran into these issues when testing the activity classes outside of a workflow 
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - Dan Newcome -
+  Copyright &copy; 2013 - Dan Newcome -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

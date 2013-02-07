@@ -9,7 +9,7 @@
   <meta name="author" content="Dan Newcome">
 
   
-  <meta name="description" content="Most of the time, when programming against the Microsoft CRM Web service, we get reasonable error messages. However, on occasion we get the &hellip;">
+  <meta name="description" content="I always like to automate my build processes, and one often-overlooked piece is automating database creation. These days I use MSBuild a lot more, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -97,6 +97,92 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/2013/02/06/dropping-a-sql-database-with-nant/">Dropping a SQL Database With NAnt</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-06T19:01:00-08:00" pubdate data-updated="true">Feb 6<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I always like to automate my build processes, and one often-overlooked piece is automating database creation.</p>
+
+<p>These days I use MSBuild a lot more, but I have plenty of legacy stuff that is still using NAnt exclusively. Database scripting is always
+one of the big chores to take care of in any app, so there are likely lots of little scripts to run to get the database migrated
+to the desired state. Most DML (data manipulation language) statements (insert/select/update) can be parameterized easily but
+DML statements like dropping a database are often tough to work with in the general sense.</p>
+
+<p>The NAnt snippet below uses the sqlcmd commandline tool to run an inline script that drops the database given in the database.name
+property. The property is expanded by NAnt as text and becomes part of the script. In order to make this work correctly we have to get
+creative with quoting. Notice the use of entity reference &apos; to insert the single quote characters needed for the database
+name in the inline script.</p>
+
+<p>Another thing to notice is that we put the database into single-user mode right before we drop the database. I used to take
+the database offline to do this, but if we do it that way, the data files on disk won&#8217;t get deleted during the drop
+operation. Then when we go to create the new database it will fail since the files already exist.</p>
+
+<p>I&#8217;m not sure if we could specify &#8220;replace&#8221; when creating the new database, perhaps that would be another solution.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;exec 
+</span><span class='line'>  program="sqlcmd.exe"
+</span><span class='line'>  commandline='-S ${database.instance} -b -d master -Q 
+</span><span class='line'>      "if exists( select name from sys.databases where name = &apos;${database.name}&apos; )
+</span><span class='line'>      begin
+</span><span class='line'>          print N&apos;${database.name} already exists on target instance, entering single-user mode&apos;
+</span><span class='line'>          
+</span><span class='line'>          alter database ${database.name}
+</span><span class='line'>          set single_user
+</span><span class='line'>          with rollback immediate;
+</span><span class='line'>          
+</span><span class='line'>          print N&apos;${database.name} already exists on target instance, dropping database&apos;
+</span><span class='line'>          drop database ${database.name};
+</span><span class='line'>      end"'
+</span><span class='line'>/&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will allow a database to be dropped for later recreation. Enjoy!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a></h1>
     
     
@@ -113,7 +199,7 @@
   
 
 
-<time datetime="2011-11-21T20:16:38-08:00" pubdate data-updated="true">Nov 21<span>st</span>, 2011</time>
+<time datetime="2011-11-21T12:16:38-08:00" pubdate data-updated="true">Nov 21<span>st</span>, 2011</time>
         
       </p>
     
@@ -135,7 +221,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading Configuration From an Alternative Location in Microsoft .NET</a></h1>
+      <h1 class="entry-title"><a href="/2011/11/16/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading Configuration From an Alternative Location in Microsoft .NET</a></h1>
     
     
       <p class="meta">
@@ -151,7 +237,7 @@
   
 
 
-<time datetime="2011-11-17T01:49:41-08:00" pubdate data-updated="true">Nov 17<span>th</span>, 2011</time>
+<time datetime="2011-11-16T17:49:41-08:00" pubdate data-updated="true">Nov 16<span>th</span>, 2011</time>
         
       </p>
     
@@ -194,7 +280,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration Types in Microsoft .NET</a></h1>
+      <h1 class="entry-title"><a href="/2011/11/16/configuration-types-in-microsoft-net/">Configuration Types in Microsoft .NET</a></h1>
     
     
       <p class="meta">
@@ -210,7 +296,7 @@
   
 
 
-<time datetime="2011-11-17T01:40:58-08:00" pubdate data-updated="true">Nov 17<span>th</span>, 2011</time>
+<time datetime="2011-11-16T17:40:58-08:00" pubdate data-updated="true">Nov 16<span>th</span>, 2011</time>
         
       </p>
     
@@ -272,7 +358,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically Creating CRM 4 Entity Metadata</a></h1>
+      <h1 class="entry-title"><a href="/2011/11/16/programmatically-creating-crm-4-entity-metadata/">Programmatically Creating CRM 4 Entity Metadata</a></h1>
     
     
       <p class="meta">
@@ -288,7 +374,7 @@
   
 
 
-<time datetime="2011-11-17T01:27:28-08:00" pubdate data-updated="true">Nov 17<span>th</span>, 2011</time>
+<time datetime="2011-11-16T17:27:28-08:00" pubdate data-updated="true">Nov 16<span>th</span>, 2011</time>
         
       </p>
     
@@ -350,7 +436,7 @@ If this is not done, the field will silently fail to be created.</p>
   
 
 
-<time datetime="2011-11-16T18:55:47-08:00" pubdate data-updated="true">Nov 16<span>th</span>, 2011</time>
+<time datetime="2011-11-16T10:55:47-08:00" pubdate data-updated="true">Nov 16<span>th</span>, 2011</time>
         
       </p>
     
@@ -402,7 +488,7 @@ If this is not done, the field will silently fail to be created.</p>
   
 
 
-<time datetime="2011-10-27T21:04:58-07:00" pubdate data-updated="true">Oct 27<span>th</span>, 2011</time>
+<time datetime="2011-10-27T14:04:58-07:00" pubdate data-updated="true">Oct 27<span>th</span>, 2011</time>
         
       </p>
     
@@ -466,7 +552,7 @@ I&#8217;m mapping the SSH port 22 to port 2222 to avoid conflicts with the nativ
   
 
 
-<time datetime="2011-10-25T12:35:00-07:00" pubdate data-updated="true">Oct 25<span>th</span>, 2011</time>
+<time datetime="2011-10-25T05:35:00-07:00" pubdate data-updated="true">Oct 25<span>th</span>, 2011</time>
         
       </p>
     
@@ -534,7 +620,7 @@ I&#8217;m mapping the SSH port 22 to port 2222 to avoid conflicts with the nativ
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/10/25/digging-into-microsoft-crm-4-dynamicentity-properties/">Digging Into Microsoft CRM 4 DynamicEntity Properties</a></h1>
+      <h1 class="entry-title"><a href="/2011/10/24/digging-into-microsoft-crm-4-dynamicentity-properties/">Digging Into Microsoft CRM 4 DynamicEntity Properties</a></h1>
     
     
       <p class="meta">
@@ -550,7 +636,7 @@ I&#8217;m mapping the SSH port 22 to port 2222 to avoid conflicts with the nativ
   
 
 
-<time datetime="2011-10-25T00:02:40-07:00" pubdate data-updated="true">Oct 25<span>th</span>, 2011</time>
+<time datetime="2011-10-24T17:02:40-07:00" pubdate data-updated="true">Oct 24<span>th</span>, 2011</time>
         
       </p>
     
@@ -670,7 +756,7 @@ I&#8217;m mapping the SSH port 22 to port 2222 to avoid conflicts with the nativ
   
 
 
-<time datetime="2011-10-24T21:21:42-07:00" pubdate data-updated="true">Oct 24<span>th</span>, 2011</time>
+<time datetime="2011-10-24T14:21:42-07:00" pubdate data-updated="true">Oct 24<span>th</span>, 2011</time>
         
       </p>
     
@@ -684,746 +770,6 @@ I&#8217;m mapping the SSH port 22 to port 2222 to avoid conflicts with the nativ
 <p>Eventually I fleshed out the mock CRM service and released it as <a href="https://github.com/dnewcome/FakeCRM">FakeCRM</a>.</p>
 
 <p>I&#8217;ll be blogging more about this topic in the future, stay tuned!</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/10/24/list-of-type-differences-between-crm4-and-2011/">List of Type Differences Between CRM4 and 2011</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-10-24T18:19:50-07:00" pubdate data-updated="true">Oct 24<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I&#8217;m posting this list since it seems to be difficult for me to find quickly in the SDK documentation. It is an incredibly handy list of type mappings that are useful for converting CRM4 code to 2011 or for (in my case) writing abstraction libraries that need to convert between the two different CRM versions.</p>
-
-<p>Without further ado, the <a href="http://msdn.microsoft.com/en-us/library/gg328507.aspx">list is here</a>.</p>
-
-<p>I&#8217;m including it inline here for quick reference:</p>
-
-<table style='border:1px solid black'>
-
-      <tr>
-
-        <th>
-
-          <strong>AttributeTypeCode</strong>
-
-        </th>
-
-        <th>
-
-                                
-
-                                    Microsoft Dynamics CRM 2011 type
-
-                            </th>
-
-        <th>
-Microsoft Dynamics CRM 4.0 type </th>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">AttributeTypeCode</a>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">BigInt</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>long</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>N/A</p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeTypeCode</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Boolean</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>bool</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb928926.aspx">CrmBoolean</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributemetadata.attributetype.aspx">AttributeType</a>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">CalendarRules</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            
-
-          </p>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.entitycollection.aspx">EntityCollection</a> or <strong>CalendarRules</strong>[]</p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb956153.aspx">DynamicEntity</a>[] or <a href="http://msdn.microsoft.com/en-us/library/bb928506.aspx">calendarrule</a>[]</p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Customer</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.entityreference.aspx">EntityReference</a>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb955969.aspx">Customer</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">DateTime</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>System.DateTime</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb928935.aspx">CrmDateTime</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Decimal</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>decimal</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb928945.aspx">CrmDecimal</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Double</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>double</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb928954.aspx">CrmFloat</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">EntityName</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>string</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>Attributes with <strong>ObjectTypeCode</strong> in <strong>DisplayMask</strong></p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Integer</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>int</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb928972.aspx">CrmNumber</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Lookup</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>EntityReference</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb957132.aspx">Lookup</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">ManagedProperty</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.booleanmanagedproperty.aspx">BooleanManagedProperty</a>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>N/A</p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Memo</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>string</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>System.String</strong>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Money</a></p>
-
-        </td>
-
-        <td>
-
-          <p> <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.money.aspx">Money</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb928963.aspx">CrmMoney</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Owner</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>EntityReference</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb670715.aspx">Owner</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">PartyList</a></p>
-
-        </td>
-
-        <td>
-
-          <p> <strong>EntityCollection</strong> or <strong>ActivityParty</strong>[]</p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb955715.aspx">activityparty[]</a> or <a href="http://msdn.microsoft.com/en-us/library/bb956153.aspx">DynamicEntity</a> []</p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Picklist</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.optionsetvalue.aspx">OptionSetValue</a>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb929048.aspx">Picklist</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>. <a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Uniqueidentifier</a> (Formerly <strong>PrimaryKey</strong>)</p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>System.Guid</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb956919.aspx">Key</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">String</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>string</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>System.String</strong>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">State</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>OptionSetValue</strong> or enumeration generated for the entity state</p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <em>EntityName</em>StateInfo</p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Status</a></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>OptionSetValue</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb958198.aspx">Status</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<strong>Uniqueidentifier</strong></p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <strong>System.Guid</strong>
-
-          </p>
-
-        </td>
-
-        <td>
-
-          <p>
-
-            <a href="http://msdn.microsoft.com/en-us/library/bb890012.aspx">UniqueIdentifier</a>
-
-          </p>
-
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-
-          <p>
-
-            <strong>AttributeType</strong>.<a href="http://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.metadata.attributetypecode.aspx">Virtual</a></p>
-
-        </td>
-
-        <td>
-
-          <p>Not used in records.</p>
-
-        </td>
-
-        <td>
-
-          <p>Not used in records.</p>
-
-        </td>
-
-      </tr>
-
-</table>
-
-
-
 </div>
   
   
@@ -1446,23 +792,23 @@ Microsoft Dynamics CRM 4.0 type </th>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/02/06/dropping-a-sql-database-with-nant/">Dropping a SQL database with NAnt</a>
+      </li>
+    
+      <li class="post">
         <a href="/2011/11/21/debugging-microsoft-crm-generic-sql-error/">Debugging Microsoft CRM &#8220;Generic SQL Error&#8221;</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
+        <a href="/2011/11/16/loading-configuration-from-an-alternative-location-in-microsoft-net/">Loading configuration from an alternative location in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
+        <a href="/2011/11/16/configuration-types-in-microsoft-net/">Configuration types in Microsoft .NET</a>
       </li>
     
       <li class="post">
-        <a href="/2011/11/17/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2011/11/16/configuration-patterns-in-net/">Configuration patterns in .NET</a>
+        <a href="/2011/11/16/programmatically-creating-crm-4-entity-metadata/">Programmatically creating CRM 4 entity metadata</a>
       </li>
     
   </ul>
@@ -1479,7 +825,7 @@ Microsoft Dynamics CRM 4.0 type </th>
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - Dan Newcome -
+  Copyright &copy; 2013 - Dan Newcome -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
